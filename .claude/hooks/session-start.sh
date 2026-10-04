@@ -6,6 +6,9 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
+# Run in the background so the session starts immediately; JDK download and first build can take minutes.
+echo '{"async": true, "asyncTimeout": 600000}'
+
 JDK_ROOT=/opt/jdk
 JAVA_HOME_DIR=$(ls -d "$JDK_ROOT"/jdk-25* 2>/dev/null | head -1 || true)
 if [ -z "$JAVA_HOME_DIR" ] || [ ! -x "$JAVA_HOME_DIR/bin/java" ]; then
