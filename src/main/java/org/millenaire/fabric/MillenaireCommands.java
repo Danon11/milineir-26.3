@@ -100,6 +100,13 @@ public final class MillenaireCommands {
                         .then(Commands.literal("settlements").executes(context -> listSettlements(context.getSource())))
                         .then(lifecycleCommand())
                         .then(Commands.literal("villagers").executes(context -> listVillagers(context.getSource())))
+                        .then(Commands.literal("generate").executes(context -> {
+                            var pos = BlockPos.containing(context.getSource().getPosition());
+                            String result = org.millenaire.fabric.village.WorldVillageGenerator.generate(context.getSource().getLevel(),
+                                    pos.getX(), pos.getZ(), new java.util.Random());
+                            context.getSource().sendSuccess(() -> Component.literal("Village generation here: " + result), true);
+                            return result.startsWith("founded") ? 1 : 0;
+                        }))
                         .then(Commands.literal("grow").executes(context -> growVillage(context.getSource(), false))
                                 .then(Commands.literal("rush").executes(context -> growVillage(context.getSource(), true))))
                         .then(villageAction("plan", false))
@@ -248,38 +255,23 @@ public final class MillenaireCommands {
                 if (!prepared.supported()) reportVillageIssues(source, prepared.combined().issues());
                 return layout.buildings().size();
             }
-            var dimension = source.getLevel().dimension().identifier();
-            var settlements = FabricSettlementState.get(source.getServer());
-            var world = BuildingPlacement.world(source.getLevel());
-            var issues = new java.util.ArrayList<>(BuildingPlacement.checkDestinations(prepared.combined(), world, replace));
-            issues.addAll(settlements.overlapIssues(dimension, layout));
-            if (!issues.isEmpty()) { reportVillageIssues(source, issues); return 0; }
             if (action.equals("check") || action.equals("checkreplace")) {
+                var dimension = source.getLevel().dimension().identifier();
+                var issues = new java.util.ArrayList<>(BuildingPlacement.checkDestinations(prepared.combined(), BuildingPlacement.world(source.getLevel()), replace));
+                issues.addAll(FabricSettlementState.get(source.getServer()).overlapIssues(dimension, layout));
+                if (!issues.isEmpty()) { reportVillageIssues(source, issues); return 0; }
                 source.sendSuccess(() -> Component.literal(id + ": " + layout.buildings().size() + " starting buildings, "
                         + prepared.combined().changes().size() + " block operations. "
                         + (replace ? "Terrain replacement passes" : "Placement into empty space passes") + "; no blocks changed."), false);
                 return layout.buildings().size();
             }
-            // Initialize and validate records before mutating blocks; publish only after the whole write succeeds.
-            var record = FabricSettlementState.from(dimension, prepared);
-            var buildingState = FabricBuildingState.get(source.getServer());
-            int changed = VillagePlacement.place(prepared, world, replace);
-            settlements.record(record);
-            record.buildings().forEach(building -> buildingState.record(building.placement()));
-            FabricSettlementLifecycleState.get(source.getServer()).ensure(record);
-            var random = new java.util.SplittableRandom(seed);
-            List<String> residentIssues = new java.util.ArrayList<>();
-            int before = FabricVillagerState.get(source.getServer()).villagers().size();
-            for (var building : record.buildings()) {
-                var placedPlan = catalog.plans().get(building.placement().plan());
-                if (placedPlan != null) residentIssues.addAll(org.millenaire.fabric.villager.VillagerSpawning.populate(
-                        source.getLevel(), placedPlan, building.placement(), random));
-            }
-            int residents = FabricVillagerState.get(source.getServer()).villagers().size() - before;
-            if (!residentIssues.isEmpty()) reportVillageIssues(source, residentIssues);
-            source.sendSuccess(() -> Component.literal("Placed starting layout " + id + ": " + layout.buildings().size()
-                    + " buildings, " + changed + " changed blocks, " + residents + " residents."), true);
-            return layout.buildings().size();
+            var result = org.millenaire.fabric.village.VillageFounder.found(source.getLevel(), catalog, type,
+                    new LegacyBuildingPlan.Position(pos.getX(), pos.getY(), pos.getZ()), seed, replace);
+            if (!result.placed()) { reportVillageIssues(source, result.issues()); return 0; }
+            if (!result.issues().isEmpty()) reportVillageIssues(source, result.issues());
+            source.sendSuccess(() -> Component.literal("Placed starting layout " + id + ": " + result.buildings()
+                    + " buildings, " + result.changedBlocks() + " changed blocks, " + result.residents() + " residents."), true);
+            return result.buildings();
         } catch (IOException | RuntimeException exception) {
             source.sendFailure(Component.literal("Village operation failed: " + exception.getMessage()));
             return 0;
