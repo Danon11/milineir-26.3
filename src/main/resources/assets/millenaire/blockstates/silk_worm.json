@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "progress=0": { "model": "millenaire:block/silkwormempty" },
+    "progress=1": { "model": "millenaire:block/silkwormip1" },
+    "progress=2": { "model": "millenaire:block/silkwormip2" },
+    "progress=3": { "model": "millenaire:block/silkwormfull" }
+  }
+}

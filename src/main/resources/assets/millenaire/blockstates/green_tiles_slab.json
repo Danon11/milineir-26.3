@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "millenaire:block/green_tiles_slab_bottom"
+    },
+    "type=top": {
+      "model": "millenaire:block/green_tiles_slab_top"
+    },
+    "type=double": {
+      "model": "millenaire:block/green_tiles"
+    }
+  }
+}

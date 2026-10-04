@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wah",
+  "pattern": [
+    "#X#"
+  ],
+  "key": {
+    "#": "millenaire:maize",
+    "X": "minecraft:chicken"
+  },
+  "result": {
+    "id": "millenaire:wah",
+    "count": 1
+  }
+}

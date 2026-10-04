@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": "millenaire:timberframeplain"
+  },
+  "result": {
+    "id": "millenaire:slab_timberframeplain",
+    "count": 6
+  }
+}

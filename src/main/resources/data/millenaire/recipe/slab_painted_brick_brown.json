@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "slab_painted_brick",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": "millenaire:painted_brick_brown"
+  },
+  "result": {
+    "id": "millenaire:slab_painted_brick_brown",
+    "count": 6
+  }
+}

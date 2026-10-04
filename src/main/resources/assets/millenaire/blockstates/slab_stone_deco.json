@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "millenaire:block/mudbrick_bottom"
+    },
+    "type=top": {
+      "model": "millenaire:block/mudbrick_top"
+    },
+    "type=double": {
+      "model": "millenaire:block/mudbrick"
+    }
+  }
+}

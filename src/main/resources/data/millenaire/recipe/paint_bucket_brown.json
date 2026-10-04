@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "paint_bucket",
+  "ingredients": [
+    "millenaire:paintbucketwhite",
+    "minecraft:brown_dye"
+  ],
+  "result": {
+    "id": "millenaire:paint_bucket_brown",
+    "count": 1
+  }
+}

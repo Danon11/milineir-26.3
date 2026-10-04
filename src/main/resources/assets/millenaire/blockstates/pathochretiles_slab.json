@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "millenaire:block/pathochretiles_bottom"
+    },
+    "type=top": {
+      "model": "millenaire:block/pathochretiles_top"
+    },
+    "type=double": {
+      "model": "millenaire:block/pathochretiles"
+    }
+  }
+}

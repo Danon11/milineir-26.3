@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "millenaire:block/timberframe_bottom"
+    },
+    "type=top": {
+      "model": "millenaire:block/timberframe_top"
+    },
+    "type=double": {
+      "model": "millenaire:block/timberframeplain"
+    }
+  }
+}

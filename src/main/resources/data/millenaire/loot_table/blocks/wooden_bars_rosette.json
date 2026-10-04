@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "millenaire:wooden_bars_rosette"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "millenaire:blocks/wooden_bars_rosette"
+}

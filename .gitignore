@@ -1,0 +1,12 @@
+.gradle/
+.gradle-user/
+.java25/
+build/
+run/
+.idea/
+*.iml
+
+# local helper output
+cp.txt
+cp.gradle
+artifacts/

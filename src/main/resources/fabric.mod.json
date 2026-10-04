@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "millenaire",
+  "version": "${version}",
+  "name": "Millenaire",
+  "description": "Millenaire 8.1.2 Fabric port in progress.",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.millenaire.fabric.MillenaireFabric"
+    ],
+    "client": [
+      "org.millenaire.fabric.firepit.FirePitClient",
+      "org.millenaire.fabric.storage.VillageStorageClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

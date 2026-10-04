@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wall_painted_brick",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": "millenaire:painted_brick_red"
+  },
+  "result": {
+    "id": "millenaire:wall_painted_brick_red",
+    "count": 6
+  }
+}

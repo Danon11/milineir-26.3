@@ -1,0 +1,1412 @@
+[
+  {
+    "name": "alchemist_amulet",
+    "kind": "item",
+    "legacy_id": "millenaire:alchemist_amulet",
+    "metadata": "0"
+  },
+  {
+    "name": "alchemistexplosive",
+    "kind": "block",
+    "legacy_id": "millenaire:alchemistexplosive",
+    "metadata": "0"
+  },
+  {
+    "name": "ayran",
+    "kind": "item",
+    "legacy_id": "millenaire:ayran",
+    "metadata": "0"
+  },
+  {
+    "name": "balche",
+    "kind": "item",
+    "legacy_id": "millenaire:balche",
+    "metadata": "0"
+  },
+  {
+    "name": "bearmeat_cooked",
+    "kind": "item",
+    "legacy_id": "millenaire:bearmeat_cooked",
+    "metadata": "0"
+  },
+  {
+    "name": "bearmeat_raw",
+    "kind": "item",
+    "legacy_id": "millenaire:bearmeat_raw",
+    "metadata": "0"
+  },
+  {
+    "name": "bed_charpoy",
+    "kind": "block",
+    "legacy_id": "millenaire:bed_charpoy",
+    "metadata": "0"
+  },
+  {
+    "name": "bed_straw",
+    "kind": "block",
+    "legacy_id": "millenaire:bed_straw",
+    "metadata": "0"
+  },
+  {
+    "name": "boudin",
+    "kind": "item",
+    "legacy_id": "millenaire:boudin",
+    "metadata": "0"
+  },
+  {
+    "name": "brickmould",
+    "kind": "item",
+    "legacy_id": "millenaire:brickmould",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantine_fresco",
+    "kind": "block",
+    "legacy_id": "millenaire:stone_deco",
+    "metadata": "4"
+  },
+  {
+    "name": "byzantine_mosaic",
+    "kind": "block",
+    "legacy_id": "millenaire:stone_deco",
+    "metadata": "3"
+  },
+  {
+    "name": "byzantine_stone_tiles",
+    "kind": "block",
+    "legacy_id": "millenaire:byzantine_stone_tiles",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantine_tiles",
+    "kind": "block",
+    "legacy_id": "millenaire:byzantine_tiles",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantine_tiles_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:byzantine_tiles_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantineaxe",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineAxe",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantineboots",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineBoots",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantinehelmet",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineHelmet",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantinehoe",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineHoe",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantineiconlarge",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineiconlarge",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantineiconmedium",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineiconmedium",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantineiconsmall",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineiconsmall",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantinelegs",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineLegs",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantinemace",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineMace",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantinepickaxe",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantinePickaxe",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantineplate",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantinePlate",
+    "metadata": "0"
+  },
+  {
+    "name": "byzantineshovel",
+    "kind": "item",
+    "legacy_id": "millenaire:byzantineShovel",
+    "metadata": "0"
+  },
+  {
+    "name": "byzpattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "0"
+  },
+  {
+    "name": "byzpattern1",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "1"
+  },
+  {
+    "name": "byzpattern2",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "2"
+  },
+  {
+    "name": "cacauhaa",
+    "kind": "item",
+    "legacy_id": "millenaire:cacauhaa",
+    "metadata": "0"
+  },
+  {
+    "name": "calva",
+    "kind": "item",
+    "legacy_id": "millenaire:calva",
+    "metadata": "0"
+  },
+  {
+    "name": "cherries",
+    "kind": "item",
+    "legacy_id": "millenaire:cherries",
+    "metadata": "0"
+  },
+  {
+    "name": "cherry_blossom",
+    "kind": "item",
+    "legacy_id": "millenaire:cherry_blossom",
+    "metadata": "0"
+  },
+  {
+    "name": "chickencurry",
+    "kind": "item",
+    "legacy_id": "millenaire:chickencurry",
+    "metadata": "0"
+  },
+  {
+    "name": "cider",
+    "kind": "item",
+    "legacy_id": "millenaire:cider",
+    "metadata": "0"
+  },
+  {
+    "name": "ciderapple",
+    "kind": "item",
+    "legacy_id": "millenaire:ciderapple",
+    "metadata": "0"
+  },
+  {
+    "name": "clothes_byz_silk",
+    "kind": "item",
+    "legacy_id": "millenaire:clothes_byz_silk",
+    "metadata": "0"
+  },
+  {
+    "name": "clothes_byz_wool",
+    "kind": "item",
+    "legacy_id": "millenaire:clothes_byz_wool",
+    "metadata": "0"
+  },
+  {
+    "name": "clothes_seljuk_cotton",
+    "kind": "item",
+    "legacy_id": "millenaire:clothes_seljuk_cotton",
+    "metadata": "0"
+  },
+  {
+    "name": "clothes_seljuk_wool",
+    "kind": "item",
+    "legacy_id": "millenaire:clothes_seljuk_wool",
+    "metadata": "0"
+  },
+  {
+    "name": "cotton",
+    "kind": "item",
+    "legacy_id": "millenaire:cotton",
+    "metadata": "0"
+  },
+  {
+    "name": "decoratedbrickwhite",
+    "kind": "block",
+    "legacy_id": "millenaire:painted_brick_decorated_white",
+    "metadata": "0"
+  },
+  {
+    "name": "denier",
+    "kind": "item",
+    "legacy_id": "millenaire:denier",
+    "metadata": "0"
+  },
+  {
+    "name": "denierargent",
+    "kind": "item",
+    "legacy_id": "millenaire:denierargent",
+    "metadata": "0"
+  },
+  {
+    "name": "denieror",
+    "kind": "item",
+    "legacy_id": "millenaire:denieror",
+    "metadata": "0"
+  },
+  {
+    "name": "dirtwall",
+    "kind": "block",
+    "legacy_id": "millenaire:earth_deco",
+    "metadata": "0"
+  },
+  {
+    "name": "feta",
+    "kind": "item",
+    "legacy_id": "millenaire:feta",
+    "metadata": "0"
+  },
+  {
+    "name": "fire_pit",
+    "kind": "block",
+    "legacy_id": "millenaire:fire_pit",
+    "metadata": "0"
+  },
+  {
+    "name": "furboots",
+    "kind": "item",
+    "legacy_id": "millenaire:furboots",
+    "metadata": "0"
+  },
+  {
+    "name": "furhelmet",
+    "kind": "item",
+    "legacy_id": "millenaire:furhelmet",
+    "metadata": "0"
+  },
+  {
+    "name": "furlegs",
+    "kind": "item",
+    "legacy_id": "millenaire:furlegs",
+    "metadata": "0"
+  },
+  {
+    "name": "furplate",
+    "kind": "item",
+    "legacy_id": "millenaire:furplate",
+    "metadata": "0"
+  },
+  {
+    "name": "grapes",
+    "kind": "item",
+    "legacy_id": "millenaire:grapes",
+    "metadata": "0"
+  },
+  {
+    "name": "gray_tiles",
+    "kind": "block",
+    "legacy_id": "millenaire:gray_tiles",
+    "metadata": "0"
+  },
+  {
+    "name": "gray_tiles_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:gray_tiles_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "helva",
+    "kind": "item",
+    "legacy_id": "millenaire:helva",
+    "metadata": "0"
+  },
+  {
+    "name": "hidehanging",
+    "kind": "item",
+    "legacy_id": "millenaire:hidehanging",
+    "metadata": "0"
+  },
+  {
+    "name": "icebrick",
+    "kind": "block",
+    "legacy_id": "millenaire:icebrick",
+    "metadata": "0"
+  },
+  {
+    "name": "ikayaki",
+    "kind": "item",
+    "legacy_id": "millenaire:ikayaki",
+    "metadata": "0"
+  },
+  {
+    "name": "indianstatue",
+    "kind": "item",
+    "legacy_id": "millenaire:indianstatue",
+    "metadata": "0"
+  },
+  {
+    "name": "indpattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "6"
+  },
+  {
+    "name": "indpattern1",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "7"
+  },
+  {
+    "name": "indpattern2",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "8"
+  },
+  {
+    "name": "indpattern3",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "9"
+  },
+  {
+    "name": "indpattern4",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "10"
+  },
+  {
+    "name": "indpattern5",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "11"
+  },
+  {
+    "name": "inuitbearstew",
+    "kind": "item",
+    "legacy_id": "millenaire:inuitbearstew",
+    "metadata": "0"
+  },
+  {
+    "name": "inuitbow",
+    "kind": "item",
+    "legacy_id": "millenaire:inuitbow",
+    "metadata": "0"
+  },
+  {
+    "name": "inuitcarving",
+    "kind": "block",
+    "legacy_id": "millenaire:inuitcarving",
+    "metadata": "0"
+  },
+  {
+    "name": "inuitmeatystew",
+    "kind": "item",
+    "legacy_id": "millenaire:inuitmeatystew",
+    "metadata": "0"
+  },
+  {
+    "name": "inuitpotatostew",
+    "kind": "item",
+    "legacy_id": "millenaire:inuitpotatostew",
+    "metadata": "0"
+  },
+  {
+    "name": "inuittrident",
+    "kind": "item",
+    "legacy_id": "millenaire:inuittrident",
+    "metadata": "0"
+  },
+  {
+    "name": "inupattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "5"
+  },
+  {
+    "name": "inupattern1",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "17"
+  },
+  {
+    "name": "inupattern2",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "18"
+  },
+  {
+    "name": "inupattern3",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "19"
+  },
+  {
+    "name": "inupattern4",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "20"
+  },
+  {
+    "name": "japaneseblueboots",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseblueboots",
+    "metadata": "0"
+  },
+  {
+    "name": "japanesebluehelmet",
+    "kind": "item",
+    "legacy_id": "millenaire:japanesebluehelmet",
+    "metadata": "0"
+  },
+  {
+    "name": "japanesebluelegs",
+    "kind": "item",
+    "legacy_id": "millenaire:japanesebluelegs",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseblueplate",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseblueplate",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseguardboots",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseGuardBoots",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseguardhelmet",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseGuardHelmet",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseguardlegs",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseGuardLegs",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseguardplate",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseGuardPlate",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseredboots",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseredboots",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseredhelmet",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseredhelmet",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseredlegs",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseredlegs",
+    "metadata": "0"
+  },
+  {
+    "name": "japaneseredplate",
+    "kind": "item",
+    "legacy_id": "millenaire:japaneseredplate",
+    "metadata": "0"
+  },
+  {
+    "name": "jappattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "21"
+  },
+  {
+    "name": "jappattern1",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "22"
+  },
+  {
+    "name": "jappattern2",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "23"
+  },
+  {
+    "name": "jappattern3",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "24"
+  },
+  {
+    "name": "jappattern4",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "25"
+  },
+  {
+    "name": "lokum",
+    "kind": "item",
+    "legacy_id": "millenaire:lokum",
+    "metadata": "0"
+  },
+  {
+    "name": "maize",
+    "kind": "item",
+    "legacy_id": "millenaire:maize",
+    "metadata": "0"
+  },
+  {
+    "name": "masa",
+    "kind": "item",
+    "legacy_id": "millenaire:masa",
+    "metadata": "0"
+  },
+  {
+    "name": "mayanaxe",
+    "kind": "item",
+    "legacy_id": "millenaire:mayanAxe",
+    "metadata": "0"
+  },
+  {
+    "name": "mayangold",
+    "kind": "block",
+    "legacy_id": "millenaire:stone_deco",
+    "metadata": "2"
+  },
+  {
+    "name": "mayanhoe",
+    "kind": "item",
+    "legacy_id": "millenaire:mayanHoe",
+    "metadata": "0"
+  },
+  {
+    "name": "mayanmace",
+    "kind": "item",
+    "legacy_id": "millenaire:mayanMace",
+    "metadata": "0"
+  },
+  {
+    "name": "mayanpickaxe",
+    "kind": "item",
+    "legacy_id": "millenaire:mayanPickaxe",
+    "metadata": "0"
+  },
+  {
+    "name": "mayanquestcrown",
+    "kind": "item",
+    "legacy_id": "millenaire:mayanquestcrown",
+    "metadata": "0"
+  },
+  {
+    "name": "mayanshovel",
+    "kind": "item",
+    "legacy_id": "millenaire:mayanShovel",
+    "metadata": "0"
+  },
+  {
+    "name": "mayanstatue",
+    "kind": "item",
+    "legacy_id": "millenaire:mayanstatue",
+    "metadata": "0"
+  },
+  {
+    "name": "maypattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "4"
+  },
+  {
+    "name": "maypattern1",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "13"
+  },
+  {
+    "name": "maypattern2",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "14"
+  },
+  {
+    "name": "maypattern3",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "15"
+  },
+  {
+    "name": "maypattern4",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "16"
+  },
+  {
+    "name": "mudbrick",
+    "kind": "block",
+    "legacy_id": "millenaire:stone_deco",
+    "metadata": "0"
+  },
+  {
+    "name": "mudbrick_seljuk_decorated",
+    "kind": "block",
+    "legacy_id": "millenaire:extended_mud_brick",
+    "metadata": "1"
+  },
+  {
+    "name": "mudbrick_seljuk_ornamented",
+    "kind": "block",
+    "legacy_id": "millenaire:extended_mud_brick",
+    "metadata": "2"
+  },
+  {
+    "name": "mudbrick_smooth",
+    "kind": "block",
+    "legacy_id": "millenaire:extended_mud_brick",
+    "metadata": "0"
+  },
+  {
+    "name": "normanaxe",
+    "kind": "item",
+    "legacy_id": "millenaire:normanAxe",
+    "metadata": "0"
+  },
+  {
+    "name": "normanboots",
+    "kind": "item",
+    "legacy_id": "millenaire:normanBoots",
+    "metadata": "0"
+  },
+  {
+    "name": "normanbroadsword",
+    "kind": "item",
+    "legacy_id": "millenaire:normanBroadsword",
+    "metadata": "0"
+  },
+  {
+    "name": "normanhelmet",
+    "kind": "item",
+    "legacy_id": "millenaire:normanHelmet",
+    "metadata": "0"
+  },
+  {
+    "name": "normanhoe",
+    "kind": "item",
+    "legacy_id": "millenaire:normanHoe",
+    "metadata": "0"
+  },
+  {
+    "name": "normanlegs",
+    "kind": "item",
+    "legacy_id": "millenaire:normanLegs",
+    "metadata": "0"
+  },
+  {
+    "name": "normanpickaxe",
+    "kind": "item",
+    "legacy_id": "millenaire:normanPickaxe",
+    "metadata": "0"
+  },
+  {
+    "name": "normanplate",
+    "kind": "item",
+    "legacy_id": "millenaire:normanPlate",
+    "metadata": "0"
+  },
+  {
+    "name": "normanshovel",
+    "kind": "item",
+    "legacy_id": "millenaire:normanShovel",
+    "metadata": "0"
+  },
+  {
+    "name": "norpattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "12"
+  },
+  {
+    "name": "obsidianflake",
+    "kind": "item",
+    "legacy_id": "millenaire:obsidianFlake",
+    "metadata": "0"
+  },
+  {
+    "name": "ochre_sandstone_carved",
+    "kind": "block",
+    "legacy_id": "millenaire:sandstone_ochre_carved",
+    "metadata": "0"
+  },
+  {
+    "name": "oliveoil",
+    "kind": "item",
+    "legacy_id": "millenaire:oliveoil",
+    "metadata": "0"
+  },
+  {
+    "name": "olives",
+    "kind": "item",
+    "legacy_id": "millenaire:olives",
+    "metadata": "0"
+  },
+  {
+    "name": "paintedbrickwhite",
+    "kind": "block",
+    "legacy_id": "millenaire:painted_brick_white",
+    "metadata": "0"
+  },
+  {
+    "name": "paper_wall",
+    "kind": "block",
+    "legacy_id": "millenaire:paper_wall",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_indianbuildings",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_indianbuildings",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_indianfull",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_indianfull",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_indianitems",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_indianitems",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_indianvillagers",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_indianvillagers",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_japanesebuildings",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_japanesebuildings",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_japanesefull",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_japanesefull",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_japaneseitems",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_japaneseitems",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_japanesevillagers",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_japanesevillagers",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_mayanbuildings",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_mayanbuildings",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_mayanfull",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_mayanfull",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_mayanitems",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_mayanitems",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_mayanvillagers",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_mayanvillagers",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_normanbuildings",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_normanbuildings",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_normanfull",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_normanfull",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_normanitems",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_normanitems",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_normanvillagers",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_normanvillagers",
+    "metadata": "0"
+  },
+  {
+    "name": "parchment_sadhu",
+    "kind": "item",
+    "legacy_id": "millenaire:parchment_sadhu",
+    "metadata": "0"
+  },
+  {
+    "name": "pathdirt",
+    "kind": "block",
+    "legacy_id": "millenaire:pathdirt",
+    "metadata": "0"
+  },
+  {
+    "name": "pathdirt_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:pathdirt_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "pathgravel",
+    "kind": "block",
+    "legacy_id": "millenaire:pathgravel",
+    "metadata": "0"
+  },
+  {
+    "name": "pathgravel_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:pathgravel_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "pathgravelslabs",
+    "kind": "block",
+    "legacy_id": "millenaire:pathgravelslabs",
+    "metadata": "0"
+  },
+  {
+    "name": "pathgravelslabs_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:pathgravelslabs_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "pathochretiles",
+    "kind": "block",
+    "legacy_id": "millenaire:pathochretiles",
+    "metadata": "0"
+  },
+  {
+    "name": "pathochretiles_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:pathochretiles_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "pathsandstone",
+    "kind": "block",
+    "legacy_id": "millenaire:pathsandstone",
+    "metadata": "0"
+  },
+  {
+    "name": "pathsandstone_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:pathsandstone_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "pathslabs",
+    "kind": "block",
+    "legacy_id": "millenaire:pathslabs",
+    "metadata": "0"
+  },
+  {
+    "name": "pathslabs_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:pathslabs_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "pathsnow",
+    "kind": "block",
+    "legacy_id": "millenaire:pathsnow",
+    "metadata": "0"
+  },
+  {
+    "name": "pathsnow_slab",
+    "kind": "block",
+    "legacy_id": "millenaire:pathsnow_slab",
+    "metadata": "0"
+  },
+  {
+    "name": "pide",
+    "kind": "item",
+    "legacy_id": "millenaire:pide",
+    "metadata": "0"
+  },
+  {
+    "name": "pistachios",
+    "kind": "item",
+    "legacy_id": "millenaire:pistachios",
+    "metadata": "0"
+  },
+  {
+    "name": "purse",
+    "kind": "item",
+    "legacy_id": "millenaire:purse",
+    "metadata": "0"
+  },
+  {
+    "name": "rasgulla",
+    "kind": "item",
+    "legacy_id": "millenaire:rasgulla",
+    "metadata": "0"
+  },
+  {
+    "name": "red_sandstone_carved",
+    "kind": "block",
+    "legacy_id": "millenaire:sandstone_red_carved",
+    "metadata": "0"
+  },
+  {
+    "name": "rice",
+    "kind": "item",
+    "legacy_id": "millenaire:rice",
+    "metadata": "0"
+  },
+  {
+    "name": "rosette",
+    "kind": "block",
+    "legacy_id": "millenaire:rosette",
+    "metadata": "0"
+  },
+  {
+    "name": "sake",
+    "kind": "item",
+    "legacy_id": "millenaire:sake",
+    "metadata": "0"
+  },
+  {
+    "name": "sandstone_carved",
+    "kind": "block",
+    "legacy_id": "millenaire:sandstone_carved",
+    "metadata": "0"
+  },
+  {
+    "name": "sapling_appletree",
+    "kind": "block",
+    "legacy_id": "millenaire:sapling_appletree",
+    "metadata": "0"
+  },
+  {
+    "name": "sapling_cherry",
+    "kind": "block",
+    "legacy_id": "millenaire:sapling_cherry",
+    "metadata": "0"
+  },
+  {
+    "name": "sapling_olivetree",
+    "kind": "block",
+    "legacy_id": "millenaire:sapling_olivetree",
+    "metadata": "0"
+  },
+  {
+    "name": "sapling_pistachio",
+    "kind": "block",
+    "legacy_id": "millenaire:sapling_pistachio",
+    "metadata": "0"
+  },
+  {
+    "name": "sapling_sakura",
+    "kind": "block",
+    "legacy_id": "millenaire:sapling_sakura",
+    "metadata": "0"
+  },
+  {
+    "name": "seafood_cooked",
+    "kind": "item",
+    "legacy_id": "millenaire:seafood_cooked",
+    "metadata": "0"
+  },
+  {
+    "name": "seafood_raw",
+    "kind": "item",
+    "legacy_id": "millenaire:seafood_raw",
+    "metadata": "0"
+  },
+  {
+    "name": "seljukboots",
+    "kind": "item",
+    "legacy_id": "millenaire:seljukboots",
+    "metadata": "0"
+  },
+  {
+    "name": "seljukbow",
+    "kind": "item",
+    "legacy_id": "millenaire:seljukbow",
+    "metadata": "0"
+  },
+  {
+    "name": "seljukhelmet",
+    "kind": "item",
+    "legacy_id": "millenaire:seljukhelmet",
+    "metadata": "0"
+  },
+  {
+    "name": "seljuklegs",
+    "kind": "item",
+    "legacy_id": "millenaire:seljuklegs",
+    "metadata": "0"
+  },
+  {
+    "name": "seljukplate",
+    "kind": "item",
+    "legacy_id": "millenaire:seljukplate",
+    "metadata": "0"
+  },
+  {
+    "name": "seljukscimitar",
+    "kind": "item",
+    "legacy_id": "millenaire:seljukscimitar",
+    "metadata": "0"
+  },
+  {
+    "name": "seljukturban",
+    "kind": "item",
+    "legacy_id": "millenaire:seljukturban",
+    "metadata": "0"
+  },
+  {
+    "name": "sikilpah",
+    "kind": "item",
+    "legacy_id": "millenaire:sikilpah",
+    "metadata": "0"
+  },
+  {
+    "name": "silk",
+    "kind": "item",
+    "legacy_id": "millenaire:silk",
+    "metadata": "0"
+  },
+  {
+    "name": "silkwormempty",
+    "kind": "block",
+    "legacy_id": "millenaire:wood_deco",
+    "metadata": "3"
+  },
+  {
+    "name": "silkwormfull",
+    "kind": "block",
+    "legacy_id": "millenaire:wood_deco",
+    "metadata": "4"
+  },
+  {
+    "name": "sjkmpattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "27"
+  },
+  {
+    "name": "sjkpattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "3"
+  },
+  {
+    "name": "sjkrpattern",
+    "kind": "item",
+    "legacy_id": "millenaire:bannerpattern",
+    "metadata": "26"
+  },
+  {
+    "name": "skoll_hati_amulet",
+    "kind": "item",
+    "legacy_id": "millenaire:skoll_hati_amulet",
+    "metadata": "0"
+  },
+  {
+    "name": "snowbrick",
+    "kind": "block",
+    "legacy_id": "millenaire:snowbrick",
+    "metadata": "0"
+  },
+  {
+    "name": "snowwall",
+    "kind": "block",
+    "legacy_id": "millenaire:snowwall",
+    "metadata": "0"
+  },
+  {
+    "name": "sod_acacia",
+    "kind": "block",
+    "legacy_id": "millenaire:sod",
+    "metadata": "4"
+  },
+  {
+    "name": "sod_birch",
+    "kind": "block",
+    "legacy_id": "millenaire:sod",
+    "metadata": "2"
+  },
+  {
+    "name": "sod_dark_oak",
+    "kind": "block",
+    "legacy_id": "millenaire:sod",
+    "metadata": "5"
+  },
+  {
+    "name": "sod_jungle",
+    "kind": "block",
+    "legacy_id": "millenaire:sod",
+    "metadata": "3"
+  },
+  {
+    "name": "sod_oak",
+    "kind": "block",
+    "legacy_id": "millenaire:sod",
+    "metadata": "0"
+  },
+  {
+    "name": "sod_spruce",
+    "kind": "block",
+    "legacy_id": "millenaire:sod",
+    "metadata": "1"
+  },
+  {
+    "name": "souvlaki",
+    "kind": "item",
+    "legacy_id": "millenaire:souvlaki",
+    "metadata": "0"
+  },
+  {
+    "name": "stained_glass_green_blue",
+    "kind": "block",
+    "legacy_id": "millenaire:stained_glass",
+    "metadata": "4"
+  },
+  {
+    "name": "stained_glass_red_blue",
+    "kind": "block",
+    "legacy_id": "millenaire:stained_glass",
+    "metadata": "3"
+  },
+  {
+    "name": "stained_glass_white",
+    "kind": "block",
+    "legacy_id": "millenaire:stained_glass",
+    "metadata": "0"
+  },
+  {
+    "name": "stained_glass_yellow",
+    "kind": "block",
+    "legacy_id": "millenaire:stained_glass",
+    "metadata": "1"
+  },
+  {
+    "name": "stained_glass_yellow_red",
+    "kind": "block",
+    "legacy_id": "millenaire:stained_glass",
+    "metadata": "2"
+  },
+  {
+    "name": "summoningwand",
+    "kind": "item",
+    "legacy_id": "millenaire:summoningwand",
+    "metadata": "0"
+  },
+  {
+    "name": "tachisword",
+    "kind": "item",
+    "legacy_id": "millenaire:tachisword",
+    "metadata": "0"
+  },
+  {
+    "name": "tannedhide",
+    "kind": "item",
+    "legacy_id": "millenaire:tannedhide",
+    "metadata": "0"
+  },
+  {
+    "name": "tapestry",
+    "kind": "item",
+    "legacy_id": "millenaire:tapestry",
+    "metadata": "0"
+  },
+  {
+    "name": "thatch",
+    "kind": "block",
+    "legacy_id": "millenaire:wood_deco",
+    "metadata": "2"
+  },
+  {
+    "name": "timberframecross",
+    "kind": "block",
+    "legacy_id": "millenaire:wood_deco",
+    "metadata": "1"
+  },
+  {
+    "name": "timberframeplain",
+    "kind": "block",
+    "legacy_id": "millenaire:wood_deco",
+    "metadata": "0"
+  },
+  {
+    "name": "tripes",
+    "kind": "item",
+    "legacy_id": "millenaire:tripes",
+    "metadata": "0"
+  },
+  {
+    "name": "turmeric",
+    "kind": "item",
+    "legacy_id": "millenaire:turmeric",
+    "metadata": "0"
+  },
+  {
+    "name": "udon",
+    "kind": "item",
+    "legacy_id": "millenaire:udon",
+    "metadata": "0"
+  },
+  {
+    "name": "ulu",
+    "kind": "item",
+    "legacy_id": "millenaire:ulu",
+    "metadata": "0"
+  },
+  {
+    "name": "unknownpowder",
+    "kind": "item",
+    "legacy_id": "millenaire:unknownpowder",
+    "metadata": "0"
+  },
+  {
+    "name": "vegcurry",
+    "kind": "item",
+    "legacy_id": "millenaire:vegcurry",
+    "metadata": "0"
+  },
+  {
+    "name": "vishnu_amulet",
+    "kind": "item",
+    "legacy_id": "millenaire:vishnu_amulet",
+    "metadata": "0"
+  },
+  {
+    "name": "wah",
+    "kind": "item",
+    "legacy_id": "millenaire:wah",
+    "metadata": "0"
+  },
+  {
+    "name": "wallcarpetlarge",
+    "kind": "item",
+    "legacy_id": "millenaire:wallcarpetlarge",
+    "metadata": "0"
+  },
+  {
+    "name": "wallcarpetmedium",
+    "kind": "item",
+    "legacy_id": "millenaire:wallcarpetmedium",
+    "metadata": "0"
+  },
+  {
+    "name": "wallcarpetsmall",
+    "kind": "item",
+    "legacy_id": "millenaire:wallcarpetsmall",
+    "metadata": "0"
+  },
+  {
+    "name": "winebasic",
+    "kind": "item",
+    "legacy_id": "millenaire:winebasic",
+    "metadata": "0"
+  },
+  {
+    "name": "winefancy",
+    "kind": "item",
+    "legacy_id": "millenaire:winefancy",
+    "metadata": "0"
+  },
+  {
+    "name": "wolfmeat_cooked",
+    "kind": "item",
+    "legacy_id": "millenaire:wolfmeat_cooked",
+    "metadata": "0"
+  },
+  {
+    "name": "wolfmeat_raw",
+    "kind": "item",
+    "legacy_id": "millenaire:wolfmeat_raw",
+    "metadata": "0"
+  },
+  {
+    "name": "woodenbars",
+    "kind": "block",
+    "legacy_id": "millenaire:wooden_bars",
+    "metadata": "0"
+  },
+  {
+    "name": "woodenbarsindian",
+    "kind": "block",
+    "legacy_id": "millenaire:wooden_bars_indian",
+    "metadata": "0"
+  },
+  {
+    "name": "woodenbarsrosette",
+    "kind": "block",
+    "legacy_id": "millenaire:wooden_bars_rosette",
+    "metadata": "0"
+  },
+  {
+    "name": "yggdrasil_amulet",
+    "kind": "item",
+    "legacy_id": "millenaire:yggdrasil_amulet",
+    "metadata": "0"
+  },
+  {
+    "name": "yogurt",
+    "kind": "item",
+    "legacy_id": "millenaire:yogurt",
+    "metadata": "0"
+  },
+  {
+    "name": "yumibow",
+    "kind": "item",
+    "legacy_id": "millenaire:yumiBow",
+    "metadata": "0"
+  }
+]

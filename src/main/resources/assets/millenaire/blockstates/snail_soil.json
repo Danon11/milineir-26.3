@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "progress=0": { "model": "millenaire:block/snail_soil_empty" },
+    "progress=1": { "model": "millenaire:block/snail_soil_empty" },
+    "progress=2": { "model": "millenaire:block/snail_soil_empty" },
+    "progress=3": { "model": "millenaire:block/snail_soil_full" }
+  }
+}

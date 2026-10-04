@@ -1,0 +1,614 @@
+status	color	label	legacy_block	legacy_state	result
+supported	802000	chestTop	minecraft:chest	facing=east	Block{minecraft:chest}[facing=east,type=single,waterlogged=false]
+supported	802100	chestBottom	minecraft:chest	facing=west	Block{minecraft:chest}[facing=west,type=single,waterlogged=false]
+supported	802200	chestLeft	minecraft:chest	facing=north	Block{minecraft:chest}[facing=north,type=single,waterlogged=false]
+supported	802300	chestRight	minecraft:chest	facing=south	Block{minecraft:chest}[facing=south,type=single,waterlogged=false]
+supported	ff0000	clear	minecraft:air	0	Block{minecraft:air}
+supported	666666	stone	minecraft:stone	variant=stone	Block{minecraft:stone}
+supported	a17053	granite	minecraft:stone	variant=granite	Block{minecraft:granite}
+supported	ab7a5d	smooth_granite	minecraft:stone	variant=smooth_granite	Block{minecraft:polished_granite}
+supported	7a7a7a	diorite	minecraft:stone	variant=diorite	Block{minecraft:diorite}
+supported	848484	smooth_diorite	minecraft:stone	variant=smooth_diorite	Block{minecraft:polished_diorite}
+supported	c3c3c3	andesite	minecraft:stone	variant=andesite	Block{minecraft:andesite}
+supported	c7c7c7	smooth_andesite	minecraft:stone	variant=smooth_andesite	Block{minecraft:polished_andesite}
+supported	804000	dirt	minecraft:dirt	variant=dirt	Block{minecraft:dirt}
+supported	804001	coarse_dirt	minecraft:dirt	variant=coarse_dirt	Block{minecraft:coarse_dirt}
+supported	804002	podzol	minecraft:dirt	variant=podzol	Block{minecraft:podzol}[snowy=false]
+supported	80402a	coarse_dirt	minecraft:dirt	1	Block{minecraft:coarse_dirt}
+supported	4c4c4c	cobblestone	minecraft:cobblestone	0	Block{minecraft:cobblestone}
+supported	5a5a5a	stonebricks	minecraft:stonebrick	0	Block{minecraft:stone_bricks}
+supported	525252	crackedstonebricks	minecraft:stonebrick	2	Block{minecraft:cracked_stone_bricks}
+supported	5a965a	mossystonebricks	minecraft:stonebrick	1	Block{minecraft:mossy_stone_bricks}
+supported	6d4723	planks	minecraft:planks	variant=oak	Block{minecraft:oak_planks}
+supported	422f1b	planks pine	minecraft:planks	variant=spruce	Block{minecraft:spruce_planks}
+supported	c8b716	planks birch	minecraft:planks	variant=birch	Block{minecraft:birch_planks}
+supported	b1805c	planks jungle	minecraft:planks	variant=jungle	Block{minecraft:jungle_planks}
+supported	b10aa0	planks acacia	minecraft:planks	variant=acacia	Block{minecraft:acacia_planks}
+supported	322c19	planks dark oak	minecraft:planks	variant=dark_oak	Block{minecraft:dark_oak_planks}
+supported	3200	saplings	minecraft:sapling	type=oak	Block{minecraft:oak_sapling}[stage=0]
+supported	320a	saplings pine	minecraft:sapling	type=spruce	Block{minecraft:spruce_sapling}[stage=0]
+supported	3214	saplings birch	minecraft:sapling	type=birch	Block{minecraft:birch_sapling}[stage=0]
+supported	321e	saplings jungle	minecraft:sapling	type=jungle	Block{minecraft:jungle_sapling}[stage=0]
+supported	3228	saplings acacia	minecraft:sapling	type=acacia	Block{minecraft:acacia_sapling}[stage=0]
+supported	3232	saplings dark oak	minecraft:sapling	type=dark_oak	Block{minecraft:dark_oak_sapling}[stage=0]
+supported	ffff	water	minecraft:water	0	Block{minecraft:water}[level=0]
+supported	e4e771	sand	minecraft:sand	0	Block{minecraft:sand}
+supported	e4e772	sandRed	minecraft:sand	1	Block{minecraft:red_sand}
+supported	323232	gravel	minecraft:gravel	0	Block{minecraft:gravel}
+supported	66ccff	glass	minecraft:glass	0	Block{minecraft:glass}
+supported	b4ffff	glass pane	minecraft:glass_pane	0	Block{minecraft:glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	28ff	lapis	minecraft:lapis_block	0	Block{minecraft:lapis_block}
+supported	b9bc29	sandstone	minecraft:sandstone	0	Block{minecraft:sandstone}
+supported	b9bc33	sandstonechiseled	minecraft:sandstone	1	Block{minecraft:chiseled_sandstone}
+supported	b9bc3d	sandstonesmooth	minecraft:sandstone	2	Block{minecraft:cut_sandstone}
+supported	fabc29	redsandstone	minecraft:red_sandstone	0	Block{minecraft:red_sandstone}
+supported	fabc33	redsandstonechiseled	minecraft:red_sandstone	1	Block{minecraft:chiseled_red_sandstone}
+supported	fabc3d	redsandstonesmooth	minecraft:red_sandstone	2	Block{minecraft:cut_red_sandstone}
+supported	ffff41	yellowflower	minecraft:yellow_flower	0	Block{minecraft:dandelion}
+supported	ff3232	redflower	minecraft:red_flower	0	Block{minecraft:poppy}
+supported	ff3233	blueflower	minecraft:red_flower	1	Block{minecraft:blue_orchid}
+supported	ff3234	alliumflower	minecraft:red_flower	2	Block{minecraft:allium}
+supported	ff3235	houstoniaflower	minecraft:red_flower	3	Block{minecraft:azure_bluet}
+supported	ff3236	redtulipflower	minecraft:red_flower	4	Block{minecraft:red_tulip}
+supported	ff3237	orangetulipflower	minecraft:red_flower	5	Block{minecraft:orange_tulip}
+supported	ff3238	whitetulipflower	minecraft:red_flower	6	Block{minecraft:white_tulip}
+supported	ff3239	pinktulipflower	minecraft:red_flower	7	Block{minecraft:pink_tulip}
+supported	ff323a	daisyflower	minecraft:red_flower	8	Block{minecraft:oxeye_daisy}
+supported	ff323b	sunflower	minecraft:double_plant	facing=north,half=lower,variant=sunflower	Block{minecraft:sunflower}[half=lower]
+supported	ff323c	syringa	minecraft:double_plant	facing=north,half=lower,variant=syringa	Block{minecraft:lilac}[half=lower]
+supported	ff323d	doubleGrass	minecraft:double_plant	facing=north,half=lower,variant=double_grass	Block{minecraft:tall_grass}[half=lower]
+supported	ff323e	doubleFern	minecraft:double_plant	facing=north,half=lower,variant=double_fern	Block{minecraft:large_fern}[half=lower]
+supported	ff323f	doubleRose	minecraft:double_plant	facing=north,half=lower,variant=double_rose	Block{minecraft:rose_bush}[half=lower]
+supported	ff3240	paeonia	minecraft:double_plant	facing=north,half=lower,variant=paeonia	Block{minecraft:peony}[half=lower]
+supported	cccccc	steelblock	minecraft:iron_block	0	Block{minecraft:iron_block}
+supported	cccccd	anvil	minecraft:anvil	facing=north	Block{minecraft:anvil}[facing=north]
+supported	ccccce	anvil	minecraft:anvil	facing=south	Block{minecraft:anvil}[facing=south]
+supported	cccccf	anvil	minecraft:anvil	facing=east	Block{minecraft:anvil}[facing=east]
+supported	ccccd0	anvil	minecraft:anvil	facing=west	Block{minecraft:anvil}[facing=west]
+supported	969696	doubleslab	minecraft:double_stone_slab	0	Block{minecraft:smooth_stone_slab}[type=double,waterlogged=false]
+supported	a0a0a0	stoneslab	minecraft:stone_slab	0	Block{minecraft:smooth_stone_slab}[type=bottom,waterlogged=false]
+supported	c3c832	sandstoneslab	minecraft:stone_slab	1	Block{minecraft:sandstone_slab}[type=bottom,waterlogged=false]
+supported	c3c837	redsandstoneslab	minecraft:stone_slab2	0	Block{minecraft:red_sandstone_slab}[type=bottom,waterlogged=false]
+supported	555555	cobblestoneslab	minecraft:stone_slab	3	Block{minecraft:cobblestone_slab}[type=bottom,waterlogged=false]
+supported	960000	bricksslab	minecraft:stone_slab	4	Block{minecraft:brick_slab}[type=bottom,waterlogged=false]
+supported	6e6e6e	stonebricksslab	minecraft:stone_slab	5	Block{minecraft:stone_brick_slab}[type=bottom,waterlogged=false]
+supported	6e6e7d	quartzslab	minecraft:stone_slab	variant=quartz,half=bottom	Block{minecraft:quartz_slab}[type=bottom,waterlogged=false]
+supported	78502d	woodenslabold	minecraft:wooden_slab	0	Block{minecraft:oak_slab}[type=bottom,waterlogged=false]
+supported	785028	woodenslaboak	minecraft:wooden_slab	0	Block{minecraft:oak_slab}[type=bottom,waterlogged=false]
+supported	785032	woodenslabpine	minecraft:wooden_slab	1	Block{minecraft:spruce_slab}[type=bottom,waterlogged=false]
+supported	78503c	woodenslabbirch	minecraft:wooden_slab	2	Block{minecraft:birch_slab}[type=bottom,waterlogged=false]
+supported	785046	woodenslabjungle	minecraft:wooden_slab	3	Block{minecraft:jungle_slab}[type=bottom,waterlogged=false]
+supported	785050	woodenslabacacia	minecraft:wooden_slab	4	Block{minecraft:acacia_slab}[type=bottom,waterlogged=false]
+supported	78505a	woodenslabdarkoak	minecraft:wooden_slab	5	Block{minecraft:dark_oak_slab}[type=bottom,waterlogged=false]
+supported	a0a0a1	stoneslabInv	minecraft:stone_slab	8	Block{minecraft:smooth_stone_slab}[type=top,waterlogged=false]
+supported	c3c833	sandstoneslabInv	minecraft:stone_slab	9	Block{minecraft:sandstone_slab}[type=top,waterlogged=false]
+supported	c3c847	redsandstoneslabInv	minecraft:stone_slab2	8	Block{minecraft:red_sandstone_slab}[type=top,waterlogged=false]
+supported	555556	cobblestoneslabInv	minecraft:stone_slab	11	Block{minecraft:cobblestone_slab}[type=top,waterlogged=false]
+supported	960001	bricksslabInv	minecraft:stone_slab	12	Block{minecraft:brick_slab}[type=top,waterlogged=false]
+supported	6e6e6f	stonebricksslabInv	minecraft:stone_slab	13	Block{minecraft:stone_brick_slab}[type=top,waterlogged=false]
+supported	6e6e82	quartzslabInv	minecraft:stone_slab	variant=quartz,half=top	Block{minecraft:quartz_slab}[type=top,waterlogged=false]
+supported	785029	woodenslaboakInv	minecraft:wooden_slab	8	Block{minecraft:oak_slab}[type=top,waterlogged=false]
+supported	78502e	woodenslabpineInv2	minecraft:wooden_slab	9	Block{minecraft:spruce_slab}[type=top,waterlogged=false]
+supported	785033	woodenslabpineInv	minecraft:wooden_slab	9	Block{minecraft:spruce_slab}[type=top,waterlogged=false]
+supported	78503d	woodenslabbirchInv	minecraft:wooden_slab	10	Block{minecraft:birch_slab}[type=top,waterlogged=false]
+supported	785047	woodenslabjungleInv	minecraft:wooden_slab	11	Block{minecraft:jungle_slab}[type=top,waterlogged=false]
+supported	785051	woodenslabacaciaInv	minecraft:wooden_slab	12	Block{minecraft:acacia_slab}[type=top,waterlogged=false]
+supported	78505b	woodenslabdarkoakInv	minecraft:wooden_slab	13	Block{minecraft:dark_oak_slab}[type=top,waterlogged=false]
+supported	800000	brick	minecraft:brick_block	0	Block{minecraft:bricks}
+supported	804023	bookshelf	minecraft:bookshelf	0	Block{minecraft:bookshelf}
+supported	808000	mossycobblestone	minecraft:mossy_cobblestone	0	Block{minecraft:mossy_cobblestone}
+supported	100040	obsidian	minecraft:obsidian	0	Block{minecraft:obsidian}
+supported	a78563	workbench	minecraft:crafting_table	0	Block{minecraft:crafting_table}
+supported	66ffff	diamondblock	minecraft:diamond_block	0	Block{minecraft:diamond_block}
+supported	67ffff	emeraldblock	minecraft:emerald_block	0	Block{minecraft:emerald_block}
+supported	ffd500	goldblock	minecraft:gold_block	0	Block{minecraft:gold_block}
+supported	58425e	clayblock	minecraft:clay	0	Block{minecraft:clay}
+supported	ff8000	pumpkin	minecraft:pumpkin	0	Block{minecraft:carved_pumpkin}[facing=south]
+supported	ffb400	pumpkinlantern	minecraft:lit_pumpkin	0	Block{minecraft:jack_o_lantern}[facing=south]
+supported	f0f0f0	white wool	minecraft:wool	0	Block{minecraft:white_wool}
+supported	e97a2f	orange wool	minecraft:wool	1	Block{minecraft:orange_wool}
+supported	c04dcb	magenta wool	minecraft:wool	2	Block{minecraft:magenta_wool}
+supported	6185d1	light blue wool	minecraft:wool	3	Block{minecraft:light_blue_wool}
+supported	c4b71c	yellow wool	minecraft:wool	4	Block{minecraft:yellow_wool}
+supported	38b72d	lime green wool	minecraft:wool	5	Block{minecraft:lime_wool}
+supported	da869d	pink wool	minecraft:wool	6	Block{minecraft:pink_wool}
+supported	444444	gray wool	minecraft:wool	7	Block{minecraft:gray_wool}
+supported	9ca4a4	light gray wool	minecraft:wool	8	Block{minecraft:light_gray_wool}
+supported	26728c	cyan wool	minecraft:wool	9	Block{minecraft:cyan_wool}
+supported	873cc9	purple wool	minecraft:wool	10	Block{minecraft:purple_wool}
+supported	243090	blue wool	minecraft:wool	11	Block{minecraft:blue_wool}
+supported	57341c	brown wool	minecraft:wool	12	Block{minecraft:brown_wool}
+supported	364b18	green wool	minecraft:wool	13	Block{minecraft:green_wool}
+supported	9e2b27	red wool	minecraft:wool	14	Block{minecraft:red_wool}
+supported	1f1b1b	black wool	minecraft:wool	15	Block{minecraft:black_wool}
+supported	96ffff	ice	minecraft:ice	0	Block{minecraft:ice}
+supported	e6ffff	snowblock	minecraft:snow	0	Block{minecraft:snow_block}
+supported	e83910	lava	minecraft:flowing_lava	0	Block{minecraft:lava}[level=0]
+supported	e83911	lavastill	minecraft:lava	0	Block{minecraft:lava}[level=0]
+supported	fd380b	netherrack	minecraft:netherrack	0	Block{minecraft:netherrack}
+supported	fd3406	tnt	minecraft:tnt	0	Block{minecraft:tnt}[unstable=false]
+supported	286b0e	oak leaves	minecraft:leaves	decayable=false,variant=oak	Block{minecraft:oak_leaves}[distance=7,persistent=true,waterlogged=false]
+supported	2a6f0f	pine leaves	minecraft:leaves	decayable=false,variant=spruce	Block{minecraft:spruce_leaves}[distance=7,persistent=true,waterlogged=false]
+supported	2c770f	birch leaves	minecraft:leaves	decayable=false,variant=birch	Block{minecraft:birch_leaves}[distance=7,persistent=true,waterlogged=false]
+supported	2e770f	jungle leaves	minecraft:leaves	decayable=false,variant=jungle	Block{minecraft:jungle_leaves}[distance=7,persistent=true,waterlogged=false]
+supported	30770f	acacia leaves	minecraft:leaves2	decayable=false,variant=acacia	Block{minecraft:acacia_leaves}[distance=7,persistent=true,waterlogged=false]
+supported	32770f	dark oak leaves	minecraft:leaves2	decayable=false,variant=dark_oak	Block{minecraft:dark_oak_leaves}[distance=7,persistent=true,waterlogged=false]
+supported	4bf30a	melon	minecraft:melon_block	0	Block{minecraft:melon}
+supported	159315	pine sappling	minecraft:sapling	1	Block{minecraft:spruce_sapling}[stage=0]
+supported	282a28	bedrock	minecraft:bedrock	0	Block{minecraft:bedrock}
+supported	d7d914	gold ore	minecraft:gold_ore	0	Block{minecraft:gold_ore}
+supported	e7e8b1	iron ore	minecraft:iron_ore	0	Block{minecraft:iron_ore}
+supported	80805	coal ore	minecraft:coal_ore	0	Block{minecraft:coal_ore}
+supported	f2f43f	sponge	minecraft:sponge	0	Block{minecraft:sponge}
+supported	3b58d5	dispenser	minecraft:dispenser	0	Block{minecraft:dispenser}[facing=down,triggered=false]
+supported	3b57cf	lapis lazuli ore	minecraft:lapis_ore	0	Block{minecraft:lapis_ore}
+supported	9a7c41	note block	minecraft:noteblock	0	Block{minecraft:note_block}[instrument=harp,note=0,powered=false]
+supported	533906	dead bush	minecraft:tallgrass	0	Block{minecraft:dead_bush}
+supported	1d470c	long grass	minecraft:tallgrass	1	Block{minecraft:short_grass}
+supported	1a410b	cone grass	minecraft:tallgrass	2	Block{minecraft:fern}
+supported	22a698	diamond ore	minecraft:diamond_ore	0	Block{minecraft:diamond_ore}
+supported	3d423b	stone preasure plate	minecraft:stone_pressure_plate	0	Block{minecraft:stone_pressure_plate}[powered=false]
+supported	684e1c	wood pressure plate	minecraft:wooden_pressure_plate	0	Block{minecraft:oak_pressure_plate}[powered=false]
+supported	684e1d	iron pressure plate	minecraft:heavy_weighted_pressure_plate	0	Block{minecraft:heavy_weighted_pressure_plate}[power=0]
+supported	ff1313	redstonewire	minecraft:redstone_wire	0	Block{minecraft:redstone_wire}[east=none,north=none,power=0,south=none,west=none]
+supported	c11313	redstone ore	minecraft:redstone_ore	0	Block{minecraft:redstone_ore}[lit=false]
+supported	ae1212	redstone torch	minecraft:redstone_torch	0	Block{minecraft:redstone_torch}[lit=true]
+supported	ff1212	redstone torch lit	minecraft:redstone_torch	5	Block{minecraft:redstone_torch}[lit=true]
+supported	6f6f6f	stone button	minecraft:stone_button	0	Block{minecraft:stone_button}[face=ceiling,facing=north,powered=false]
+supported	6f6f70	stone button east	minecraft:stone_button	1	Block{minecraft:stone_button}[face=wall,facing=east,powered=false]
+supported	6f6f71	stone button west	minecraft:stone_button	2	Block{minecraft:stone_button}[face=wall,facing=west,powered=false]
+supported	6f6f72	stone button south	minecraft:stone_button	3	Block{minecraft:stone_button}[face=wall,facing=south,powered=false]
+supported	6f6f73	stone button north	minecraft:stone_button	4	Block{minecraft:stone_button}[face=wall,facing=north,powered=false]
+supported	6f6f74	stone button up	minecraft:stone_button	5	Block{minecraft:stone_button}[face=floor,facing=north,powered=false]
+supported	3ab1bc	snow_layer_0,	minecraft:snow_layer	0	Block{minecraft:snow}[layers=1]
+supported	3ab1bd	snow_layer_1	minecraft:snow_layer	1	Block{minecraft:snow}[layers=2]
+supported	3ab1be	snow_layer_2	minecraft:snow_layer	2	Block{minecraft:snow}[layers=3]
+supported	3ab1bf	snow_layer_3	minecraft:snow_layer	3	Block{minecraft:snow}[layers=4]
+supported	3ab1c0	snow_layer_4	minecraft:snow_layer	4	Block{minecraft:snow}[layers=5]
+supported	3ab1c1	snow_layer_5	minecraft:snow_layer	5	Block{minecraft:snow}[layers=6]
+supported	3ab1c2	snow_layer_6	minecraft:snow_layer	6	Block{minecraft:snow}[layers=7]
+supported	3ab1c3	snow_layer_7	minecraft:snow_layer	7	Block{minecraft:snow}[layers=8]
+supported	c99931	jukebox	minecraft:jukebox	0	Block{minecraft:jukebox}[has_record=false]
+supported	b3882b	soul sand	minecraft:soul_sand	0	Block{minecraft:soul_sand}
+supported	e3cf23	glowstone	minecraft:glowstone	0	Block{minecraft:glowstone}
+supported	f4e45b	cake	minecraft:cake	0	Block{minecraft:cake}[bites=0]
+supported	dbcc4e	mushroom	minecraft:brown_mushroom_block	0	Block{minecraft:brown_mushroom_block}[down=true,east=true,north=true,south=true,up=true,west=true]
+supported	e05231	mushroom	minecraft:red_mushroom_block	0	Block{minecraft:red_mushroom_block}[down=true,east=true,north=true,south=true,up=true,west=true]
+supported	3a2e2c	iron bars	minecraft:iron_bars	0	Block{minecraft:iron_bars}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	9d814b	fence gate	minecraft:fence_gate	0	Block{minecraft:oak_fence_gate}[facing=south,in_wall=false,open=false,powered=false]
+supported	a0a0a	bedrock	minecraft:bedrock	0	Block{minecraft:bedrock}
+supported	d9144a	mooshroom red	minecraft:red_mushroom	0	Block{minecraft:red_mushroom}
+supported	f88f37	mooshroom brown	minecraft:brown_mushroom	0	Block{minecraft:brown_mushroom}
+supported	18601e	lily pad	minecraft:waterlily	0	Block{minecraft:lily_pad}
+supported	353d44	rail	minecraft:rail	0	Block{minecraft:rail}[shape=north_south,waterlogged=false]
+supported	12aa0c	vinesTop	minecraft:vine	8	Block{minecraft:vine}[east=true,north=false,south=false,up=false,west=false]
+supported	12aa0d	vinesBottom	minecraft:vine	2	Block{minecraft:vine}[east=false,north=false,south=false,up=false,west=true]
+supported	12aa0e	vinesLeft	minecraft:vine	4	Block{minecraft:vine}[east=false,north=true,south=false,up=false,west=false]
+supported	12aa0f	vinesRight	minecraft:vine	1	Block{minecraft:vine}[east=false,north=false,south=true,up=false,west=false]
+supported	790c0c	redstonelampoff	minecraft:redstone_lamp	0	Block{minecraft:redstone_lamp}[lit=false]
+supported	de0c0c	redstonelampon	minecraft:lit_redstone_lamp	0	Block{minecraft:redstone_lamp}[lit=true]
+supported	787878	cauldronempty	minecraft:cauldron	0	Block{minecraft:cauldron}
+supported	78787d	cauldronfull	minecraft:cauldron	3	Block{minecraft:water_cauldron}[level=3]
+supported	960a3e	netherwart	minecraft:nether_wart	3	Block{minecraft:nether_wart}[age=3]
+supported	585858	chiseled stone brick	minecraft:stonebrick	3	Block{minecraft:chiseled_stone_bricks}
+supported	c3b233	smooth sandstone	minecraft:sandstone	2	Block{minecraft:cut_sandstone}
+supported	4a4a4a	cobblestone wall	minecraft:cobblestone_wall	0	Block{minecraft:cobblestone_wall}[east=none,north=none,south=none,up=true,waterlogged=false,west=none]
+supported	8000ff	portal	minecraft:portal	0	Block{minecraft:nether_portal}[axis=x]
+supported	ffff01	torchTop	minecraft:torch	facing=west	Block{minecraft:wall_torch}[facing=west]
+supported	ffff02	torchBottom	minecraft:torch	facing=east	Block{minecraft:wall_torch}[facing=east]
+supported	ffff03	torchLeft	minecraft:torch	facing=south	Block{minecraft:wall_torch}[facing=south]
+supported	ffff04	torchRight	minecraft:torch	facing=north	Block{minecraft:wall_torch}[facing=north]
+supported	ffff05	torchStanding	minecraft:torch	facing=up	Block{minecraft:torch}
+supported	19191a	furnaceTop	minecraft:furnace	facing=west	Block{minecraft:furnace}[facing=west,lit=false]
+supported	19191b	furnaceBottom	minecraft:furnace	facing=east	Block{minecraft:furnace}[facing=east,lit=false]
+supported	19191c	furnaceLeft	minecraft:furnace	facing=south	Block{minecraft:furnace}[facing=south,lit=false]
+supported	19191d	furnaceTop	minecraft:furnace	facing=north	Block{minecraft:furnace}[facing=north,lit=false]
+supported	824000	logoak	minecraft:log	variant=oak,axis=y	Block{minecraft:oak_log}[axis=y]
+supported	82400a	logoakvert	minecraft:log	variant=oak,axis=x	Block{minecraft:oak_log}[axis=x]
+supported	824014	logoakhor	minecraft:log	variant=oak,axis=z	Block{minecraft:oak_log}[axis=z]
+supported	4e2c0d	logpine	minecraft:log	variant=spruce,axis=y	Block{minecraft:spruce_log}[axis=y]
+supported	4e2c14	logpinevert	minecraft:log	variant=spruce,axis=x	Block{minecraft:spruce_log}[axis=x]
+supported	4e2c1e	logpinehor	minecraft:log	variant=spruce,axis=z	Block{minecraft:spruce_log}[axis=z]
+supported	82766a	logbirch	minecraft:log	variant=birch,axis=y	Block{minecraft:birch_log}[axis=y]
+supported	82766e	logbirchvert	minecraft:log	variant=birch,axis=x	Block{minecraft:birch_log}[axis=x]
+supported	827678	logbirchhor	minecraft:log	variant=birch,axis=z	Block{minecraft:birch_log}[axis=z]
+supported	362b14	logjungle	minecraft:log	variant=jungle,axis=y	Block{minecraft:jungle_log}[axis=y]
+supported	362b1e	logjunglevert	minecraft:log	variant=jungle,axis=x	Block{minecraft:jungle_log}[axis=x]
+supported	362b28	logjunglehor	minecraft:log	variant=jungle,axis=z	Block{minecraft:jungle_log}[axis=z]
+supported	da8696	logacacia	minecraft:log2	variant=acacia,axis=y	Block{minecraft:acacia_log}[axis=y]
+supported	da8697	logacaciavert	minecraft:log2	variant=acacia,axis=x	Block{minecraft:acacia_log}[axis=x]
+supported	da8698	logacaciahor	minecraft:log2	variant=acacia,axis=z	Block{minecraft:acacia_log}[axis=z]
+supported	533900	logdarkoak	minecraft:log2	variant=dark_oak,axis=y	Block{minecraft:dark_oak_log}[axis=y]
+supported	533901	logdarkoakvert	minecraft:log2	variant=dark_oak,axis=x	Block{minecraft:dark_oak_log}[axis=x]
+supported	533902	logdarkoakhor	minecraft:log2	variant=dark_oak,axis=z	Block{minecraft:dark_oak_log}[axis=z]
+supported	c8	signpostTop	minecraft:standing_sign	rotation=0	Block{minecraft:oak_sign}[rotation=0,waterlogged=false]
+supported	c9	signpostBottom	minecraft:standing_sign	rotation=8	Block{minecraft:oak_sign}[rotation=8,waterlogged=false]
+supported	ca	signpostLeft	minecraft:standing_sign	rotation=4	Block{minecraft:oak_sign}[rotation=4,waterlogged=false]
+supported	cb	signpostRight	minecraft:standing_sign	rotation=12	Block{minecraft:oak_sign}[rotation=12,waterlogged=false]
+supported	640000	woodstairsOakTop	minecraft:oak_stairs	facing=west,half=bottom	Block{minecraft:oak_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	650000	woodstairsOakBottom	minecraft:oak_stairs	facing=east,half=bottom	Block{minecraft:oak_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	660000	woodstairsOakLeft	minecraft:oak_stairs	facing=south,half=bottom	Block{minecraft:oak_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	670000	woodstairsOakRight	minecraft:oak_stairs	facing=north,half=bottom	Block{minecraft:oak_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	640032	woodstairsPineTop	minecraft:spruce_stairs	facing=west,half=bottom	Block{minecraft:spruce_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	650032	woodstairsPineBottom	minecraft:spruce_stairs	facing=east,half=bottom	Block{minecraft:spruce_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	660032	woodstairsPineLeft	minecraft:spruce_stairs	facing=south,half=bottom	Block{minecraft:spruce_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	670032	woodstairsPineRight	minecraft:spruce_stairs	facing=north,half=bottom	Block{minecraft:spruce_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	64003c	woodstairsBirchTop	minecraft:birch_stairs	facing=west,half=bottom	Block{minecraft:birch_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	65003c	woodstairsBirchBottom	minecraft:birch_stairs	facing=east,half=bottom	Block{minecraft:birch_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	66003c	woodstairsBirchLeft	minecraft:birch_stairs	facing=south,half=bottom	Block{minecraft:birch_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	67003c	woodstairsBirchRight	minecraft:birch_stairs	facing=north,half=bottom	Block{minecraft:birch_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	640046	woodstairsJungleTop	minecraft:jungle_stairs	facing=west,half=bottom	Block{minecraft:jungle_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	650046	woodstairsJungleBottom	minecraft:jungle_stairs	facing=east,half=bottom	Block{minecraft:jungle_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	660046	woodstairsJungleLeft	minecraft:jungle_stairs	facing=south,half=bottom	Block{minecraft:jungle_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	670046	woodstairsJungleRight	minecraft:jungle_stairs	facing=north,half=bottom	Block{minecraft:jungle_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	640050	woodstairsAcaciaTop	minecraft:acacia_stairs	facing=west,half=bottom	Block{minecraft:acacia_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	650050	woodstairsAcaciaBottom	minecraft:acacia_stairs	facing=east,half=bottom	Block{minecraft:acacia_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	660050	woodstairsAcaciaLeft	minecraft:acacia_stairs	facing=south,half=bottom	Block{minecraft:acacia_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	670050	woodstairsAcaciaRight	minecraft:acacia_stairs	facing=north,half=bottom	Block{minecraft:acacia_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	64005a	woodstairsDarkOakTop	minecraft:dark_oak_stairs	facing=west,half=bottom	Block{minecraft:dark_oak_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	65005a	woodstairsDarkOakBottom	minecraft:dark_oak_stairs	facing=east,half=bottom	Block{minecraft:dark_oak_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	66005a	woodstairsDarkOakLeft	minecraft:dark_oak_stairs	facing=south,half=bottom	Block{minecraft:dark_oak_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	67005a	woodstairsDarkOakRight	minecraft:dark_oak_stairs	facing=north,half=bottom	Block{minecraft:dark_oak_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	780000	stonestairsTop	minecraft:stone_stairs	facing=west,half=bottom	Block{minecraft:cobblestone_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	790000	stonestairsBottom	minecraft:stone_stairs	facing=east,half=bottom	Block{minecraft:cobblestone_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	7a0000	stonestairsLeft	minecraft:stone_stairs	facing=south,half=bottom	Block{minecraft:cobblestone_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	7b0000	stonestairsRight	minecraft:stone_stairs	facing=north,half=bottom	Block{minecraft:cobblestone_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	820000	stonebrickstairsTop	minecraft:stone_brick_stairs	facing=west,half=bottom	Block{minecraft:stone_brick_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	830000	stonebrickstairsBottom	minecraft:stone_brick_stairs	facing=east,half=bottom	Block{minecraft:stone_brick_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	840000	stonebrickstairsLeft	minecraft:stone_brick_stairs	facing=south,half=bottom	Block{minecraft:stone_brick_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	850000	stonebrickstairsRight	minecraft:stone_brick_stairs	facing=north,half=bottom	Block{minecraft:stone_brick_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	8c0000	brickstairsTop	minecraft:brick_stairs	facing=west,half=bottom	Block{minecraft:brick_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	8d0000	brickstairsBottom	minecraft:brick_stairs	facing=east,half=bottom	Block{minecraft:brick_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	8e0000	brickstairsLeft	minecraft:brick_stairs	facing=south,half=bottom	Block{minecraft:brick_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	8f0000	brickstairsRight	minecraft:brick_stairs	facing=north,half=bottom	Block{minecraft:brick_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	960500	sandstonestairsTop	minecraft:sandstone_stairs	facing=west,half=bottom	Block{minecraft:sandstone_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	970500	sandstonestairsBottom	minecraft:sandstone_stairs	facing=east,half=bottom	Block{minecraft:sandstone_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	980500	sandstonestairsLeft	minecraft:sandstone_stairs	facing=south,half=bottom	Block{minecraft:sandstone_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	990500	sandstonestairsRight	minecraft:sandstone_stairs	facing=north,half=bottom	Block{minecraft:sandstone_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	960514	redSandStoneStairsTop	minecraft:red_sandstone_stairs	facing=west,half=bottom	Block{minecraft:red_sandstone_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	970514	redSandStoneStairsBottom	minecraft:red_sandstone_stairs	facing=east,half=bottom	Block{minecraft:red_sandstone_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	980514	redSandStoneStairsLeft	minecraft:red_sandstone_stairs	facing=south,half=bottom	Block{minecraft:red_sandstone_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	990514	redSandStoneStairsRight	minecraft:red_sandstone_stairs	facing=north,half=bottom	Block{minecraft:red_sandstone_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	96050a	quartzStairsTop	minecraft:quartz_stairs	facing=west,half=bottom	Block{minecraft:quartz_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	97050a	quartzStairsBottom	minecraft:quartz_stairs	facing=east,half=bottom	Block{minecraft:quartz_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	98050a	quartzStairsLeft	minecraft:quartz_stairs	facing=south,half=bottom	Block{minecraft:quartz_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	99050a	quartzStairsRight	minecraft:quartz_stairs	facing=north,half=bottom	Block{minecraft:quartz_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	640066	woodstairsOakInvTop	minecraft:oak_stairs	facing=west,half=top	Block{minecraft:oak_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	6500ca	woodstairsOakInvBottom	minecraft:oak_stairs	facing=east,half=top	Block{minecraft:oak_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	660066	woodstairsOakInvLeft	minecraft:oak_stairs	facing=south,half=top	Block{minecraft:oak_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	6700ca	woodstairsOakInvRight	minecraft:oak_stairs	facing=north,half=top	Block{minecraft:oak_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	640070	woodstairsPineInvTop	minecraft:spruce_stairs	facing=west,half=top	Block{minecraft:spruce_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	650070	woodstairsPineInvBottom	minecraft:spruce_stairs	facing=east,half=top	Block{minecraft:spruce_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	660070	woodstairsPineInvLeft	minecraft:spruce_stairs	facing=south,half=top	Block{minecraft:spruce_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	670070	woodstairsPineInvRight	minecraft:spruce_stairs	facing=north,half=top	Block{minecraft:spruce_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	64007a	woodstairsBirchInvTop	minecraft:birch_stairs	facing=west,half=top	Block{minecraft:birch_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	65007a	woodstairsBirchInvBottom	minecraft:birch_stairs	facing=east,half=top	Block{minecraft:birch_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	66007a	woodstairsBirchInvLeft	minecraft:birch_stairs	facing=south,half=top	Block{minecraft:birch_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	67007a	woodstairsBirchInvRight	minecraft:birch_stairs	facing=north,half=top	Block{minecraft:birch_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	640084	woodstairsJungleInvTop	minecraft:jungle_stairs	facing=west,half=top	Block{minecraft:jungle_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	650084	woodstairsJungleInvBottom	minecraft:jungle_stairs	facing=east,half=top	Block{minecraft:jungle_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	660084	woodstairsJungleInvLeft	minecraft:jungle_stairs	facing=south,half=top	Block{minecraft:jungle_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	670084	woodstairsJungleInvRight	minecraft:jungle_stairs	facing=north,half=top	Block{minecraft:jungle_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	64008e	woodstairsAcaciaInvTop	minecraft:acacia_stairs	facing=west,half=top	Block{minecraft:acacia_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	65008e	woodstairsAcaciaInvBottom	minecraft:acacia_stairs	facing=east,half=top	Block{minecraft:acacia_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	66008e	woodstairsAcaciaInvLeft	minecraft:acacia_stairs	facing=south,half=top	Block{minecraft:acacia_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	67008e	woodstairsAcaciaInvRight	minecraft:acacia_stairs	facing=north,half=top	Block{minecraft:acacia_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	640098	woodstairsDarkOakInvTop	minecraft:dark_oak_stairs	facing=west,half=top	Block{minecraft:dark_oak_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	650098	woodstairsDarkOakInvBottom	minecraft:dark_oak_stairs	facing=east,half=top	Block{minecraft:dark_oak_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	660098	woodstairsDarkOakInvLeft	minecraft:dark_oak_stairs	facing=south,half=top	Block{minecraft:dark_oak_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	670098	woodstairsDarkOakInvRight	minecraft:dark_oak_stairs	facing=north,half=top	Block{minecraft:dark_oak_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	780066	stonestairsInvTop	minecraft:stone_stairs	facing=west,half=top	Block{minecraft:cobblestone_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	7900ca	stonestairsInvBottom	minecraft:stone_stairs	facing=east,half=top	Block{minecraft:cobblestone_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	7a0066	stonestairsInvLeft	minecraft:stone_stairs	facing=south,half=top	Block{minecraft:cobblestone_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	7b00ca	stonestairsInvRight	minecraft:stone_stairs	facing=north,half=top	Block{minecraft:cobblestone_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	820066	stonebrickstairsInvTop	minecraft:stone_brick_stairs	facing=west,half=top	Block{minecraft:stone_brick_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	8300ca	stonebrickstairsInvBottom	minecraft:stone_brick_stairs	facing=east,half=top	Block{minecraft:stone_brick_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	840066	stonebrickstairsInvLeft	minecraft:stone_brick_stairs	facing=south,half=top	Block{minecraft:stone_brick_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	8500ca	stonebrickstairsInvRight	minecraft:stone_brick_stairs	facing=north,half=top	Block{minecraft:stone_brick_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	8c0066	brickstairsInvTop	minecraft:brick_stairs	facing=west,half=top	Block{minecraft:brick_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	8d00ca	brickstairsInvBottom	minecraft:brick_stairs	facing=east,half=top	Block{minecraft:brick_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	8e0066	brickstairsInvLeft	minecraft:brick_stairs	facing=south,half=top	Block{minecraft:brick_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	8f00ca	brickstairsInvRight	minecraft:brick_stairs	facing=north,half=top	Block{minecraft:brick_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	960566	sandstonestairsInvTop	minecraft:sandstone_stairs	facing=west,half=top	Block{minecraft:sandstone_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	9705ca	sandstonestairsInvBottom	minecraft:sandstone_stairs	facing=east,half=top	Block{minecraft:sandstone_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	980566	sandstonestairsInvLeft	minecraft:sandstone_stairs	facing=south,half=top	Block{minecraft:sandstone_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	9905ca	sandstonestairsInvRight	minecraft:sandstone_stairs	facing=north,half=top	Block{minecraft:sandstone_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	96057a	redSandStoneStairsInvTop	minecraft:red_sandstone_stairs	facing=west,half=top	Block{minecraft:red_sandstone_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	97057a	redSandStoneStairsInvBottom	minecraft:red_sandstone_stairs	facing=east,half=top	Block{minecraft:red_sandstone_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	98057a	redSandStoneStairsInvLeft	minecraft:red_sandstone_stairs	facing=south,half=top	Block{minecraft:red_sandstone_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	99057a	redSandStoneStairsInvRight	minecraft:red_sandstone_stairs	facing=north,half=top	Block{minecraft:red_sandstone_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	96050f	quartzStairsInvTop	minecraft:quartz_stairs	facing=west,half=top	Block{minecraft:quartz_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	97050f	quartzStairsInvBottom	minecraft:quartz_stairs	facing=east,half=top	Block{minecraft:quartz_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	98050f	quartzStairsInvLeft	minecraft:quartz_stairs	facing=south,half=top	Block{minecraft:quartz_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	99050f	quartzStairsInvRight	minecraft:quartz_stairs	facing=north,half=top	Block{minecraft:quartz_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	5a4000	ladderTop	minecraft:ladder	facing=east	Block{minecraft:ladder}[facing=east,waterlogged=false]
+supported	5b4000	ladderBottom	minecraft:ladder	facing=west	Block{minecraft:ladder}[facing=west,waterlogged=false]
+supported	5c4000	ladderLeft	minecraft:ladder	facing=north	Block{minecraft:ladder}[facing=north,waterlogged=false]
+supported	5d4000	ladderRight	minecraft:ladder	facing=south	Block{minecraft:ladder}[facing=south,waterlogged=false]
+supported	460080	doorTop	minecraft:wooden_door	facing=east	Block{minecraft:oak_door}[facing=east,half=lower,hinge=left,open=false,powered=false]
+supported	470080	doorBottom	minecraft:wooden_door	facing=west	Block{minecraft:oak_door}[facing=west,half=lower,hinge=left,open=false,powered=false]
+supported	480080	doorLeft	minecraft:wooden_door	facing=north	Block{minecraft:oak_door}[facing=north,half=lower,hinge=left,open=false,powered=false]
+supported	490080	doorRight	minecraft:wooden_door	facing=south	Block{minecraft:oak_door}[facing=south,half=lower,hinge=left,open=false,powered=false]
+supported	460580	spruceDoorTop	minecraft:spruce_door	facing=east	Block{minecraft:spruce_door}[facing=east,half=lower,hinge=left,open=false,powered=false]
+supported	470580	spruceDoorBottom	minecraft:spruce_door	facing=west	Block{minecraft:spruce_door}[facing=west,half=lower,hinge=left,open=false,powered=false]
+supported	480580	spruceDoorLeft	minecraft:spruce_door	facing=north	Block{minecraft:spruce_door}[facing=north,half=lower,hinge=left,open=false,powered=false]
+supported	490580	spruceDoorRight	minecraft:spruce_door	facing=south	Block{minecraft:spruce_door}[facing=south,half=lower,hinge=left,open=false,powered=false]
+supported	460a80	birchDoorTop	minecraft:birch_door	facing=east	Block{minecraft:birch_door}[facing=east,half=lower,hinge=left,open=false,powered=false]
+supported	470a80	birchDoorBottom	minecraft:birch_door	facing=west	Block{minecraft:birch_door}[facing=west,half=lower,hinge=left,open=false,powered=false]
+supported	480a80	birchDoorLeft	minecraft:birch_door	facing=north	Block{minecraft:birch_door}[facing=north,half=lower,hinge=left,open=false,powered=false]
+supported	490a80	birchDoorRight	minecraft:birch_door	facing=south	Block{minecraft:birch_door}[facing=south,half=lower,hinge=left,open=false,powered=false]
+supported	460f80	jungleDoorTop	minecraft:jungle_door	facing=east	Block{minecraft:jungle_door}[facing=east,half=lower,hinge=left,open=false,powered=false]
+supported	470f80	jungleDoorBottom	minecraft:jungle_door	facing=west	Block{minecraft:jungle_door}[facing=west,half=lower,hinge=left,open=false,powered=false]
+supported	480f80	jungleDoorLeft	minecraft:jungle_door	facing=north	Block{minecraft:jungle_door}[facing=north,half=lower,hinge=left,open=false,powered=false]
+supported	490f80	jungleDoorRight	minecraft:jungle_door	facing=south	Block{minecraft:jungle_door}[facing=south,half=lower,hinge=left,open=false,powered=false]
+supported	461480	acaciaDoorTop	minecraft:acacia_door	facing=east	Block{minecraft:acacia_door}[facing=east,half=lower,hinge=left,open=false,powered=false]
+supported	471480	acaciaDoorBottom	minecraft:acacia_door	facing=west	Block{minecraft:acacia_door}[facing=west,half=lower,hinge=left,open=false,powered=false]
+supported	481480	acaciaDoorLeft	minecraft:acacia_door	facing=north	Block{minecraft:acacia_door}[facing=north,half=lower,hinge=left,open=false,powered=false]
+supported	491480	acaciaDoorRight	minecraft:acacia_door	facing=south	Block{minecraft:acacia_door}[facing=south,half=lower,hinge=left,open=false,powered=false]
+supported	461e80	darkOakDoorTop	minecraft:dark_oak_door	facing=east	Block{minecraft:dark_oak_door}[facing=east,half=lower,hinge=left,open=false,powered=false]
+supported	471e80	darkOakDoorBottom	minecraft:dark_oak_door	facing=west	Block{minecraft:dark_oak_door}[facing=west,half=lower,hinge=left,open=false,powered=false]
+supported	481e80	darkOakDoorLeft	minecraft:dark_oak_door	facing=north	Block{minecraft:dark_oak_door}[facing=north,half=lower,hinge=left,open=false,powered=false]
+supported	491e80	darkOakDoorRight	minecraft:dark_oak_door	facing=south	Block{minecraft:dark_oak_door}[facing=south,half=lower,hinge=left,open=false,powered=false]
+supported	46008c	doorUpper	minecraft:wooden_door	half=upper,hinge=left	Block{minecraft:oak_door}[facing=north,half=upper,hinge=left,open=false,powered=false]
+supported	46008d	doorUpperInv	minecraft:wooden_door	half=upper,hinge=right	Block{minecraft:oak_door}[facing=north,half=upper,hinge=right,open=false,powered=false]
+supported	46058c	spruceDoorUpper	minecraft:spruce_door	half=upper,hinge=left	Block{minecraft:spruce_door}[facing=north,half=upper,hinge=left,open=false,powered=false]
+supported	46058d	spruceDoorUpperInv	minecraft:spruce_door	half=upper,hinge=right	Block{minecraft:spruce_door}[facing=north,half=upper,hinge=right,open=false,powered=false]
+supported	460a8c	birchDoorUpper	minecraft:birch_door	half=upper,hinge=left	Block{minecraft:birch_door}[facing=north,half=upper,hinge=left,open=false,powered=false]
+supported	460a8d	birchDoorUpperInv	minecraft:birch_door	half=upper,hinge=right	Block{minecraft:birch_door}[facing=north,half=upper,hinge=right,open=false,powered=false]
+supported	460f8c	jungleDoorUpper	minecraft:jungle_door	half=upper,hinge=left	Block{minecraft:jungle_door}[facing=north,half=upper,hinge=left,open=false,powered=false]
+supported	460f8d	jungleDoorUpperInv	minecraft:jungle_door	half=upper,hinge=right	Block{minecraft:jungle_door}[facing=north,half=upper,hinge=right,open=false,powered=false]
+supported	46148c	acaciaDoorUpper	minecraft:acacia_door	half=upper,hinge=left	Block{minecraft:acacia_door}[facing=north,half=upper,hinge=left,open=false,powered=false]
+supported	46148d	doorUpperInv	minecraft:acacia_door	half=upper,hinge=right	Block{minecraft:acacia_door}[facing=north,half=upper,hinge=right,open=false,powered=false]
+supported	461e8c	darkOakDoorUpper	minecraft:dark_oak_door	half=upper,hinge=left	Block{minecraft:dark_oak_door}[facing=north,half=upper,hinge=left,open=false,powered=false]
+supported	461e8d	darkOakDoorUpperInv	minecraft:dark_oak_door	half=upper,hinge=right	Block{minecraft:dark_oak_door}[facing=north,half=upper,hinge=right,open=false,powered=false]
+supported	46c8c8	irondoorTop	minecraft:iron_door	facing=east	Block{minecraft:iron_door}[facing=east,half=lower,hinge=left,open=false,powered=false]
+supported	47c8c8	irondoorBottom	minecraft:iron_door	facing=west	Block{minecraft:iron_door}[facing=west,half=lower,hinge=left,open=false,powered=false]
+supported	48c8c8	irondoorLeft	minecraft:iron_door	facing=north	Block{minecraft:iron_door}[facing=north,half=lower,hinge=left,open=false,powered=false]
+supported	49c8c8	irondoorRight	minecraft:iron_door	facing=south	Block{minecraft:iron_door}[facing=south,half=lower,hinge=left,open=false,powered=false]
+supported	4ac8c8	ironDoorUpper	minecraft:iron_door	half=upper,hinge=left	Block{minecraft:iron_door}[facing=north,half=upper,hinge=left,open=false,powered=false]
+supported	4bc8c8	ironDoorUpperInv	minecraft:iron_door	half=upper,hinge=right	Block{minecraft:iron_door}[facing=north,half=upper,hinge=right,open=false,powered=false]
+supported	460096	trapdoorTop	minecraft:trapdoor	facing=west	Block{minecraft:oak_trapdoor}[facing=west,half=bottom,open=false,powered=false,waterlogged=false]
+supported	470096	trapdoorBottom	minecraft:trapdoor	facing=east	Block{minecraft:oak_trapdoor}[facing=east,half=bottom,open=false,powered=false,waterlogged=false]
+supported	480096	trapdoorLeft	minecraft:trapdoor	facing=south	Block{minecraft:oak_trapdoor}[facing=south,half=bottom,open=false,powered=false,waterlogged=false]
+supported	490096	trapdoorRight	minecraft:trapdoor	facing=north	Block{minecraft:oak_trapdoor}[facing=north,half=bottom,open=false,powered=false,waterlogged=false]
+supported	460097	trapdoorOpenTop	minecraft:trapdoor	facing=west,open=true	Block{minecraft:oak_trapdoor}[facing=west,half=bottom,open=true,powered=false,waterlogged=false]
+supported	470097	trapdoorOpenBottom	minecraft:trapdoor	facing=east,open=true	Block{minecraft:oak_trapdoor}[facing=east,half=bottom,open=true,powered=false,waterlogged=false]
+supported	480097	trapdoorOpenLeft	minecraft:trapdoor	facing=south,open=true	Block{minecraft:oak_trapdoor}[facing=south,half=bottom,open=true,powered=false,waterlogged=false]
+supported	490097	trapdoorOpenRight	minecraft:trapdoor	facing=north,open=true	Block{minecraft:oak_trapdoor}[facing=north,half=bottom,open=true,powered=false,waterlogged=false]
+supported	4a0096	trapdoorUpperWest	minecraft:trapdoor	facing=west,half=top	Block{minecraft:oak_trapdoor}[facing=west,half=top,open=false,powered=false,waterlogged=false]
+supported	4b0096	trapdoorUpperEast	minecraft:trapdoor	facing=east,half=top	Block{minecraft:oak_trapdoor}[facing=east,half=top,open=false,powered=false,waterlogged=false]
+supported	4c0096	trapdoorUpperSouth	minecraft:trapdoor	facing=south,half=top	Block{minecraft:oak_trapdoor}[facing=south,half=top,open=false,powered=false,waterlogged=false]
+supported	4d0096	trapdoorUpperNorth	minecraft:trapdoor	facing=north,half=top	Block{minecraft:oak_trapdoor}[facing=north,half=top,open=false,powered=false,waterlogged=false]
+supported	4a0097	trapdoorUpperWestOpen	minecraft:trapdoor	facing=west,half=top,open=true	Block{minecraft:oak_trapdoor}[facing=west,half=top,open=true,powered=false,waterlogged=false]
+supported	4b0097	trapdoorUpperEastOpen	minecraft:trapdoor	facing=east,half=top,open=true	Block{minecraft:oak_trapdoor}[facing=east,half=top,open=true,powered=false,waterlogged=false]
+supported	4c0097	trapdoorUpperSouthOpen	minecraft:trapdoor	facing=south,half=top,open=true	Block{minecraft:oak_trapdoor}[facing=south,half=top,open=true,powered=false,waterlogged=false]
+supported	4d0097	trapdoorUpperNorthOpen	minecraft:trapdoor	facing=north,half=top,open=true	Block{minecraft:oak_trapdoor}[facing=north,half=top,open=true,powered=false,waterlogged=false]
+supported	aa8200	fenceOak	minecraft:fence	0	Block{minecraft:oak_fence}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	4600a0	fencegateOakTop	minecraft:fence_gate	facing=west	Block{minecraft:oak_fence_gate}[facing=west,in_wall=false,open=false,powered=false]
+supported	4700aa	fencegateOakLeft	minecraft:fence_gate	facing=south	Block{minecraft:oak_fence_gate}[facing=south,in_wall=false,open=false,powered=false]
+supported	4800a0	fencegateOakBottom	minecraft:fence_gate	facing=east	Block{minecraft:oak_fence_gate}[facing=east,in_wall=false,open=false,powered=false]
+supported	4900aa	fencegateOakRight	minecraft:fence_gate	facing=north	Block{minecraft:oak_fence_gate}[facing=north,in_wall=false,open=false,powered=false]
+supported	aa8201	fenceSpruce	minecraft:spruce_fence	0	Block{minecraft:spruce_fence}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	4600a1	fencegateSpruceTop	minecraft:spruce_fence_gate	facing=west	Block{minecraft:spruce_fence_gate}[facing=west,in_wall=false,open=false,powered=false]
+supported	4700ab	fencegateSpruceLeft	minecraft:spruce_fence_gate	facing=south	Block{minecraft:spruce_fence_gate}[facing=south,in_wall=false,open=false,powered=false]
+supported	4800a1	fencegateSpruceBottom	minecraft:spruce_fence_gate	facing=east	Block{minecraft:spruce_fence_gate}[facing=east,in_wall=false,open=false,powered=false]
+supported	4900ab	fencegateSpruceRight	minecraft:spruce_fence_gate	facing=north	Block{minecraft:spruce_fence_gate}[facing=north,in_wall=false,open=false,powered=false]
+supported	aa8202	fenceBirch	minecraft:birch_fence	0	Block{minecraft:birch_fence}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	4600a2	fencegateBirchTop	minecraft:birch_fence_gate	facing=west	Block{minecraft:birch_fence_gate}[facing=west,in_wall=false,open=false,powered=false]
+supported	4700ac	fencegateBirchLeft	minecraft:birch_fence_gate	facing=south	Block{minecraft:birch_fence_gate}[facing=south,in_wall=false,open=false,powered=false]
+supported	4800a2	fencegateBirchBottom	minecraft:birch_fence_gate	facing=east	Block{minecraft:birch_fence_gate}[facing=east,in_wall=false,open=false,powered=false]
+supported	4900ac	fencegateBirchRight	minecraft:birch_fence_gate	facing=north	Block{minecraft:birch_fence_gate}[facing=north,in_wall=false,open=false,powered=false]
+supported	aa8203	fenceJungle	minecraft:jungle_fence	0	Block{minecraft:jungle_fence}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	4600a3	fencegateJungleTop	minecraft:jungle_fence_gate	facing=west	Block{minecraft:jungle_fence_gate}[facing=west,in_wall=false,open=false,powered=false]
+supported	4700ad	fencegateJungleLeft	minecraft:jungle_fence_gate	facing=south	Block{minecraft:jungle_fence_gate}[facing=south,in_wall=false,open=false,powered=false]
+supported	4800a3	fencegateJungleBottom	minecraft:jungle_fence_gate	facing=east	Block{minecraft:jungle_fence_gate}[facing=east,in_wall=false,open=false,powered=false]
+supported	4900ad	fencegateJungleRight	minecraft:jungle_fence_gate	facing=north	Block{minecraft:jungle_fence_gate}[facing=north,in_wall=false,open=false,powered=false]
+supported	aa8204	fenceAcacia	minecraft:acacia_fence	0	Block{minecraft:acacia_fence}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	4600a4	fencegateAcaciaTop	minecraft:acacia_fence_gate	facing=west	Block{minecraft:acacia_fence_gate}[facing=west,in_wall=false,open=false,powered=false]
+supported	4700ae	fencegateAcaciaLeft	minecraft:acacia_fence_gate	facing=south	Block{minecraft:acacia_fence_gate}[facing=south,in_wall=false,open=false,powered=false]
+supported	4800a4	fencegateAcaciaBottom	minecraft:acacia_fence_gate	facing=east	Block{minecraft:acacia_fence_gate}[facing=east,in_wall=false,open=false,powered=false]
+supported	4900ae	fencegateAcaciaRight	minecraft:acacia_fence_gate	facing=north	Block{minecraft:acacia_fence_gate}[facing=north,in_wall=false,open=false,powered=false]
+supported	aa8205	fenceDarkOak	minecraft:dark_oak_fence	0	Block{minecraft:dark_oak_fence}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	4600a5	fencegateDarkOakTop	minecraft:dark_oak_fence_gate	facing=west	Block{minecraft:dark_oak_fence_gate}[facing=west,in_wall=false,open=false,powered=false]
+supported	4700af	fencegateDarkOakLeft	minecraft:dark_oak_fence_gate	facing=south	Block{minecraft:dark_oak_fence_gate}[facing=south,in_wall=false,open=false,powered=false]
+supported	4800a5	fencegateDarkOakBottom	minecraft:dark_oak_fence_gate	facing=east	Block{minecraft:dark_oak_fence_gate}[facing=east,in_wall=false,open=false,powered=false]
+supported	4900af	fencegateDarkOakRight	minecraft:dark_oak_fence_gate	facing=north	Block{minecraft:dark_oak_fence_gate}[facing=north,in_wall=false,open=false,powered=false]
+supported	a00000	bedTop	minecraft:bed	facing=west,part=head	Block{minecraft:red_bed}[facing=west,occupied=false,part=head]
+supported	a00001	bedBottom	minecraft:bed	facing=east,part=head	Block{minecraft:red_bed}[facing=east,occupied=false,part=head]
+supported	a00002	bedLeft	minecraft:bed	facing=south,part=head	Block{minecraft:red_bed}[facing=south,occupied=false,part=head]
+supported	a00003	bedRight	minecraft:bed	facing=north,part=head	Block{minecraft:red_bed}[facing=north,occupied=false,part=head]
+supported	b4ffef	glass pane white	minecraft:stained_glass_pane	0	Block{minecraft:white_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fffe	glass pane orange	minecraft:stained_glass_pane	1	Block{minecraft:orange_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fffd	glass pane magenta	minecraft:stained_glass_pane	2	Block{minecraft:magenta_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fffc	glass pane light blue	minecraft:stained_glass_pane	3	Block{minecraft:light_blue_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fffb	glass pane yellow	minecraft:stained_glass_pane	4	Block{minecraft:yellow_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fffa	glass pane lime	minecraft:stained_glass_pane	5	Block{minecraft:lime_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff9	glass pane pink	minecraft:stained_glass_pane	6	Block{minecraft:pink_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff8	glass pane gray	minecraft:stained_glass_pane	7	Block{minecraft:gray_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff7	glass pane light gray	minecraft:stained_glass_pane	8	Block{minecraft:light_gray_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff6	glass pane cyan	minecraft:stained_glass_pane	9	Block{minecraft:cyan_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff5	glass pane purple	minecraft:stained_glass_pane	10	Block{minecraft:purple_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff4	glass pane blue	minecraft:stained_glass_pane	11	Block{minecraft:blue_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff3	glass pane brown	minecraft:stained_glass_pane	12	Block{minecraft:brown_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff2	glass pane green	minecraft:stained_glass_pane	13	Block{minecraft:green_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff1	glass pane red	minecraft:stained_glass_pane	14	Block{minecraft:red_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	b4fff0	glass pane black	minecraft:stained_glass_pane	15	Block{minecraft:black_stained_glass_pane}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	beffef	carpet white	minecraft:carpet	0	Block{minecraft:white_carpet}
+supported	befffe	carpet orange	minecraft:carpet	1	Block{minecraft:orange_carpet}
+supported	befffd	carpet magenta	minecraft:carpet	2	Block{minecraft:magenta_carpet}
+supported	befffc	carpet light blue	minecraft:carpet	3	Block{minecraft:light_blue_carpet}
+supported	befffb	carpet yellow	minecraft:carpet	4	Block{minecraft:yellow_carpet}
+supported	befffa	carpet lime	minecraft:carpet	5	Block{minecraft:lime_carpet}
+supported	befff9	carpet pink	minecraft:carpet	6	Block{minecraft:pink_carpet}
+supported	befff8	carpet gray	minecraft:carpet	7	Block{minecraft:gray_carpet}
+supported	befff7	carpet light gray	minecraft:carpet	8	Block{minecraft:light_gray_carpet}
+supported	befff6	carpet cyan	minecraft:carpet	9	Block{minecraft:cyan_carpet}
+supported	befff5	carpet purple	minecraft:carpet	10	Block{minecraft:purple_carpet}
+supported	befff4	carpet blue	minecraft:carpet	11	Block{minecraft:blue_carpet}
+supported	befff3	carpet brown	minecraft:carpet	12	Block{minecraft:brown_carpet}
+supported	befff2	carpet green	minecraft:carpet	13	Block{minecraft:green_carpet}
+supported	befff1	carpet red	minecraft:carpet	14	Block{minecraft:red_carpet}
+supported	befff0	carpet black	minecraft:carpet	15	Block{minecraft:black_carpet}
+supported	2d171b	netherbrick	minecraft:nether_brick	0	Block{minecraft:nether_bricks}
+supported	2d171e	nether_brick_fence	minecraft:nether_brick_fence	0	Block{minecraft:nether_brick_fence}[east=false,north=false,south=false,waterlogged=false,west=false]
+supported	64171b	netherBrickStairsTop	minecraft:nether_brick_stairs	facing=west,half=bottom	Block{minecraft:nether_brick_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	65171b	netherBrickStairsBottom	minecraft:nether_brick_stairs	facing=east,half=bottom	Block{minecraft:nether_brick_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	66171b	netherBrickStairsLeft	minecraft:nether_brick_stairs	facing=south,half=bottom	Block{minecraft:nether_brick_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	67171b	netherBrickStairsRight	minecraft:nether_brick_stairs	facing=north,half=bottom	Block{minecraft:nether_brick_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	64171c	netherBrickStairsInvTop	minecraft:nether_brick_stairs	facing=west,half=top	Block{minecraft:nether_brick_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	65171c	netherBrickStairsInvBottom	minecraft:nether_brick_stairs	facing=east,half=top	Block{minecraft:nether_brick_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	66171c	netherBrickStairsInvLeft	minecraft:nether_brick_stairs	facing=south,half=top	Block{minecraft:nether_brick_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	67171c	netherBrickStairsInvRight	minecraft:nether_brick_stairs	facing=north,half=top	Block{minecraft:nether_brick_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	6c6d3c	boneblock	minecraft:bone_block	axis=y	Block{minecraft:bone_block}[axis=y]
+supported	6c6d3d	boneblockvert	minecraft:bone_block	axis=x	Block{minecraft:bone_block}[axis=x]
+supported	6c6d3e	boneblockhor	minecraft:bone_block	axis=z	Block{minecraft:bone_block}[axis=z]
+supported	befaff	glazed_terracotta_white north	minecraft:white_glazed_terracotta	facing=north	Block{minecraft:white_glazed_terracotta}[facing=north]
+supported	befafe	glazed_terracotta_white east	minecraft:white_glazed_terracotta	facing=east	Block{minecraft:white_glazed_terracotta}[facing=east]
+supported	befafd	glazed_terracotta_white south	minecraft:white_glazed_terracotta	facing=south	Block{minecraft:white_glazed_terracotta}[facing=south]
+supported	befafc	glazed_terracotta_white west	minecraft:white_glazed_terracotta	facing=west	Block{minecraft:white_glazed_terracotta}[facing=west]
+supported	befafb	glazed_terracotta_orange north	minecraft:orange_glazed_terracotta	facing=north	Block{minecraft:orange_glazed_terracotta}[facing=north]
+supported	befafa	glazed_terracotta_orange east	minecraft:orange_glazed_terracotta	facing=east	Block{minecraft:orange_glazed_terracotta}[facing=east]
+supported	befaf9	glazed_terracotta_orange south	minecraft:orange_glazed_terracotta	facing=south	Block{minecraft:orange_glazed_terracotta}[facing=south]
+supported	befaf8	glazed_terracotta_orange west	minecraft:orange_glazed_terracotta	facing=west	Block{minecraft:orange_glazed_terracotta}[facing=west]
+supported	befaf7	glazed_terracotta_magenta north	minecraft:magenta_glazed_terracotta	facing=north	Block{minecraft:magenta_glazed_terracotta}[facing=north]
+supported	befaf6	glazed_terracotta_magenta east	minecraft:magenta_glazed_terracotta	facing=east	Block{minecraft:magenta_glazed_terracotta}[facing=east]
+supported	befaf5	glazed_terracotta_magenta south	minecraft:magenta_glazed_terracotta	facing=south	Block{minecraft:magenta_glazed_terracotta}[facing=south]
+supported	befaf4	glazed_terracotta_magenta west	minecraft:magenta_glazed_terracotta	facing=west	Block{minecraft:magenta_glazed_terracotta}[facing=west]
+supported	befaf3	glazed_terracotta_light_blue north	minecraft:light_blue_glazed_terracotta	facing=north	Block{minecraft:light_blue_glazed_terracotta}[facing=north]
+supported	befaf2	glazed_terracotta_light_blue east	minecraft:light_blue_glazed_terracotta	facing=east	Block{minecraft:light_blue_glazed_terracotta}[facing=east]
+supported	befaf1	glazed_terracotta_light_blue south	minecraft:light_blue_glazed_terracotta	facing=south	Block{minecraft:light_blue_glazed_terracotta}[facing=south]
+supported	befaf0	glazed_terracotta_light_blue west	minecraft:light_blue_glazed_terracotta	facing=west	Block{minecraft:light_blue_glazed_terracotta}[facing=west]
+supported	befaef	glazed_terracotta_yellow north	minecraft:yellow_glazed_terracotta	facing=north	Block{minecraft:yellow_glazed_terracotta}[facing=north]
+supported	befaee	glazed_terracotta_yellow east	minecraft:yellow_glazed_terracotta	facing=east	Block{minecraft:yellow_glazed_terracotta}[facing=east]
+supported	befaed	glazed_terracotta_yellow south	minecraft:yellow_glazed_terracotta	facing=south	Block{minecraft:yellow_glazed_terracotta}[facing=south]
+supported	befaec	glazed_terracotta_yellow west	minecraft:yellow_glazed_terracotta	facing=west	Block{minecraft:yellow_glazed_terracotta}[facing=west]
+supported	befaeb	glazed_terracotta_lime north	minecraft:lime_glazed_terracotta	facing=north	Block{minecraft:lime_glazed_terracotta}[facing=north]
+supported	befaea	glazed_terracotta_lime east	minecraft:lime_glazed_terracotta	facing=east	Block{minecraft:lime_glazed_terracotta}[facing=east]
+supported	befae9	glazed_terracotta_lime south	minecraft:lime_glazed_terracotta	facing=south	Block{minecraft:lime_glazed_terracotta}[facing=south]
+supported	befae8	glazed_terracotta_lime west	minecraft:lime_glazed_terracotta	facing=west	Block{minecraft:lime_glazed_terracotta}[facing=west]
+supported	befae7	glazed_terracotta_pink north	minecraft:pink_glazed_terracotta	facing=north	Block{minecraft:pink_glazed_terracotta}[facing=north]
+supported	befae6	glazed_terracotta_pink east	minecraft:pink_glazed_terracotta	facing=east	Block{minecraft:pink_glazed_terracotta}[facing=east]
+supported	befae5	glazed_terracotta_pink south	minecraft:pink_glazed_terracotta	facing=south	Block{minecraft:pink_glazed_terracotta}[facing=south]
+supported	befae4	glazed_terracotta_pink west	minecraft:pink_glazed_terracotta	facing=west	Block{minecraft:pink_glazed_terracotta}[facing=west]
+supported	befae3	glazed_terracotta_gray north	minecraft:gray_glazed_terracotta	facing=north	Block{minecraft:gray_glazed_terracotta}[facing=north]
+supported	befae2	glazed_terracotta_gray east	minecraft:gray_glazed_terracotta	facing=east	Block{minecraft:gray_glazed_terracotta}[facing=east]
+supported	befae1	glazed_terracotta_gray south	minecraft:gray_glazed_terracotta	facing=south	Block{minecraft:gray_glazed_terracotta}[facing=south]
+supported	befae0	glazed_terracotta_gray west	minecraft:gray_glazed_terracotta	facing=west	Block{minecraft:gray_glazed_terracotta}[facing=west]
+supported	befadf	glazed_terracotta_silver north	minecraft:silver_glazed_terracotta	facing=north	Block{minecraft:light_gray_glazed_terracotta}[facing=north]
+supported	befade	glazed_terracotta_silver east	minecraft:silver_glazed_terracotta	facing=east	Block{minecraft:light_gray_glazed_terracotta}[facing=east]
+supported	befadd	glazed_terracotta_silver south	minecraft:silver_glazed_terracotta	facing=south	Block{minecraft:light_gray_glazed_terracotta}[facing=south]
+supported	befadc	glazed_terracotta_silver west	minecraft:silver_glazed_terracotta	facing=west	Block{minecraft:light_gray_glazed_terracotta}[facing=west]
+supported	befadb	glazed_terracotta_cyan north	minecraft:cyan_glazed_terracotta	facing=north	Block{minecraft:cyan_glazed_terracotta}[facing=north]
+supported	befada	glazed_terracotta_cyan east	minecraft:cyan_glazed_terracotta	facing=east	Block{minecraft:cyan_glazed_terracotta}[facing=east]
+supported	befad9	glazed_terracotta_cyan south	minecraft:cyan_glazed_terracotta	facing=south	Block{minecraft:cyan_glazed_terracotta}[facing=south]
+supported	befad8	glazed_terracotta_cyan west	minecraft:cyan_glazed_terracotta	facing=west	Block{minecraft:cyan_glazed_terracotta}[facing=west]
+supported	befad7	glazed_terracotta_purple north	minecraft:purple_glazed_terracotta	facing=north	Block{minecraft:purple_glazed_terracotta}[facing=north]
+supported	befad6	glazed_terracotta_purple east	minecraft:purple_glazed_terracotta	facing=east	Block{minecraft:purple_glazed_terracotta}[facing=east]
+supported	befad5	glazed_terracotta_purple south	minecraft:purple_glazed_terracotta	facing=south	Block{minecraft:purple_glazed_terracotta}[facing=south]
+supported	befad4	glazed_terracotta_purple west	minecraft:purple_glazed_terracotta	facing=west	Block{minecraft:purple_glazed_terracotta}[facing=west]
+supported	befad3	glazed_terracotta_blue north	minecraft:blue_glazed_terracotta	facing=north	Block{minecraft:blue_glazed_terracotta}[facing=north]
+supported	befad2	glazed_terracotta_blue east	minecraft:blue_glazed_terracotta	facing=east	Block{minecraft:blue_glazed_terracotta}[facing=east]
+supported	befad1	glazed_terracotta_blue south	minecraft:blue_glazed_terracotta	facing=south	Block{minecraft:blue_glazed_terracotta}[facing=south]
+supported	befad0	glazed_terracotta_blue west	minecraft:blue_glazed_terracotta	facing=west	Block{minecraft:blue_glazed_terracotta}[facing=west]
+supported	befacf	glazed_terracotta_brown north	minecraft:brown_glazed_terracotta	facing=north	Block{minecraft:brown_glazed_terracotta}[facing=north]
+supported	beface	glazed_terracotta_brown east	minecraft:brown_glazed_terracotta	facing=east	Block{minecraft:brown_glazed_terracotta}[facing=east]
+supported	befacd	glazed_terracotta_brown south	minecraft:brown_glazed_terracotta	facing=south	Block{minecraft:brown_glazed_terracotta}[facing=south]
+supported	befacc	glazed_terracotta_brown west	minecraft:brown_glazed_terracotta	facing=west	Block{minecraft:brown_glazed_terracotta}[facing=west]
+supported	befacb	glazed_terracotta_green north	minecraft:green_glazed_terracotta	facing=north	Block{minecraft:green_glazed_terracotta}[facing=north]
+supported	befaca	glazed_terracotta_green east	minecraft:green_glazed_terracotta	facing=east	Block{minecraft:green_glazed_terracotta}[facing=east]
+supported	befac9	glazed_terracotta_green south	minecraft:green_glazed_terracotta	facing=south	Block{minecraft:green_glazed_terracotta}[facing=south]
+supported	befac8	glazed_terracotta_green west	minecraft:green_glazed_terracotta	facing=west	Block{minecraft:green_glazed_terracotta}[facing=west]
+supported	befac7	glazed_terracotta_red north	minecraft:red_glazed_terracotta	facing=north	Block{minecraft:red_glazed_terracotta}[facing=north]
+supported	befac6	glazed_terracotta_red east	minecraft:red_glazed_terracotta	facing=east	Block{minecraft:red_glazed_terracotta}[facing=east]
+supported	befac5	glazed_terracotta_red south	minecraft:red_glazed_terracotta	facing=south	Block{minecraft:red_glazed_terracotta}[facing=south]
+supported	befac4	glazed_terracotta_red west	minecraft:red_glazed_terracotta	facing=west	Block{minecraft:red_glazed_terracotta}[facing=west]
+supported	befac3	glazed_terracotta_black north	minecraft:black_glazed_terracotta	facing=north	Block{minecraft:black_glazed_terracotta}[facing=north]
+supported	befac2	glazed_terracotta_black east	minecraft:black_glazed_terracotta	facing=east	Block{minecraft:black_glazed_terracotta}[facing=east]
+supported	befac1	glazed_terracotta_black south	minecraft:black_glazed_terracotta	facing=south	Block{minecraft:black_glazed_terracotta}[facing=south]
+supported	befac0	glazed_terracotta_black west	minecraft:black_glazed_terracotta	facing=west	Block{minecraft:black_glazed_terracotta}[facing=west]
+supported	bef4f0	terracotta	minecraft:hardened_clay	0	Block{minecraft:terracotta}
+supported	bef5ef	terracotta white	minecraft:stained_hardened_clay	color=white	Block{minecraft:white_terracotta}
+supported	bef5fe	terracotta orange	minecraft:stained_hardened_clay	color=orange	Block{minecraft:orange_terracotta}
+supported	bef5fd	terracotta magenta	minecraft:stained_hardened_clay	color=magenta	Block{minecraft:magenta_terracotta}
+supported	bef5fc	terracotta light blue	minecraft:stained_hardened_clay	color=light_blue	Block{minecraft:light_blue_terracotta}
+supported	bef5fb	terracotta yellow	minecraft:stained_hardened_clay	color=yellow	Block{minecraft:yellow_terracotta}
+supported	bef5fa	terracotta lime	minecraft:stained_hardened_clay	color=lime	Block{minecraft:lime_terracotta}
+supported	bef5f9	terracotta pink	minecraft:stained_hardened_clay	color=pink	Block{minecraft:pink_terracotta}
+supported	bef5f8	terracotta gray	minecraft:stained_hardened_clay	color=gray	Block{minecraft:gray_terracotta}
+supported	bef5f7	terracotta light gray	minecraft:stained_hardened_clay	color=silver	Block{minecraft:light_gray_terracotta}
+supported	bef5f6	terracotta cyan	minecraft:stained_hardened_clay	color=cyan	Block{minecraft:cyan_terracotta}
+supported	bef5f5	terracotta purple	minecraft:stained_hardened_clay	color=purple	Block{minecraft:purple_terracotta}
+supported	bef5f4	terracotta blue	minecraft:stained_hardened_clay	color=blue	Block{minecraft:blue_terracotta}
+supported	bef5f3	terracotta brown	minecraft:stained_hardened_clay	color=brown	Block{minecraft:brown_terracotta}
+supported	bef5f2	terracotta green	minecraft:stained_hardened_clay	color=green	Block{minecraft:green_terracotta}
+supported	bef5f1	terracotta red	minecraft:stained_hardened_clay	color=red	Block{minecraft:red_terracotta}
+supported	bef5f0	terracotta black	minecraft:stained_hardened_clay	color=black	Block{minecraft:black_terracotta}
+supported	faf0fa	quartz block	minecraft:quartz_block	variant=default	Block{minecraft:quartz_block}
+supported	faf0fb	chiseled quartz block	minecraft:quartz_block	variant=chiseled	Block{minecraft:chiseled_quartz_block}
+supported	faf0fc	pillared quartz block X	minecraft:quartz_block	variant=lines_x	Block{minecraft:quartz_pillar}[axis=x]
+supported	faf0fd	pillared quartz block Y	minecraft:quartz_block	variant=lines_y	Block{minecraft:quartz_pillar}[axis=y]
+supported	faf0fe	pillared quartz block Z	minecraft:quartz_block	variant=lines_z	Block{minecraft:quartz_pillar}[axis=z]
+supported	aa7eaa	purpur	minecraft:purpur_block	0	Block{minecraft:purpur_block}
+supported	aa7eab	purpurStairsTop	minecraft:purpur_stairs	facing=west,half=bottom	Block{minecraft:purpur_stairs}[facing=west,half=bottom,shape=straight,waterlogged=false]
+supported	aa7eac	purpurStairsBottom	minecraft:purpur_stairs	facing=east,half=bottom	Block{minecraft:purpur_stairs}[facing=east,half=bottom,shape=straight,waterlogged=false]
+supported	aa7ead	purpurStairsLeft	minecraft:purpur_stairs	facing=south,half=bottom	Block{minecraft:purpur_stairs}[facing=south,half=bottom,shape=straight,waterlogged=false]
+supported	aa7eae	purpurStairsRight	minecraft:purpur_stairs	facing=north,half=bottom	Block{minecraft:purpur_stairs}[facing=north,half=bottom,shape=straight,waterlogged=false]
+supported	aa7eaf	purpurStairsInvTop	minecraft:purpur_stairs	facing=west,half=top	Block{minecraft:purpur_stairs}[facing=west,half=top,shape=straight,waterlogged=false]
+supported	aa7eb0	purpurStairsInvBottom	minecraft:purpur_stairs	facing=east,half=top	Block{minecraft:purpur_stairs}[facing=east,half=top,shape=straight,waterlogged=false]
+supported	aa7eb1	purpurStairsInvLeft	minecraft:purpur_stairs	facing=south,half=top	Block{minecraft:purpur_stairs}[facing=south,half=top,shape=straight,waterlogged=false]
+supported	aa7eb2	purpurStairsInvRight	minecraft:purpur_stairs	facing=north,half=top	Block{minecraft:purpur_stairs}[facing=north,half=top,shape=straight,waterlogged=false]
+supported	aa7eb3	purpurSlab	minecraft:purpur_slab	0	Block{minecraft:purpur_slab}[type=bottom,waterlogged=false]
+supported	aa7eb4	purpurSlabInv	minecraft:purpur_slab	8	Block{minecraft:purpur_slab}[type=top,waterlogged=false]
+supported	aa7eb5	purpurPillar	minecraft:purpur_pillar	axis=y	Block{minecraft:purpur_pillar}[axis=y]
+supported	aa7eb6	purpurPillarVert	minecraft:purpur_pillar	axis=x	Block{minecraft:purpur_pillar}[axis=x]
+supported	aa7eb7	purpurPillarHor	minecraft:purpur_pillar	axis=z	Block{minecraft:purpur_pillar}[axis=z]
+supported	aa7f00	endRodNorth	minecraft:end_rod	facing=north	Block{minecraft:end_rod}[facing=north]
+supported	aa7f01	endRodSouth	minecraft:end_rod	facing=south	Block{minecraft:end_rod}[facing=south]
+supported	aa7f02	endRodEast	minecraft:end_rod	facing=east	Block{minecraft:end_rod}[facing=east]
+supported	aa7f03	endRodWest	minecraft:end_rod	facing=west	Block{minecraft:end_rod}[facing=west]
+supported	aa7f04	endRodUp	minecraft:end_rod	facing=up	Block{minecraft:end_rod}[facing=up]
+supported	aa7f05	endRodDown	minecraft:end_rod	facing=down	Block{minecraft:end_rod}[facing=down]
+supported	468000	seaLantern	minecraft:sea_lantern	0	Block{minecraft:sea_lantern}
+supported	b01905	redstoneBlock	minecraft:redstone_block	0	Block{minecraft:redstone_block}
+supported	a68b0c	hay	minecraft:hay_block	axis=y	Block{minecraft:hay_block}[axis=y]
+supported	a68b0d	hayVert	minecraft:hay_block	axis=x	Block{minecraft:hay_block}[axis=x]
+supported	a68b0e	hayHor	minecraft:hay_block	axis=z	Block{minecraft:hay_block}[axis=z]
+supported	947a41	grassPath	minecraft:dirt	0	Block{minecraft:dirt}
+supported	bef5ee	concreteWhite	minecraft:concrete	0	Block{minecraft:white_concrete}
+supported	bef5ed	concreteOrange	minecraft:concrete	1	Block{minecraft:orange_concrete}
+supported	bef5ec	concreteMagenta	minecraft:concrete	2	Block{minecraft:magenta_concrete}
+supported	bef5eb	concreteLightBlue	minecraft:concrete	3	Block{minecraft:light_blue_concrete}
+supported	bef5ea	concreteYellow	minecraft:concrete	4	Block{minecraft:yellow_concrete}
+supported	bef5e9	concreteLime	minecraft:concrete	5	Block{minecraft:lime_concrete}
+supported	bef5e8	concretePink	minecraft:concrete	6	Block{minecraft:pink_concrete}
+supported	bef5e7	concreteGray	minecraft:concrete	7	Block{minecraft:gray_concrete}
+supported	bef5e6	concreteLightGray	minecraft:concrete	8	Block{minecraft:light_gray_concrete}
+supported	bef5e5	concreteCyan	minecraft:concrete	9	Block{minecraft:cyan_concrete}
+supported	bef5e4	concretePurple	minecraft:concrete	10	Block{minecraft:purple_concrete}
+supported	bef5e3	concreteBlue	minecraft:concrete	11	Block{minecraft:blue_concrete}
+supported	bef5e2	concreteBrown	minecraft:concrete	12	Block{minecraft:brown_concrete}
+supported	bef5e1	concreteGreen	minecraft:concrete	13	Block{minecraft:green_concrete}
+supported	bef5e0	concreteRed	minecraft:concrete	14	Block{minecraft:red_concrete}
+supported	bef5df	concreteBlack	minecraft:concrete	15	Block{minecraft:black_concrete}
+supported	7843ff	flowerpotEmpty	minecraft:flower_pot	255	Block{minecraft:flower_pot}
+supported	784301	flowerpotPoppy	minecraft:flower_pot	1	Block{minecraft:potted_poppy}
+supported	784302	flowerpotBlueOrchid	minecraft:flower_pot	2	Block{minecraft:potted_blue_orchid}
+supported	784303	flowerpotAllium	minecraft:flower_pot	3	Block{minecraft:potted_allium}
+supported	784304	flowerpotHoustonia	minecraft:flower_pot	4	Block{minecraft:potted_azure_bluet}
+supported	784305	flowerpotRedTulip	minecraft:flower_pot	5	Block{minecraft:potted_red_tulip}
+supported	784306	flowerpotOrangeTulip	minecraft:flower_pot	6	Block{minecraft:potted_orange_tulip}
+supported	784307	flowerpotWhiteTulip	minecraft:flower_pot	7	Block{minecraft:potted_white_tulip}
+supported	784308	flowerpotPinkTulip	minecraft:flower_pot	8	Block{minecraft:potted_pink_tulip}
+supported	784309	flowerpotOxeyeDaisy	minecraft:flower_pot	9	Block{minecraft:potted_oxeye_daisy}
+supported	78430a	flowerpotDandelion	minecraft:flower_pot	10	Block{minecraft:potted_dandelion}
+supported	78430b	flowerpotOak	minecraft:flower_pot	11	Block{minecraft:potted_oak_sapling}
+supported	78430c	flowerpotSpruce	minecraft:flower_pot	12	Block{minecraft:potted_spruce_sapling}
+supported	78430d	flowerpotBirch	minecraft:flower_pot	13	Block{minecraft:potted_birch_sapling}
+supported	78430e	flowerpotJungle	minecraft:flower_pot	14	Block{minecraft:potted_jungle_sapling}
+supported	78430f	flowerpotAcacia	minecraft:flower_pot	15	Block{minecraft:potted_acacia_sapling}
+supported	784310	flowerpotDarkOak	minecraft:flower_pot	16	Block{minecraft:potted_dark_oak_sapling}
+supported	784311	flowerpotMushroomRed	minecraft:flower_pot	17	Block{minecraft:potted_red_mushroom}
+supported	784312	flowerpotMushroomBrown	minecraft:flower_pot	18	Block{minecraft:potted_brown_mushroom}
+supported	784313	flowerpotDeadBush	minecraft:flower_pot	19	Block{minecraft:potted_dead_bush}
+supported	784314	flowerpotFern	minecraft:flower_pot	20	Block{minecraft:potted_fern}
+supported	784315	flowerpotCactus	minecraft:flower_pot	21	Block{minecraft:potted_cactus}

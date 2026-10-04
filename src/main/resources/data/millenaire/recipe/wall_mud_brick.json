@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": "millenaire:mudbrick"
+  },
+  "result": {
+    "id": "millenaire:wall_mud_brick",
+    "count": 6
+  }
+}

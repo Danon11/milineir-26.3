@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "millenaire:block/cookedbrick_bottom"
+    },
+    "type=top": {
+      "model": "millenaire:block/cookedbrick_top"
+    },
+    "type=double": {
+      "model": "millenaire:block/cookedbrick"
+    }
+  }
+}
