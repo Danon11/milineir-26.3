@@ -8,7 +8,9 @@ import java.util.*;
 public final class VillageLayout {
     public static final int DEFAULT_RADIUS = 80;
     public static final int MAX_RADIUS = 256;
-    public static final int MAX_BUILDINGS = 64;
+    public static final int MAX_BUILDINGS = 1024;
+    /** Extra search distance for start buildings that do not fit inside a walled village. */
+    static final int OVERFLOW = 32;
 
     public record Bounds(int minX, int minZ, int maxX, int maxZ) {
         public Bounds {
@@ -17,17 +19,27 @@ public final class VillageLayout {
         public boolean intersects(Bounds other) {
             return minX <= other.maxX && maxX >= other.minX && minZ <= other.maxZ && maxZ >= other.minZ;
         }
-        boolean within(Position centre, int radius) {
+        public boolean within(Position centre, int radius) {
             return minX >= centre.x() - radius && maxX <= centre.x() + radius
                     && minZ >= centre.z() - radius && maxZ <= centre.z() + radius;
         }
     }
 
-    public record Building(LegacyBuildingPlan plan, Position origin, int rotation, boolean centre, Bounds reservedArea) {}
+    /** Why a building is in the layout: the centre, a declared start building, a wall piece, or a sub-building overlay. */
+    public enum Role { CENTRE, START, WALL, SUB }
+
+    public record Building(LegacyBuildingPlan plan, Position origin, int rotation, boolean centre, Bounds reservedArea, Role role) {
+        public Building(LegacyBuildingPlan plan, Position origin, int rotation, boolean centre, Bounds reservedArea) {
+            this(plan, origin, rotation, centre, reservedArea, centre ? Role.CENTRE : Role.START);
+        }
+    }
     public record Layout(VillageTypeDefinition type, Position origin, long seed, int radius,
                          List<Building> buildings, List<String> issues) {
         public Layout { buildings = List.copyOf(buildings); issues = List.copyOf(issues); }
-        public boolean complete() { return issues.isEmpty() && buildings.size() == 1 + type.startBuildings().size(); }
+        public boolean complete() {
+            return issues.isEmpty() && buildings.stream().filter(b -> b.role() == Role.CENTRE || b.role() == Role.START).count()
+                    == 1 + type.startBuildings().size();
+        }
     }
 
     private VillageLayout() {}
@@ -52,6 +64,8 @@ public final class VillageLayout {
             return new Layout(type, origin, seed, radius, List.of(), List.of(issue));
         }
         var random = new Random(seed);
+        int usedRadius = radius;
+        boolean walled = !type.source().first("innerwalltype", "").isBlank();
         List<String> references = new ArrayList<>();
         references.add(type.centre()); references.addAll(type.startBuildings());
         for (int index = 0; index < references.size(); index++) {
@@ -61,14 +75,51 @@ public final class VillageLayout {
                 validate(plan);
                 boolean centre = index == 0;
                 Building building = centre ? at(plan, origin, 3, true) : find(plan, origin, radius, buildings, random);
-                if (building == null || !building.reservedArea().within(origin, radius))
-                    throw new IllegalArgumentException("No space within radius " + radius + " for " + plan.id());
+                // Walled villages leave little room inside the ring; large start buildings may then sit just outside it.
+                if (building == null && !centre && walled && radius + OVERFLOW <= MAX_RADIUS) {
+                    building = find(plan, origin, radius + OVERFLOW, buildings, random);
+                    if (building != null) usedRadius = Math.max(usedRadius, radius + OVERFLOW);
+                }
+                if (building == null || !bounds(plan, building.origin(), building.rotation(), false).within(origin, usedRadius))
+                    throw new IllegalArgumentException("No space within radius " + usedRadius + " for " + plan.id());
                 buildings.add(building);
+                addSubBuildings(catalog, building, buildings, random);
+                // Walls are laid out right after the centre so that every later building keeps clear of them.
+                if (centre) addWalls(catalog, type, origin, radius, buildings, issues);
             } catch (IllegalArgumentException | ArithmeticException exception) {
                 issues.add((index == 0 ? "Centre" : "Start " + index) + " (" + key + "): " + exception.getMessage());
             }
         }
-        return new Layout(type, origin, seed, radius, buildings, issues);
+        return new Layout(type, origin, seed, usedRadius, buildings, issues);
+    }
+
+    /** {@code startingsubbuilding} plans overlay their parent at the same origin and rotation. */
+    private static void addSubBuildings(LegacyContentCatalog catalog, Building parent, List<Building> buildings, Random random) {
+        for (String key : parent.plan().parameters().getOrDefault("startingsubbuilding", List.of())) {
+            if (key.isBlank()) continue;
+            LegacyBuildingPlan sub = choose(catalog, parent.plan().culture(), key.trim(), random);
+            buildings.add(new Building(sub, parent.origin(), parent.rotation(), false, parent.reservedArea(), Role.SUB));
+        }
+    }
+
+    private static void addWalls(LegacyContentCatalog catalog, VillageTypeDefinition type, Position origin, int radius,
+                                 List<Building> buildings, List<String> issues) {
+        String inner = type.source().first("innerwalltype", "").trim();
+        String outer = type.source().first("outerwalltype", "").trim();
+        int innerRadius = integer(type.source().fields(), "innerwallradius", 0);
+        for (String[] wall : new String[][]{{inner, Integer.toString(innerRadius)}, {outer, "0"}}) {
+            if (wall[0].isEmpty()) continue;
+            try {
+                var wallType = VillageWalls.type(catalog, type.culture(), wall[0]);
+                for (var piece : VillageWalls.pieces(catalog, type.culture(), wallType, origin, radius, Integer.parseInt(wall[1]))) {
+                    Building building = at(piece.plan(), piece.centre(), piece.facing(), false);
+                    buildings.add(new Building(building.plan(), building.origin(), building.rotation(), false,
+                            bounds(piece.plan(), building.origin(), building.rotation(), false), Role.WALL));
+                }
+            } catch (IllegalArgumentException exception) {
+                issues.add("Walls (" + wall[0] + "): " + exception.getMessage());
+            }
+        }
     }
 
     static LegacyBuildingPlan choose(LegacyContentCatalog catalog, String culture, String key, Random random) {
@@ -110,7 +161,8 @@ public final class VillageLayout {
                 int fixed = fixedOrientation(plan);
                 int facing = fixed >= 0 ? fixed : facingCentre(dx, dz);
                 Building building = at(plan, site, facing, false);
-                if (!building.reservedArea().within(centre, radius)) continue;
+                // The footprint must lie in the village; its clearance margin may extend past the edge.
+                if (!bounds(plan, building.origin(), building.rotation(), false).within(centre, radius)) continue;
                 if (previous.stream().noneMatch(other -> other.reservedArea().intersects(building.reservedArea()))) return building;
             }
         }

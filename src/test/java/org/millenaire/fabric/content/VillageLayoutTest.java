@@ -89,20 +89,28 @@ class VillageLayoutTest {
             assertNoOverlaps(layout);
             for (var building : layout.buildings()) {
                 assertEquals(type.culture(), building.plan().culture()); assertEquals(0, building.plan().upgrade());
-                assertTrue(building.reservedArea().within(layout.origin(), layout.radius()));
+                assertTrue(VillageLayout.bounds(building.plan(), building.origin(), building.rotation(), false).within(layout.origin(), layout.radius()));
             }
         }
         assertEquals(52, total);
         var type = catalog.cultures().get("norman").villageTypes().get("agricole");
         var layout = VillageLayout.create(catalog, type, new Position(0, 64, 0), 1234);
         assertTrue(layout.complete(), layout.issues().toString());
-        assertEquals(6, layout.buildings().size());
+        assertEquals(6, layout.buildings().stream().filter(b -> b.role() == VillageLayout.Role.CENTRE || b.role() == VillageLayout.Role.START).count());
+        var walls = layout.buildings().stream().filter(b -> b.role() == VillageLayout.Role.WALL).toList();
+        assertTrue(walls.stream().anyMatch(b -> b.plan().key().equals("borderpost_gate")), "outer border posts with gates");
+        assertEquals(4, walls.stream().filter(b -> b.plan().key().equals("borderpost_gate")).count());
+        assertTrue(layout.buildings().stream().anyMatch(b -> b.role() == VillageLayout.Role.SUB && b.plan().key().equals("manor_A_inn")));
         System.out.println("Bundled starting-layout audit: " + complete + "/" + total + " complete geometric layouts; terrain and palette support checked separately.");
     }
 
     private static void assertNoOverlaps(VillageLayout.Layout layout) {
-        for (int i = 0; i < layout.buildings().size(); i++) for (int j = i + 1; j < layout.buildings().size(); j++)
-            assertFalse(layout.buildings().get(i).reservedArea().intersects(layout.buildings().get(j).reservedArea()));
+        // Sub-buildings overlay their parent by design.
+        for (int i = 0; i < layout.buildings().size(); i++) for (int j = i + 1; j < layout.buildings().size(); j++) {
+            var first = layout.buildings().get(i); var second = layout.buildings().get(j);
+            if (first.role() == VillageLayout.Role.SUB || second.role() == VillageLayout.Role.SUB) continue;
+            assertFalse(first.reservedArea().intersects(second.reservedArea()), first.plan().id() + " overlaps " + second.plan().id());
+        }
     }
     private static LegacyBuildingPlan plan(String key, char variant, int upgrade, Map<String, List<String>> fields) {
         Map<String, List<String>> params = new HashMap<>(fields); params.put("areatoclear", List.of("0"));

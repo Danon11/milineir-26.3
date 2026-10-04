@@ -69,6 +69,14 @@ class GoalCatalogTest {
     }
 
     @Test
+    void townhallLimitFallsBackToTheBuildingOutsideAVillage() throws Exception {
+        var goal = goal(GoalDefinition.Kind.CRAFTING, "output=bed_straw,1\ntownhalllimit=bed_straw,16\n");
+        var building = new MapStore(64, "bed_straw", 16);
+        assertFalse(GoalRules.canCraft(goal, building, null));
+        assertTrue(GoalRules.canCraft(goal, building, new MapStore(64, "bed_straw", 3)));
+    }
+
+    @Test
     void cookingTakesBatchesAboveMinimum() throws Exception {
         var goal = goal(GoalDefinition.Kind.COOKING, "itemtocook=fishraw\nminimumtocook=3\nbuildinglimit=fishcooked,60\nhelditems=fishcooked\n");
         assertEquals(Optional.of("fishcooked"), GoalRules.cookedGood(goal));

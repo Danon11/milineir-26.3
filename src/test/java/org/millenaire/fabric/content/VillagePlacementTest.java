@@ -55,13 +55,13 @@ class VillagePlacementTest {
         var fixture = fixture(false, true);
         var prepared = VillagePlacement.prepare(fixture.layout(), fixture.palette());
         assertFalse(prepared.supported());
-        assertTrue(prepared.combined().issues().stream().anyMatch(issue -> issue.contains("outerwalltype")));
+        assertTrue(prepared.combined().issues().stream().anyMatch(issue -> issue.contains("borderposts")), prepared.combined().issues().toString());
         var world = new MemoryWorld();
         assertThrows(IllegalArgumentException.class, () -> VillagePlacement.place(prepared, world, true));
         assertEquals(0, world.writes);
     }
 
-    @Test void unportedHamletAndSubBuildingGeneratorsAlsoPreventPartialResults() throws Exception {
+    @Test void unportedHamletGeneratorPreventsPartialResults() throws Exception {
         var fixture = fixture(false, false);
         var base = fixture.layout();
         var source = new LegacyDocument("test", "UTF-8", List.of(), Map.of("centre", List.of("hall"),
@@ -77,7 +77,6 @@ class VillagePlacementTest {
         var prepared = VillagePlacement.prepare(layout, fixture.palette());
         assertFalse(prepared.supported());
         assertTrue(prepared.combined().issues().stream().anyMatch(issue -> issue.contains("hameau")));
-        assertTrue(prepared.combined().issues().stream().anyMatch(issue -> issue.contains("sub-buildings")));
         assertTrue(prepared.combined().changes().isEmpty());
     }
 
@@ -106,7 +105,7 @@ class VillagePlacementTest {
         var type = VillageTypeDefinition.from("demo", "test", new LegacyDocument("test", "UTF-8", List.of(), fields));
         var catalog = new LegacyContentCatalog(Map.of(), Map.of(), Map.of(hall.id(), hall, house.id(), house), palette, List.of());
         var layout = VillageLayout.create(catalog, type, new Position(0, 64, 0), 1234);
-        assertTrue(layout.complete(), layout.issues().toString());
+        assertTrue(walls || layout.complete(), layout.issues().toString());
         return new Fixture(layout, palette);
     }
     private LegacyBuildingPlan plan(String key, int color) throws Exception {

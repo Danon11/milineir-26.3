@@ -11,7 +11,7 @@ import org.millenaire.fabric.economy.StartingStock;
 
 /** Compiles every starting building into one placement operation and one rollback footprint. */
 public final class VillagePlacement {
-    public static final int MAX_OPERATIONS = 131072;
+    public static final int MAX_OPERATIONS = 1 << 21;
     public record PreparedBuilding(VillageLayout.Building building, BuildingPlacement.Prepared blocks) {}
     public record Prepared(VillageLayout.Layout layout, List<PreparedBuilding> buildings, BuildingPlacement.Prepared combined) {
         public Prepared { buildings = List.copyOf(buildings); }
@@ -39,15 +39,13 @@ public final class VillagePlacement {
         Set<String> issues = new LinkedHashSet<>(layout.issues());
         // These declarations create additional structures in the original generator.
         // Refuse incomplete results until their generators have been migrated.
-        for (String key : List.of("customcentre", "innerwalltype", "outerwalltype", "hameau", "hamlet")) {
+        for (String key : List.of("customcentre", "hameau", "hamlet")) {
             if (layout.type().source().values(key).stream().anyMatch(value -> !value.isBlank()))
                 issues.add("Unsupported village feature: " + key + "=" + layout.type().source().values(key));
         }
-        Set<BlockPos> positions = new HashSet<>();
+        Map<BlockPos, BuildingPlacement.Change> byPosition = new LinkedHashMap<>();
         for (var building : layout.buildings()) {
             var plan = building.plan();
-            if (!plan.parameters().getOrDefault("startingsubbuilding", List.of()).isEmpty())
-                issues.add(plan.id() + ": starting sub-buildings are not supported yet");
             var origin = building.origin();
             var prepared = BuildingPlacement.prepare(plan, palette, new BlockPos(origin.x(), origin.y(), origin.z()), building.rotation(), resolver, goods, layout.seed());
             buildings.add(new PreparedBuilding(building, prepared));
@@ -56,11 +54,16 @@ public final class VillagePlacement {
             treeRoots.addAll(prepared.treeRoots());
             prepared.issues().forEach(issue -> issues.add(plan.id() + ": " + issue));
             for (var change : prepared.changes()) {
-                if (!positions.add(change.pos())) issues.add("Overlapping building blocks at " + change.pos());
-                if (changes.size() < MAX_OPERATIONS) changes.add(change);
-                else issues.add("Village exceeds " + MAX_OPERATIONS + " block operations");
+                // A sub-building overlays its parent; any other overlap is a layout error.
+                if (byPosition.containsKey(change.pos()) && building.role() != VillageLayout.Role.SUB) {
+                    issues.add("Overlapping building blocks at " + change.pos());
+                    continue;
+                }
+                byPosition.put(change.pos(), change);
+                if (byPosition.size() > MAX_OPERATIONS) issues.add("Village exceeds " + MAX_OPERATIONS + " block operations");
             }
         }
+        changes.addAll(byPosition.values());
         if (!layout.complete() && issues.isEmpty()) issues.add("Incomplete starting layout");
         if (!issues.isEmpty()) { changes.clear(); setups.clear(); stocks.clear(); treeRoots.clear(); }
         changes.sort(Comparator.comparingInt((BuildingPlacement.Change c) -> c.state().isAir() ? 0 : c.secondPass() ? 2 : 1)

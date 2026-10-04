@@ -15,8 +15,9 @@ public final class GoalRules {
     /** True while no building limit would be exceeded by the goal's outputs or harvest. */
     public static boolean belowLimits(GoalDefinition goal, GoodsStore building, GoodsStore townhall) {
         for (var limit : goal.buildingLimits().entrySet()) if (building.count(limit.getKey()) >= limit.getValue()) return false;
-        if (townhall != null)
-            for (var limit : goal.townhallLimits().entrySet()) if (townhall.count(limit.getKey()) >= limit.getValue()) return false;
+        // A building outside a village has no town hall; its own chests then carry the town hall limit.
+        GoodsStore village = townhall != null ? townhall : building;
+        for (var limit : goal.townhallLimits().entrySet()) if (village.count(limit.getKey()) >= limit.getValue()) return false;
         return true;
     }
 

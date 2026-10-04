@@ -160,6 +160,7 @@ public final class MillenaireBrain extends Goal {
         for (var building : places) {
             String slot = goal.key() + "@" + building.plan() + building.origin();
             if (goal.maxInBuilding() > 0 && ACTIVE.getOrDefault(slot, 0) >= goal.maxInBuilding()) continue;
+            if (goal.maxTotal() > 0 && ACTIVE.getOrDefault(goal.key(), 0) >= goal.maxTotal()) continue;
             var store = context.store(building);
             Task task = switch (goal.kind()) {
                 case CRAFTING -> GoalRules.canCraft(goal, store, townhall) ? new WorkTask(goal, slot, context.workPoint(building),
@@ -373,6 +374,7 @@ public final class MillenaireBrain extends Goal {
 
         @Override void begin() {
             ACTIVE.merge(slot, 1, Integer::sum);
+            ACTIVE.merge(goal.key(), 1, Integer::sum);
             hold(InteractionHand.MAIN_HAND, goal.heldItems().isEmpty() ? null : goal.heldItems().getFirst());
             super.begin();
         }
@@ -388,6 +390,7 @@ public final class MillenaireBrain extends Goal {
 
         @Override void end() {
             ACTIVE.computeIfPresent(slot, (key, count) -> count <= 1 ? null : count - 1);
+            ACTIVE.computeIfPresent(goal.key(), (key, count) -> count <= 1 ? null : count - 1);
             villager.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
 
