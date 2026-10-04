@@ -13,7 +13,7 @@ import java.util.random.RandomGenerator;
 public record VillagerProfile(String culture, String type, Model model, boolean female, List<String> textures,
                               Map<String, List<List<String>>> clothes, float baseScale, int health,
                               String firstNameList, String familyNameList, List<String> goals, List<String> tags,
-                              Map<String, Integer> startingInventory, List<String> bringBackHomeGoods) {
+                              Map<String, Integer> startingInventory, List<String> bringBackHomeGoods, String defaultWeapon) {
     public static final String FREE_CLOTHES = "free";
     public static final String NATURAL_CLOTHES = "natural";
     private static final float SCALE_MIN = 0.8F, SCALE_VARIATION = 0.09F;
@@ -39,6 +39,7 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
         tags = List.copyOf(tags);
         startingInventory = Collections.unmodifiableMap(new LinkedHashMap<>(startingInventory));
         bringBackHomeGoods = List.copyOf(bringBackHomeGoods);
+        defaultWeapon = defaultWeapon == null ? "" : defaultWeapon;
         if (textures.isEmpty()) throw new IllegalArgumentException("Villager type " + culture + "/" + type + " has no texture");
         if (!(baseScale > 0) || health <= 0) throw new IllegalArgumentException("Invalid scale or health for " + culture + "/" + type);
     }
@@ -80,7 +81,7 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
         List<String> bringBack = document.values("bringbackhomegood").stream().map(good -> good.trim().toLowerCase(Locale.ROOT)).toList();
         return new VillagerProfile(culture, type, model, female, document.values("texture").stream().map(texture -> texture.trim().toLowerCase(Locale.ROOT)).toList(),
                 clothes, scale, health, firstNames, familyNames, document.values("goal").stream().map(goal -> goal.trim().toLowerCase(Locale.ROOT)).toList(), tags,
-                inventory, bringBack);
+                inventory, bringBack, last(document, "defaultweapon", "").toLowerCase(Locale.ROOT));
     }
 
     private static String last(LegacyDocument document, String key, String fallback) {

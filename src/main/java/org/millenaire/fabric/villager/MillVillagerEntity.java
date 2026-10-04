@@ -25,7 +25,8 @@ import java.util.Optional;
  * A Millénaire villager. Identity (culture, type, names, home building) is server-side state; the skin,
  * clothing layers and body model are synchronised so the client renderer can draw the legacy 64x32 skins.
  */
-public class MillVillagerEntity extends PathfinderMob implements net.minecraft.world.item.trading.Merchant {
+public class MillVillagerEntity extends PathfinderMob implements net.minecraft.world.item.trading.Merchant,
+        net.minecraft.world.entity.monster.RangedAttackMob {
     private static final EntityDataAccessor<String> TEXTURE = SynchedEntityData.defineId(MillVillagerEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> CLOTH_0 = SynchedEntityData.defineId(MillVillagerEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> CLOTH_1 = SynchedEntityData.defineId(MillVillagerEntity.class, EntityDataSerializers.STRING);
@@ -50,7 +51,7 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 20.0).add(Attributes.MOVEMENT_SPEED, 0.5)
-                .add(Attributes.FOLLOW_RANGE, 48.0);
+                .add(Attributes.FOLLOW_RANGE, 48.0).add(Attributes.ATTACK_DAMAGE, 1.0);
     }
 
     @Override
@@ -65,6 +66,7 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         goalSelector.addGoal(1, new OpenDoorGoal(this, true));
         brain = new org.millenaire.fabric.goal.MillenaireBrain(this);
         goalSelector.addGoal(2, brain);
+        VillagerCombat.register(this);
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -86,6 +88,10 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         getAttribute(Attributes.MAX_HEALTH).setBaseValue(profile.health());
         getAttribute(Attributes.SCALE).setBaseValue(appearance.scale());
         setHealth(profile.health());
+        combatRole = null;
+        setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, VillagerCombat.weapon(profile, good ->
+                new org.millenaire.fabric.goal.ChestGoodsStore(null, java.util.List.of(), org.millenaire.fabric.MillenaireCommands.contentCatalog().goods()).prototype(good)));
+        setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND, 0.0F);
         updateName();
     }
 
@@ -120,6 +126,7 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         firstName = input.getStringOr("first_name", "");
         familyName = input.getStringOr("family_name", "");
         building = input.getStringOr("building", "");
+        combatRole = null;
         entityData.set(TEXTURE, input.getStringOr("texture", DEFAULT_TEXTURE));
         entityData.set(CLOTH_0, input.getStringOr("cloth_0", ""));
         entityData.set(CLOTH_1, input.getStringOr("cloth_1", ""));
@@ -139,7 +146,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
 
     @Override
     protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
-        if (!isAlive() || isSleeping() || tradingPlayer != null || player.isSecondaryUseActive()) return super.mobInteract(player, hand);
+        if (!isAlive() || isSleeping() || tradingPlayer != null || player.isSecondaryUseActive()
+                || combatRole() == VillagerCombat.Role.HOSTILE || getTarget() != null) return super.mobInteract(player, hand);
         if (level().isClientSide()) return net.minecraft.world.InteractionResult.SUCCESS;
         // A quest step with this villager takes precedence over trading.
         if (org.millenaire.fabric.quest.QuestService.talk(this, player)) return net.minecraft.world.InteractionResult.SUCCESS;
@@ -200,4 +208,62 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         return value.isEmpty() ? Optional.empty() : Optional.of(value);
     }
     public VillagerProfile.Model model() { return VillagerProfile.Model.byId(entityData.get(MODEL)); }
+
+    // Combat: roles come from the legacy profile tags, see VillagerCombat.
+    private VillagerCombat.Role combatRole;
+
+    public java.util.Optional<VillagerProfile> profile() {
+        return java.util.Optional.ofNullable(VillagerSpawning.snapshot().profiles().get(profileId()));
+    }
+
+    public VillagerCombat.Role combatRole() {
+        if (combatRole == null) combatRole = VillagerCombat.role(profile().orElse(null));
+        return combatRole;
+    }
+
+    public boolean isArcher() { return getMainHandItem().is(net.minecraft.world.item.Items.BOW); }
+
+    net.minecraft.world.entity.ai.goal.GoalSelector goalSelector() { return goalSelector; }
+    net.minecraft.world.entity.ai.goal.GoalSelector targetSelector() { return targetSelector; }
+
+    @Override
+    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+        boolean hurt = super.hurtServer(level, source, amount);
+        if (hurt && source.getEntity() instanceof net.minecraft.world.entity.LivingEntity attacker) {
+            VillagerCombat.alert(this, attacker);
+            if (attacker instanceof net.minecraft.world.entity.player.Player player && combatRole() != VillagerCombat.Role.HOSTILE)
+                adjustReputation(level, player, -Math.max(1, Math.round(amount * VillagerCombat.REPUTATION_PER_DAMAGE)));
+        }
+        return hurt;
+    }
+
+    @Override
+    public void die(net.minecraft.world.damagesource.DamageSource source) {
+        if (level() instanceof net.minecraft.server.level.ServerLevel level && combatRole() != VillagerCombat.Role.HOSTILE
+                && source.getEntity() instanceof net.minecraft.world.entity.player.Player player)
+            adjustReputation(level, player, -VillagerCombat.REPUTATION_PER_KILL);
+        super.die(source);
+    }
+
+    private void adjustReputation(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.player.Player player, int delta) {
+        if (player.isCreative() || building.isEmpty()) return;
+        org.millenaire.fabric.goal.VillageContext.of(level, org.millenaire.fabric.MillenaireCommands.contentCatalog(), building)
+                .ifPresent(context -> org.millenaire.fabric.FabricReputationState.get(level.getServer())
+                        .add(VillagerTrading.villageKey(context), player.getUUID(), delta));
+    }
+
+    @Override
+    public void performRangedAttack(net.minecraft.world.entity.LivingEntity target, float power) {
+        if (!(level() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        var bow = getMainHandItem();
+        var arrow = net.minecraft.world.entity.projectile.ProjectileUtil.getMobArrow(this, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), power, bow);
+        arrow.pickup = net.minecraft.world.entity.projectile.arrow.AbstractArrow.Pickup.DISALLOWED;
+        double dx = target.getX() - getX();
+        double dy = target.getY(1.0 / 3.0) - arrow.getY();
+        double dz = target.getZ() - getZ();
+        double distance = Math.sqrt(dx * dx + dz * dz);
+        net.minecraft.world.entity.projectile.Projectile.spawnProjectileUsingShoot(arrow, level, bow, dx, dy + distance * 0.2, dz, 1.6F,
+                rangedAttackUncertainty(level));
+        playSound(net.minecraft.sounds.SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (getRandom().nextFloat() * 0.4F + 0.8F));
+    }
 }

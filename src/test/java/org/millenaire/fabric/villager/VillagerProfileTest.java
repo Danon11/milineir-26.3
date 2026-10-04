@@ -35,6 +35,19 @@ class VillagerProfileTest {
     }
 
     @Test
+    void combatRolesAndWeaponsFollowLegacyTags() throws Exception {
+        LegacyContentCatalog catalog = LegacyCatalogLoader.load(bundle());
+        var profiles = VillagerProfile.all(catalog, new ArrayList<>());
+        assertEquals(VillagerCombat.Role.FIGHTER, VillagerCombat.role(profiles.get("norman/knight")));
+        assertEquals(VillagerCombat.Role.CIVILIAN, VillagerCombat.role(profiles.get("norman/wife")));
+        assertEquals(VillagerCombat.Role.HOSTILE, VillagerCombat.role(profiles.get("japanese/japanese_bandit")));
+        assertTrue(VillagerCombat.archer(profiles.get("norman/guard")));
+        assertEquals("woodsword", profiles.get("norman/knight").defaultWeapon());
+        long fighters = profiles.values().stream().filter(p -> VillagerCombat.role(p) == VillagerCombat.Role.FIGHTER).count();
+        assertTrue(fighters > 100, "fighters: " + fighters);
+    }
+
+    @Test
     void rollsSkinClothesScaleAndNamesFromCultureLists() throws Exception {
         LegacyContentCatalog catalog = LegacyCatalogLoader.load(bundle());
         var profiles = VillagerProfile.all(catalog, new ArrayList<>());
