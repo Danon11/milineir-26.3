@@ -129,6 +129,8 @@ public final class MillenaireBrain extends Goal {
     private static int builtInPriority(String name) {
         return switch (name) {
             case "bringbackresourceshome" -> 60;
+            case "choptrees" -> 45;
+            case "plantsaplings" -> 40;
             case "chat" -> 15;
             case "gosocialise" -> 10;
             case "gorest" -> 5;
@@ -159,13 +161,20 @@ public final class MillenaireBrain extends Goal {
                 if (carried < 16 && !(carried > 0 && night(villager.level() instanceof ServerLevel server ? server.getDefaultClockTime() : 0))) yield null;
                 yield new DeliverTask(context, profile);
             }
+            case "choptrees" -> context == null ? null : ResourceGoals.chopTree(context, villager)
+                    .map(plan -> (Task) new BuiltInWorkTask(name, plan, 120)).orElse(null);
+            case "plantsaplings" -> context == null ? null : ResourceGoals.plantCarriedSapling(context, villager, random)
+                    .map(plan -> (Task) new BuiltInWorkTask(name, plan, 40)).orElse(null);
             default -> null; // other built-in goals are not ported yet
         };
     }
 
     private Task dataTask(GoalDefinition goal, VillageContext context) {
+        // buildingTag picks a tagged building of the village; requiredTag restricts the goal to tagged buildings too.
+        List<String> tags = new ArrayList<>(goal.buildingTags());
+        tags.addAll(goal.requiredTags());
         List<FabricBuildingState.PlacedBuilding> places = goal.townhallGoal() ? context.townhall().stream().toList()
-                : goal.buildingTags().isEmpty() ? List.of(context.home()) : context.withTags(goal.buildingTags());
+                : tags.isEmpty() ? List.of(context.home()) : context.withTags(tags);
         GoodsStore townhall = context.townhall().map(context::store).orElse(null);
         for (var building : places) {
             String slot = goal.key() + "@" + building.plan() + building.origin();
@@ -209,11 +218,19 @@ public final class MillenaireBrain extends Goal {
                     var at = context.leisurePoint(building).orElse(context.workPoint(building));
                     yield new IdleTask(goal.key(), at, Math.max(100, goal.durationTicks()), goal.key());
                 }
-                default -> null; // mining, block gathering, slaughter, saplings and furnace tending are not ported yet
+                case MINING -> work(goal, slot, ResourceGoals.mining(goal, context, building, store, random));
+                case GATHER_BLOCKS -> work(goal, slot, ResourceGoals.gather(goal, context, building, store, townhall, villager, random));
+                case SLAUGHTER_ANIMAL -> work(goal, slot, ResourceGoals.slaughter(goal, context, building, villager, random));
+                case PLANT_SAPLING -> work(goal, slot, ResourceGoals.plantSapling(goal, context, building, villager, store, random));
+                case TEND_FURNACE -> work(goal, slot, ResourceGoals.tendFurnace(goal, context, building, store));
             };
             if (task != null) return task;
         }
         return null;
+    }
+
+    private Task work(GoalDefinition goal, String slot, Optional<ResourceGoals.Plan> plan) {
+        return plan.map(p -> (Task) new WorkTask(goal, slot, p.target(), p.effect())).orElse(null);
     }
 
     private Task plantingTask(GoalDefinition goal, String slot, VillageContext context, FabricBuildingState.PlacedBuilding building, GoodsStore store) {
@@ -343,6 +360,20 @@ public final class MillenaireBrain extends Goal {
         }
         @Override void complete() {
             nextAllowed.put(goalName, villager.level().getGameTime() + 200);
+        }
+    }
+
+    /** A code-defined work goal: walk, work with swings, apply, then wait before repeating. */
+    private final class BuiltInWorkTask extends Task {
+        private final ResourceGoals.Plan plan;
+        BuiltInWorkTask(String name, ResourceGoals.Plan plan, int ticks) {
+            super(name, plan.target(), ticks);
+            this.plan = plan;
+        }
+        @Override void working() { if (workTicks % 20 == 0) villager.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT); }
+        @Override void complete() {
+            plan.effect().getAsBoolean();
+            nextAllowed.put(label, villager.level().getGameTime() + 100);
         }
     }
 

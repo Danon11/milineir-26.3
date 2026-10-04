@@ -65,9 +65,30 @@ public final class VillagerSpawning {
         return villager;
     }
 
+    /** Farm animals for the legacy spawn markers: two adults per marker, as a starting herd. */
+    private static final Map<String, String> ANIMAL_MARKERS = Map.of("cowspawn", "cow", "pigspawn", "pig", "sheepspawn", "sheep",
+            "chickenspawn", "chicken", "squidspawn", "squid", "wolfspawn", "wolf", "polarbearspawn", "polar_bear");
+
+    public static int spawnAnimals(ServerLevel level, FabricBuildingState.PlacedBuilding placed) {
+        int spawned = 0;
+        for (var marker : ANIMAL_MARKERS.entrySet())
+            for (var point : placed.servicePoints().getOrDefault(marker.getKey(), List.of())) {
+                var type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getValue(net.minecraft.resources.Identifier.withDefaultNamespace(marker.getValue()));
+                for (int i = 0; i < 2; i++) {
+                    var entity = type.create(level, EntitySpawnReason.STRUCTURE);
+                    if (entity == null) continue;
+                    entity.snapTo(point.x() + 0.5, point.y(), point.z() + 0.5, level.getRandom().nextFloat() * 360F, 0F);
+                    if (entity instanceof net.minecraft.world.entity.Mob mob) mob.setPersistenceRequired();
+                    if (level.addFreshEntity(entity)) spawned++;
+                }
+            }
+        return spawned;
+    }
+
     /** Spawns the residents of a newly placed building; unknown resident types are returned as issues. */
     public static List<String> populate(ServerLevel level, LegacyBuildingPlan plan, FabricBuildingState.PlacedBuilding placed, RandomGenerator random) {
         List<String> issues = new ArrayList<>();
+        spawnAnimals(level, placed);
         for (Resident resident : residents(plan, placed)) {
             VillagerProfile profile = snapshot.profiles().get(resident.profileId());
             if (profile == null) {
