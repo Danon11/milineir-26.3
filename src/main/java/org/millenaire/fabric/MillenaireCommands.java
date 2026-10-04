@@ -37,6 +37,7 @@ public final class MillenaireCommands {
 
     public static void setContentCatalog(LegacyContentCatalog catalog) {
         QuestCatalog quests = QuestCatalog.from(catalog);
+        org.millenaire.fabric.villager.VillagerSpawning.update(catalog);
         contentCatalog = catalog;
         questCatalog = quests;
     }
@@ -98,6 +99,14 @@ public final class MillenaireCommands {
                                     return builder.buildFuture();
                                 })
                                 .executes(context -> questInfo(context.getSource(), StringArgumentType.getString(context, "quest"))))))
+                .then(Commands.literal("villager")
+                        .then(Commands.literal("spawn").then(Commands.argument("type", StringArgumentType.greedyString())
+                                .suggests((context, builder) -> {
+                                    org.millenaire.fabric.villager.VillagerSpawning.snapshot().profiles().keySet().stream()
+                                            .filter(type -> type.startsWith(builder.getRemaining())).forEach(builder::suggest);
+                                    return builder.buildFuture();
+                                })
+                                .executes(context -> spawnVillager(context.getSource(), StringArgumentType.getString(context, "type"))))))
                 .then(Commands.literal("culture")
                         .then(Commands.literal("list").executes(context -> listCultures(context.getSource()))))
                 .then(Commands.literal("content")
@@ -199,8 +208,18 @@ public final class MillenaireCommands {
             settlements.record(record);
             record.buildings().forEach(building -> buildingState.record(building.placement()));
             FabricSettlementLifecycleState.get(source.getServer()).ensure(record);
+            var random = new java.util.SplittableRandom(seed);
+            List<String> residentIssues = new java.util.ArrayList<>();
+            int before = FabricVillagerState.get(source.getServer()).villagers().size();
+            for (var building : record.buildings()) {
+                var placedPlan = catalog.plans().get(building.placement().plan());
+                if (placedPlan != null) residentIssues.addAll(org.millenaire.fabric.villager.VillagerSpawning.populate(
+                        source.getLevel(), placedPlan, building.placement(), random));
+            }
+            int residents = FabricVillagerState.get(source.getServer()).villagers().size() - before;
+            if (!residentIssues.isEmpty()) reportVillageIssues(source, residentIssues);
             source.sendSuccess(() -> Component.literal("Placed starting layout " + id + ": " + layout.buildings().size()
-                    + " buildings, " + changed + " changed blocks. Villagers and village simulation are not implemented yet."), true);
+                    + " buildings, " + changed + " changed blocks, " + residents + " residents."), true);
             return layout.buildings().size();
         } catch (IOException | RuntimeException exception) {
             source.sendFailure(Component.literal("Village operation failed: " + exception.getMessage()));
@@ -221,6 +240,23 @@ public final class MillenaireCommands {
                 .collect(Collectors.joining("\n", "Placed starting layouts:\n", ""));
         source.sendSuccess(() -> Component.literal(message), false);
         return settlements.size();
+    }
+
+    private static int spawnVillager(CommandSourceStack source, String type) {
+        var profile = org.millenaire.fabric.villager.VillagerSpawning.snapshot().profiles().get(type.trim().toLowerCase(java.util.Locale.ROOT));
+        if (profile == null) {
+            source.sendFailure(Component.literal("Unknown villager type: " + type + " (expected culture/type)"));
+            return 0;
+        }
+        try {
+            var villager = org.millenaire.fabric.villager.VillagerSpawning.spawn(source.getLevel(), BlockPos.containing(source.getPosition()),
+                    profile, "", new java.util.SplittableRandom());
+            source.sendSuccess(() -> Component.literal("Spawned " + profile.id() + " " + villager.getName().getString()), true);
+            return 1;
+        } catch (RuntimeException exception) {
+            source.sendFailure(Component.literal("Villager spawn failed: " + exception.getMessage()));
+            return 0;
+        }
     }
 
     private static int listVillagers(CommandSourceStack source) {
@@ -322,10 +358,14 @@ public final class MillenaireCommands {
             }
             int changed = BuildingPlacement.place(prepared, world, replace);
             var origin = BlockPos.containing(source.getPosition());
-            FabricBuildingState.get(source.getServer()).record(new FabricBuildingState.PlacedBuilding(
+            var placed = new FabricBuildingState.PlacedBuilding(
                     source.getLevel().dimension().identifier(), plan.id(),
                     new org.millenaire.fabric.content.LegacyBuildingPlan.Position(origin.getX(), origin.getY(), origin.getZ()),
-                    rotation, prepared.servicePoints()));
+                    rotation, prepared.servicePoints());
+            FabricBuildingState.get(source.getServer()).record(placed);
+            var residentIssues = org.millenaire.fabric.villager.VillagerSpawning.populate(source.getLevel(), plan, placed,
+                    new java.util.SplittableRandom(source.getLevel().getSeed() ^ origin.asLong()));
+            if (!residentIssues.isEmpty()) source.sendFailure(Component.literal(String.join("; ", residentIssues)));
             source.sendSuccess(() -> Component.literal("Placed " + plan.id() + ": " + changed + " changed blocks, rotation " + rotation), true);
             return changed;
         } catch (IOException | RuntimeException exception) {

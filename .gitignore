@@ -10,3 +10,4 @@ run/
 cp.txt
 cp.gradle
 artifacts/
+logs/

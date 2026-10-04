@@ -11,7 +11,8 @@
     ],
     "client": [
       "org.millenaire.fabric.firepit.FirePitClient",
-      "org.millenaire.fabric.storage.VillageStorageClient"
+      "org.millenaire.fabric.storage.VillageStorageClient",
+      "org.millenaire.fabric.villager.client.VillagerClient"
     ]
   },
   "depends": {

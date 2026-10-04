@@ -20,6 +20,7 @@ public final class MillenaireFabric implements ModInitializer {
         FirePitContent.registerCommon();
         LegacyContentRegistry.register();
         org.millenaire.fabric.storage.VillageStorageContent.registerBlockEntities();
+        org.millenaire.fabric.villager.VillagerContent.register();
         MillenaireCommands.register();
         ServerTickEvents.END_SERVER_TICK.register(server ->
                 FabricSettlementLifecycleState.get(server).tick());
