@@ -50,7 +50,7 @@ public final class MillenaireBrain extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!(villager.level() instanceof ServerLevel)) return false;
+        if (!(villager.level() instanceof ServerLevel) || villager.getTradingPlayer() != null) return false;
         if (task != null) return true;
         if (--cooldown > 0) return false;
         cooldown = DECISION_INTERVAL + villager.getRandom().nextInt(20);
@@ -59,7 +59,7 @@ public final class MillenaireBrain extends Goal {
     }
 
     @Override
-    public boolean canContinueToUse() { return task != null && !task.finished; }
+    public boolean canContinueToUse() { return task != null && !task.finished && villager.getTradingPlayer() == null; }
 
     @Override
     public boolean requiresUpdateEveryTick() { return true; }

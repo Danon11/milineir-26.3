@@ -26,5 +26,7 @@ class FabricBuildingStateTest {
         state.record(new FabricBuildingState.PlacedBuilding(dimension, "norman:fountain_A1", new Position(0, 64, 0), 1, Map.of()));
         assertEquals(1, state.buildings().size());
         assertEquals("norman:fountain_A1", state.buildings().getFirst().plan());
+        state.record(new FabricBuildingState.PlacedBuilding(dimension, "norman:manor_A_inn_A0", new Position(0, 64, 0), 1, Map.of()));
+        assertEquals(2, state.buildings().size(), "a sub-building keeps its parent record");
     }
 }

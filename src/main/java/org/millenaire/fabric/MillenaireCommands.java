@@ -35,11 +35,13 @@ public final class MillenaireCommands {
     private static volatile QuestCatalog questCatalog = QuestCatalog.empty();
     private static volatile QuestTexts questTexts = QuestTexts.empty();
     private static volatile org.millenaire.fabric.goal.GoalCatalog goalCatalog = org.millenaire.fabric.goal.GoalCatalog.empty();
+    private static volatile org.millenaire.fabric.economy.TradeCatalog tradeCatalog = org.millenaire.fabric.economy.TradeCatalog.empty();
 
     public static void setContentCatalog(LegacyContentCatalog catalog) {
         QuestCatalog quests = QuestCatalog.from(catalog);
         org.millenaire.fabric.villager.VillagerSpawning.update(catalog);
         goalCatalog = org.millenaire.fabric.goal.GoalCatalog.from(catalog);
+        tradeCatalog = org.millenaire.fabric.economy.TradeCatalog.from(catalog);
         contentCatalog = catalog;
         questCatalog = quests;
     }
@@ -47,6 +49,7 @@ public final class MillenaireCommands {
     public static QuestCatalog questCatalog() { return questCatalog; }
     public static LegacyContentCatalog contentCatalog() { return contentCatalog; }
     public static org.millenaire.fabric.goal.GoalCatalog goalCatalog() { return goalCatalog; }
+    public static org.millenaire.fabric.economy.TradeCatalog tradeCatalog() { return tradeCatalog; }
 
     /** Loads quest strings from the same bundled and custom roots as the content catalog. */
     public static void loadQuestTexts(java.nio.file.Path game) throws IOException {
@@ -105,6 +108,7 @@ public final class MillenaireCommands {
                                 .executes(context -> questInfo(context.getSource(), StringArgumentType.getString(context, "quest"))))))
                 .then(Commands.literal("villager")
                         .then(Commands.literal("status").executes(context -> villagerStatus(context.getSource())))
+                        .then(Commands.literal("offers").executes(context -> villagerOffers(context.getSource())))
                         .then(Commands.literal("spawn").then(Commands.argument("type", StringArgumentType.greedyString())
                                 .suggests((context, builder) -> {
                                     org.millenaire.fabric.villager.VillagerSpawning.snapshot().profiles().keySet().stream()
@@ -246,6 +250,34 @@ public final class MillenaireCommands {
                 .collect(Collectors.joining("\n", "Placed starting layouts:\n", ""));
         source.sendSuccess(() -> Component.literal(message), false);
         return settlements.size();
+    }
+
+    /** Lists the shop offers of each nearby villager for the command source as the trading player. */
+    private static int villagerOffers(CommandSourceStack source) {
+        var villagers = source.getLevel().getEntitiesOfClass(org.millenaire.fabric.villager.MillVillagerEntity.class,
+                net.minecraft.world.phys.AABB.ofSize(source.getPosition(), 128, 128, 128));
+        var player = source.getPlayer();
+        int count = 0;
+        StringBuilder message = new StringBuilder();
+        for (var villager : villagers) {
+            var session = player == null ? java.util.Optional.<org.millenaire.fabric.villager.VillagerTrading.Session>empty()
+                    : org.millenaire.fabric.villager.VillagerTrading.open(villager, player);
+            if (player == null) {
+                // Console: show the shop with zero reputation using a placeholder identity.
+                session = org.millenaire.fabric.villager.VillagerTrading.openFor(villager, java.util.UUID.nameUUIDFromBytes(new byte[0]));
+            }
+            if (session.isEmpty()) {
+                message.append(villager.getName().getString()).append(": ").append(org.millenaire.fabric.villager.VillagerTrading.explain(villager)).append("\n");
+                continue;
+            }
+            message.append(villager.getName().getString()).append(" [").append(villager.profileId()).append("]: ");
+            message.append(session.get().specs().stream().map(o -> (o.direction() == org.millenaire.fabric.economy.TradeOffers.Direction.VILLAGE_SELLS
+                    ? "sells " : "buys ") + o.good() + " " + o.price() + "d x" + o.maxUses()).collect(Collectors.joining(", "))).append("\n");
+            count++;
+        }
+        String text = count + " shops nearby:\n" + message;
+        source.sendSuccess(() -> Component.literal(text), false);
+        return count;
     }
 
     private static int villagerStatus(CommandSourceStack source) {

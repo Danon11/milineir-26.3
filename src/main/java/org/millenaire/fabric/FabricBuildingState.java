@@ -36,10 +36,15 @@ public final class FabricBuildingState extends SavedData {
     static Codec<Position> positionCodec() { return POSITION; }
     public List<PlacedBuilding> buildings() { return List.copyOf(buildings); }
     public void record(PlacedBuilding building) {
-        buildings.removeIf(previous -> previous.dimension().equals(building.dimension()) && previous.origin().equals(building.origin()));
+        // Upgrades replace the record at the same origin; sub-buildings share it under a different plan key.
+        buildings.removeIf(previous -> previous.dimension().equals(building.dimension()) && previous.origin().equals(building.origin())
+                && planKey(previous.plan()).equals(planKey(building.plan())));
         buildings.add(building);
         setDirty();
     }
+    /** Plan identifier without its upgrade level: {@code norman:fountain_A1} becomes {@code norman:fountain_A}. */
+    static String planKey(String plan) { return plan.replaceAll("\\d+$", ""); }
+
     public record PlacedBuilding(Identifier dimension, String plan, Position origin, int rotation, Map<String, List<Position>> servicePoints) {
         public PlacedBuilding {
             Objects.requireNonNull(dimension); Objects.requireNonNull(plan); Objects.requireNonNull(origin);

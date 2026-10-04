@@ -25,7 +25,7 @@ import java.util.Optional;
  * A Millénaire villager. Identity (culture, type, names, home building) is server-side state; the skin,
  * clothing layers and body model are synchronised so the client renderer can draw the legacy 64x32 skins.
  */
-public class MillVillagerEntity extends PathfinderMob {
+public class MillVillagerEntity extends PathfinderMob implements net.minecraft.world.item.trading.Merchant {
     private static final EntityDataAccessor<String> TEXTURE = SynchedEntityData.defineId(MillVillagerEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> CLOTH_0 = SynchedEntityData.defineId(MillVillagerEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> CLOTH_1 = SynchedEntityData.defineId(MillVillagerEntity.class, EntityDataSerializers.STRING);
@@ -131,6 +131,49 @@ public class MillVillagerEntity extends PathfinderMob {
 
     @Override
     public boolean removeWhenFarAway(double distance) { return false; }
+
+    // Trading: the shop of the villager's building, shown in the vanilla merchant screen.
+    private net.minecraft.world.entity.player.Player tradingPlayer;
+    private VillagerTrading.Session tradeSession;
+    private net.minecraft.world.item.trading.MerchantOffers offers = new net.minecraft.world.item.trading.MerchantOffers();
+
+    @Override
+    protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+        if (!isAlive() || isSleeping() || tradingPlayer != null || player.isSecondaryUseActive()) return super.mobInteract(player, hand);
+        if (level().isClientSide()) return net.minecraft.world.InteractionResult.SUCCESS;
+        var session = VillagerTrading.open(this, player);
+        if (session.isEmpty()) {
+            player.sendSystemMessage(VillagerTrading.noShop(this));
+            return net.minecraft.world.InteractionResult.SUCCESS;
+        }
+        tradeSession = session.get();
+        offers = tradeSession.offers();
+        setTradingPlayer(player);
+        getNavigation().stop();
+        openTradingScreen(player, getDisplayName(), 1);
+        return net.minecraft.world.InteractionResult.SUCCESS;
+    }
+
+    @Override public void setTradingPlayer(net.minecraft.world.entity.player.Player player) {
+        tradingPlayer = player;
+        if (player == null) tradeSession = null;
+    }
+    @Override public net.minecraft.world.entity.player.Player getTradingPlayer() { return tradingPlayer; }
+    @Override public net.minecraft.world.item.trading.MerchantOffers getOffers() { return offers; }
+    @Override public void overrideOffers(net.minecraft.world.item.trading.MerchantOffers offers) { this.offers = offers; }
+    @Override public void notifyTrade(net.minecraft.world.item.trading.MerchantOffer offer) {
+        offer.increaseUses();
+        if (tradeSession != null && tradingPlayer != null) VillagerTrading.completed(tradeSession, offer, tradingPlayer);
+    }
+    @Override public void notifyTradeUpdated(net.minecraft.world.item.ItemStack stack) {}
+    @Override public int getVillagerXp() { return 0; }
+    @Override public void overrideXp(int xp) {}
+    @Override public boolean showProgressBar() { return false; }
+    @Override public net.minecraft.sounds.SoundEvent getNotifyTradeSound() { return net.minecraft.sounds.SoundEvents.VILLAGER_YES; }
+    @Override public boolean isClientSide() { return level().isClientSide(); }
+    @Override public boolean stillValid(net.minecraft.world.entity.player.Player player) {
+        return tradingPlayer == player && isAlive() && player.distanceToSqr(this) < 64.0;
+    }
 
     public int carried(String good) { return inventory.getOrDefault(good, 0); }
     public java.util.Map<String, Integer> carriedGoods() { return java.util.Collections.unmodifiableMap(inventory); }
