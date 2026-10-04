@@ -23,7 +23,10 @@ public final class MillenaireFabric implements ModInitializer {
         org.millenaire.fabric.villager.VillagerContent.register();
         MillenaireCommands.register();
         ServerTickEvents.END_SERVER_TICK.register(server ->
-                FabricSettlementLifecycleState.get(server).tick());
+                {
+                    FabricSettlementLifecycleState.get(server).tick();
+                    org.millenaire.fabric.quest.QuestService.tick(server);
+                });
         FabricLoader.getInstance().getModContainer("millenaire").ifPresentOrElse(
                 modContainer -> {
                     FabricContentDeployer.deploy(modContainer);

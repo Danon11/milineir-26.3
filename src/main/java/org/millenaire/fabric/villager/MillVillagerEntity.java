@@ -141,6 +141,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
         if (!isAlive() || isSleeping() || tradingPlayer != null || player.isSecondaryUseActive()) return super.mobInteract(player, hand);
         if (level().isClientSide()) return net.minecraft.world.InteractionResult.SUCCESS;
+        // A quest step with this villager takes precedence over trading.
+        if (org.millenaire.fabric.quest.QuestService.talk(this, player)) return net.minecraft.world.InteractionResult.SUCCESS;
         var session = VillagerTrading.open(this, player);
         if (session.isEmpty()) {
             player.sendSystemMessage(VillagerTrading.noShop(this));

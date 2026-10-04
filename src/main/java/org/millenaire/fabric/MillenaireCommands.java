@@ -47,6 +47,7 @@ public final class MillenaireCommands {
     }
 
     public static QuestCatalog questCatalog() { return questCatalog; }
+    public static QuestTexts questTexts() { return questTexts; }
     public static LegacyContentCatalog contentCatalog() { return contentCatalog; }
     public static org.millenaire.fabric.goal.GoalCatalog goalCatalog() { return goalCatalog; }
     public static org.millenaire.fabric.economy.TradeCatalog tradeCatalog() { return tradeCatalog; }
@@ -70,6 +71,27 @@ public final class MillenaireCommands {
     }
 
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        // Player quest actions, used by the chat buttons; no operator permission required.
+        dispatcher.register(Commands.literal(org.millenaire.fabric.quest.QuestService.COMMAND)
+                .then(Commands.literal("list").executes(context -> {
+                    var player = context.getSource().getPlayerOrException();
+                    var lines = org.millenaire.fabric.quest.QuestService.describe(player);
+                    context.getSource().sendSuccess(() -> Component.literal(lines.isEmpty() ? "You have no Millénaire quests."
+                            : String.join("\n", lines)), false);
+                    return lines.size();
+                }))
+                .then(Commands.literal("accept").then(Commands.argument("id", LongArgumentType.longArg()).executes(context -> {
+                    var player = context.getSource().getPlayerOrException();
+                    var result = org.millenaire.fabric.quest.QuestService.accept(player, LongArgumentType.getLong(context, "id"));
+                    context.getSource().sendSuccess(() -> result, false);
+                    return 1;
+                })))
+                .then(Commands.literal("refuse").then(Commands.argument("id", LongArgumentType.longArg()).executes(context -> {
+                    var player = context.getSource().getPlayerOrException();
+                    var result = org.millenaire.fabric.quest.QuestService.refuse(player, LongArgumentType.getLong(context, "id"));
+                    context.getSource().sendSuccess(() -> result, false);
+                    return 1;
+                }))));
         dispatcher.register(Commands.literal("millenaire")
                 .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                 .then(Commands.literal("village")
@@ -99,6 +121,31 @@ public final class MillenaireCommands {
                                             return builder.buildFuture();
                                         })
                                         .executes(context -> listQuests(context.getSource(), StringArgumentType.getString(context, "group")))))
+                        .then(Commands.literal("selftest").then(Commands.argument("quest", StringArgumentType.greedyString())
+                                .executes(context -> {
+                                    var quest = questCatalog.get(StringArgumentType.getString(context, "quest").trim());
+                                    if (quest.isEmpty()) { context.getSource().sendFailure(Component.literal("Unknown quest")); return 0; }
+                                    var log = org.millenaire.fabric.quest.QuestService.selfTest(context.getSource().getServer(), quest.get());
+                                    context.getSource().sendSuccess(() -> Component.literal(String.join("\n", log)), false);
+                                    return log.size();
+                                })))
+                        .then(Commands.literal("give").then(Commands.argument("quest", StringArgumentType.greedyString())
+                                .suggests((context, builder) -> {
+                                    questCatalog.quests().keySet().stream().filter(path -> path.startsWith(builder.getRemaining()))
+                                            .forEach(builder::suggest);
+                                    return builder.buildFuture();
+                                })
+                                .executes(context -> {
+                                    var player = context.getSource().getPlayerOrException();
+                                    var quest = questCatalog.get(StringArgumentType.getString(context, "quest").trim());
+                                    if (quest.isEmpty()) { context.getSource().sendFailure(Component.literal("Unknown quest")); return 0; }
+                                    var instance = org.millenaire.fabric.quest.QuestService.force(context.getSource().getServer(), quest.get(), player);
+                                    if (instance.isEmpty()) {
+                                        context.getSource().sendFailure(Component.literal("No eligible villagers or the quest conditions are not met."));
+                                        return 0;
+                                    }
+                                    return 1;
+                                })))
                         .then(Commands.literal("info").then(Commands.argument("quest", StringArgumentType.greedyString())
                                 .suggests((context, builder) -> {
                                     questCatalog.quests().keySet().stream().filter(path -> path.startsWith(builder.getRemaining()))
