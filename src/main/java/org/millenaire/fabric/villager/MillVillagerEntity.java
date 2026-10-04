@@ -86,7 +86,9 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         inventory.clear();
         inventory.putAll(profile.startingInventory());
         getAttribute(Attributes.MAX_HEALTH).setBaseValue(profile.health());
-        getAttribute(Attributes.SCALE).setBaseValue(appearance.scale());
+        adultScale = appearance.scale();
+        childAge = profile.child() ? 0 : -1;
+        updateScale();
         setHealth(profile.health());
         combatRole = null;
         setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, VillagerCombat.weapon(profile, good ->
@@ -115,6 +117,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         output.putString("cloth_0", entityData.get(CLOTH_0));
         output.putString("cloth_1", entityData.get(CLOTH_1));
         output.putInt("model", entityData.get(MODEL));
+        output.putInt("child_age", childAge);
+        output.putFloat("adult_scale", adultScale);
         output.store("inventory", com.mojang.serialization.Codec.unboundedMap(com.mojang.serialization.Codec.STRING, com.mojang.serialization.Codec.INT), inventory);
     }
 
@@ -127,6 +131,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         familyName = input.getStringOr("family_name", "");
         building = input.getStringOr("building", "");
         combatRole = null;
+        childAge = input.getIntOr("child_age", -1);
+        adultScale = input.getFloatOr("adult_scale", (float) getAttributeBaseValue(Attributes.SCALE));
         entityData.set(TEXTURE, input.getStringOr("texture", DEFAULT_TEXTURE));
         entityData.set(CLOTH_0, input.getStringOr("cloth_0", ""));
         entityData.set(CLOTH_1, input.getStringOr("cloth_1", ""));
@@ -239,6 +245,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
 
     @Override
     public void die(net.minecraft.world.damagesource.DamageSource source) {
+        if (level() instanceof net.minecraft.server.level.ServerLevel serverLevel && !isRemoved())
+            profile().ifPresent(profile -> VillagerSpawning.record(serverLevel, this, profile, false));
         if (level() instanceof net.minecraft.server.level.ServerLevel level && combatRole() != VillagerCombat.Role.HOSTILE
                 && source.getEntity() instanceof net.minecraft.world.entity.player.Player player)
             adjustReputation(level, player, -VillagerCombat.REPUTATION_PER_KILL);
@@ -265,5 +273,49 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         net.minecraft.world.entity.projectile.Projectile.spawnProjectileUsingShoot(arrow, level, bow, dx, dy + distance * 0.2, dz, 1.6F,
                 rangedAttackUncertainty(level));
         playSound(net.minecraft.sounds.SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (getRandom().nextFloat() * 0.4F + 0.8F));
+    }
+
+    // Children: they grow over GROW_TICKS and then take a free adult place in the village (VillagePopulation).
+    public static final int GROW_TICKS = 3 * 24000;
+    private static final float CHILD_START_SCALE = 0.55F;
+    private int childAge = -1;
+    private float adultScale = 1.0F;
+
+    public boolean isChildVillager() { return childAge >= 0; }
+
+    private void updateScale() {
+        float progress = childAge < 0 ? 1.0F : Math.min(1.0F, childAge / (float) GROW_TICKS);
+        getAttribute(Attributes.SCALE).setBaseValue(adultScale * (CHILD_START_SCALE + (1.0F - CHILD_START_SCALE) * progress));
+    }
+
+    @Override
+    protected void customServerAiStep(net.minecraft.server.level.ServerLevel level) {
+        super.customServerAiStep(level);
+        if (childAge < 0) return;
+        childAge++;
+        if (childAge % 200 == 0) updateScale();
+        if (childAge >= GROW_TICKS && childAge % 1200 == 0) growUp(level);
+    }
+
+    /** Becomes the adult type of a free place of the child's gender, preferring its own house. */
+    public boolean growUp(net.minecraft.server.level.ServerLevel level) {
+        var own = profile().orElse(null);
+        if (own == null) return false;
+        var settlement = org.millenaire.fabric.village.VillagePopulation.settlementOf(level.getServer(), level.dimension().identifier(), building);
+        if (settlement.isEmpty()) return false;
+        var profiles = VillagerSpawning.snapshot().profiles();
+        String home = org.millenaire.fabric.village.VillagePopulation.baseKey(building);
+        var vacancy = org.millenaire.fabric.village.VillagePopulation.vacancies(level.getServer(), settlement.get()).stream()
+                .filter(v -> profiles.containsKey(v.profileId()) && profiles.get(v.profileId()).female() == own.female()
+                        && !profiles.get(v.profileId()).child() && profiles.get(v.profileId()).culture().equals(own.culture()))
+                .min(java.util.Comparator.comparing(v -> !org.millenaire.fabric.village.VillagePopulation.baseKey(v.building()).equals(home)));
+        if (vacancy.isEmpty()) return false;
+        var adult = profiles.get(vacancy.get().profileId());
+        var names = VillagerSpawning.snapshot().nameLists().getOrDefault(adult.culture(), java.util.Map.of());
+        var rolled = adult.roll(new java.util.SplittableRandom(getUUID().getLeastSignificantBits()), names);
+        var appearance = new VillagerProfile.Appearance(rolled.texture(), rolled.cloth0(), rolled.cloth1(), rolled.scale(), firstName, familyName);
+        initialize(adult, appearance, vacancy.get().building());
+        VillagerSpawning.record(level, this, adult, true);
+        return true;
     }
 }

@@ -13,7 +13,8 @@ import java.util.random.RandomGenerator;
 public record VillagerProfile(String culture, String type, Model model, boolean female, List<String> textures,
                               Map<String, List<List<String>>> clothes, float baseScale, int health,
                               String firstNameList, String familyNameList, List<String> goals, List<String> tags,
-                              Map<String, Integer> startingInventory, List<String> bringBackHomeGoods, String defaultWeapon) {
+                              Map<String, Integer> startingInventory, List<String> bringBackHomeGoods, String defaultWeapon,
+                              String maleChild, String femaleChild) {
     public static final String FREE_CLOTHES = "free";
     public static final String NATURAL_CLOTHES = "natural";
     private static final float SCALE_MIN = 0.8F, SCALE_VARIATION = 0.09F;
@@ -25,6 +26,9 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
     }
 
     /** Result of rolling a new villager: texture paths are relative to {@code assets/millenaire/}. */
+    public boolean child() { return tags.contains("child"); }
+    public boolean canHaveChildren() { return female && !child() && (!maleChild.isEmpty() || !femaleChild.isEmpty()); }
+
     public record Appearance(String texture, Optional<String> cloth0, Optional<String> cloth1, float scale,
                              String firstName, String familyName) {
         public String fullName() { return familyName.isEmpty() ? firstName : firstName + " " + familyName; }
@@ -40,6 +44,8 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
         startingInventory = Collections.unmodifiableMap(new LinkedHashMap<>(startingInventory));
         bringBackHomeGoods = List.copyOf(bringBackHomeGoods);
         defaultWeapon = defaultWeapon == null ? "" : defaultWeapon;
+        maleChild = maleChild == null ? "" : maleChild;
+        femaleChild = femaleChild == null ? "" : femaleChild;
         if (textures.isEmpty()) throw new IllegalArgumentException("Villager type " + culture + "/" + type + " has no texture");
         if (!(baseScale > 0) || health <= 0) throw new IllegalArgumentException("Invalid scale or health for " + culture + "/" + type);
     }
@@ -81,7 +87,8 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
         List<String> bringBack = document.values("bringbackhomegood").stream().map(good -> good.trim().toLowerCase(Locale.ROOT)).toList();
         return new VillagerProfile(culture, type, model, female, document.values("texture").stream().map(texture -> texture.trim().toLowerCase(Locale.ROOT)).toList(),
                 clothes, scale, health, firstNames, familyNames, document.values("goal").stream().map(goal -> goal.trim().toLowerCase(Locale.ROOT)).toList(), tags,
-                inventory, bringBack, last(document, "defaultweapon", "").toLowerCase(Locale.ROOT));
+                inventory, bringBack, last(document, "defaultweapon", "").toLowerCase(Locale.ROOT),
+                last(document, "malechild", "").toLowerCase(Locale.ROOT), last(document, "femalechild", "").toLowerCase(Locale.ROOT));
     }
 
     private static String last(LegacyDocument document, String key, String fallback) {

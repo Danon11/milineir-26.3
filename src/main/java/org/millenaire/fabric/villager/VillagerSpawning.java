@@ -59,10 +59,18 @@ public final class VillagerSpawning {
         var appearance = profile.roll(random, names);
         villager.initialize(profile, appearance, building);
         if (!level.addFreshEntity(villager)) throw new IllegalStateException("Villager could not be added to the level");
+        record(level, villager, profile, true);
+        return villager;
+    }
+
+    /** Writes the persistent record of a villager: identity, home building and whether it is alive. */
+    public static void record(ServerLevel level, MillVillagerEntity villager, VillagerProfile profile, boolean alive) {
+        BlockPos pos = villager.blockPosition();
+        String name = villager.familyName().isEmpty() ? villager.firstName() : villager.firstName() + " " + villager.familyName();
         FabricVillagerState.get(level.getServer()).upsert(new FabricVillagerState.Villager(villager.getStringUUID(),
                 level.dimension().identifier(), new LegacyBuildingPlan.Position(pos.getX(), pos.getY(), pos.getZ()),
-                profile.culture(), profile.type(), appearance.fullName(), profile.female() ? "female" : "male", building, true));
-        return villager;
+                profile.culture(), profile.type(), name.isBlank() ? profile.type() : name, profile.female() ? "female" : "male",
+                villager.building(), alive));
     }
 
     /** Farm animals for the legacy spawn markers: two adults per marker, as a starting herd. */

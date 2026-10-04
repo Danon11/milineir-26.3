@@ -29,7 +29,10 @@ public record VillageContext(ServerLevel level, LegacyContentCatalog catalog, Fa
         }
         var dimension = level.dimension().identifier();
         var home = FabricBuildingState.get(level.getServer()).buildings().stream()
-                .filter(b -> b.dimension().equals(dimension) && b.plan().equals(plan) && b.origin().equals(origin)).findFirst();
+                // Upgrades change the plan's level suffix (A0 -> A1), not the building a villager belongs to.
+                .filter(b -> b.dimension().equals(dimension) && b.origin().equals(origin)
+                        && org.millenaire.fabric.village.VillagePopulation.baseKey(b.plan() + "@").equals(org.millenaire.fabric.village.VillagePopulation.baseKey(plan + "@")))
+                .findFirst();
         if (home.isEmpty()) return Optional.empty();
         var settlement = FabricSettlementState.get(level.getServer()).settlements().stream()
                 .filter(s -> s.dimension().equals(dimension) && s.buildings().stream().anyMatch(b -> b.placement().origin().equals(origin)))

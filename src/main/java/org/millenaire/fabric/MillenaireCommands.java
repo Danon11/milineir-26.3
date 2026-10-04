@@ -107,6 +107,7 @@ public final class MillenaireCommands {
                             context.getSource().sendSuccess(() -> Component.literal("Village generation here: " + result), true);
                             return result.startsWith("founded") ? 1 : 0;
                         }))
+                        .then(Commands.literal("populate").executes(context -> populateVillage(context.getSource())))
                         .then(Commands.literal("grow").executes(context -> growVillage(context.getSource(), false))
                                 .then(Commands.literal("rush").executes(context -> growVillage(context.getSource(), true))))
                         .then(villageAction("plan", false))
@@ -165,6 +166,7 @@ public final class MillenaireCommands {
                 .then(Commands.literal("villager")
                         .then(Commands.literal("status").executes(context -> villagerStatus(context.getSource())))
                         .then(Commands.literal("offers").executes(context -> villagerOffers(context.getSource())))
+                        .then(Commands.literal("growup").executes(context -> growUpChildren(context.getSource())))
                         .then(Commands.literal("spawn").then(Commands.argument("type", StringArgumentType.greedyString())
                                 .suggests((context, builder) -> {
                                     org.millenaire.fabric.villager.VillagerSpawning.snapshot().profiles().keySet().stream()
@@ -377,6 +379,27 @@ public final class MillenaireCommands {
         String result = org.millenaire.fabric.village.VillageGrowth.evaluate(source.getLevel(), settlement.get(), rush);
         source.sendSuccess(() -> Component.literal(settlement.get().name() + ": " + result), true);
         return 1;
+    }
+
+    /** Runs one population pass on the settlement here without waiting for the random chances. */
+    private static int populateVillage(CommandSourceStack source) {
+        var pos = BlockPos.containing(source.getPosition());
+        var settlement = FabricSettlementState.get(source.getServer()).containing(source.getLevel().dimension().identifier(), pos.getX(), pos.getZ());
+        if (settlement.isEmpty()) { source.sendFailure(Component.literal("No Millénaire settlement here.")); return 0; }
+        String result = org.millenaire.fabric.village.VillagePopulation.step(source.getLevel(), settlement.get(), new java.util.Random(), true);
+        source.sendSuccess(() -> Component.literal(settlement.get().name() + ": " + result), true);
+        return result.equals("no change") ? 0 : 1;
+    }
+
+    /** Grows up every child villager within 64 blocks at once. */
+    private static int growUpChildren(CommandSourceStack source) {
+        var children = source.getLevel().getEntitiesOfClass(org.millenaire.fabric.villager.MillVillagerEntity.class,
+                net.minecraft.world.phys.AABB.ofSize(source.getPosition(), 128, 128, 128), org.millenaire.fabric.villager.MillVillagerEntity::isChildVillager);
+        int grown = 0;
+        for (var child : children) if (child.growUp(source.getLevel())) grown++;
+        int count = grown;
+        source.sendSuccess(() -> Component.literal("Grew up " + count + " of " + children.size() + " children."), true);
+        return grown;
     }
 
     private static int listVillagers(CommandSourceStack source) {
