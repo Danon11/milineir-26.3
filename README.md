@@ -4,7 +4,7 @@ This is an in-progress port of Millenaire 8.1.2 from Forge 1.12.2 to Fabric for 
 
 ## Build
 
-Requirements: Java 25 and an internet connection for the first dependency download. The project includes Gradle Wrapper scripts.
+Requirements: Java 25 and an internet connection (cloud sessions install Java 25 through `.claude/hooks/session-start.sh`) for the first dependency download. The project includes Gradle Wrapper scripts.
 
 In PowerShell, set `JAVA_HOME` to a Java 25 JDK, then run:
 
@@ -23,6 +23,7 @@ The mod JAR is written to `build/libs/millenaire-8.1.2-fabric.1.jar`.
 - Places supported PNG building plans through `/millenaire building check|place|replace <rotation> <culture:plan_A0>` and persists their service points. Unsupported palette states stop placement; `/millenaire building list` lists stored placements.
 - Plans manual starting layouts from village definitions through `/millenaire village plan <seed> <culture:type>`. Preserves repeated starting houses, chooses weighted variants, and reserves space around each building. `check`, `checkreplace`, `place`, and `replace` use the same arguments; successful group placements persist through world reloads and appear in `/millenaire village settlements`. Unsupported walls, hamlets, sub-buildings, and palette points reject the whole placement. See [VILLAGE_PORT_REPORT.md](VILLAGE_PORT_REPORT.md) for commands and limits.
 - Parses and validates all 91 bundled quests and their translated texts; `/millenaire quest list` and `/millenaire quest info <group/key>` inspect them. Quests are not offered or executed yet. See [QUEST_PORT_REPORT.md](QUEST_PORT_REPORT.md).
+- Spawns living villagers with legacy skins, clothing and names; they sleep at night and work, trade and give quests by day. `/millenaire village replace <seed> <culture:type>` builds a starting village with walls and residents (47 of 52 types). See [PORTING_STATUS.md](PORTING_STATUS.md).
 - Persists village marker coordinates through `/millenaire village mark` and `/millenaire village list`; markers do not create villages.
 - Includes 95 converted crafting recipes, block loot tables, converted models and blockstates, English names for registered content, and 23 locale files.
 - Seeds bundled Millenaire content into `mods/millenaire` and `mods/millenaire-custom` without overwriting files that are already there.
