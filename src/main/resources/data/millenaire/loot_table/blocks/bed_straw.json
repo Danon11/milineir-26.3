@@ -8,6 +8,13 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "millenaire:bed_straw",
+            "state": {
+              "part": "head"
+            }
+          },
           "name": "millenaire:bed_straw"
         }
       ],

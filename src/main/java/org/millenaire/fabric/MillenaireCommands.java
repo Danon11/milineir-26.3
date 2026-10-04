@@ -34,15 +34,19 @@ public final class MillenaireCommands {
     private static volatile LegacyContentCatalog contentCatalog = LegacyContentCatalog.empty();
     private static volatile QuestCatalog questCatalog = QuestCatalog.empty();
     private static volatile QuestTexts questTexts = QuestTexts.empty();
+    private static volatile org.millenaire.fabric.goal.GoalCatalog goalCatalog = org.millenaire.fabric.goal.GoalCatalog.empty();
 
     public static void setContentCatalog(LegacyContentCatalog catalog) {
         QuestCatalog quests = QuestCatalog.from(catalog);
         org.millenaire.fabric.villager.VillagerSpawning.update(catalog);
+        goalCatalog = org.millenaire.fabric.goal.GoalCatalog.from(catalog);
         contentCatalog = catalog;
         questCatalog = quests;
     }
 
     public static QuestCatalog questCatalog() { return questCatalog; }
+    public static LegacyContentCatalog contentCatalog() { return contentCatalog; }
+    public static org.millenaire.fabric.goal.GoalCatalog goalCatalog() { return goalCatalog; }
 
     /** Loads quest strings from the same bundled and custom roots as the content catalog. */
     public static void loadQuestTexts(java.nio.file.Path game) throws IOException {
@@ -100,6 +104,7 @@ public final class MillenaireCommands {
                                 })
                                 .executes(context -> questInfo(context.getSource(), StringArgumentType.getString(context, "quest"))))))
                 .then(Commands.literal("villager")
+                        .then(Commands.literal("status").executes(context -> villagerStatus(context.getSource())))
                         .then(Commands.literal("spawn").then(Commands.argument("type", StringArgumentType.greedyString())
                                 .suggests((context, builder) -> {
                                     org.millenaire.fabric.villager.VillagerSpawning.snapshot().profiles().keySet().stream()
@@ -117,7 +122,8 @@ public final class MillenaireCommands {
                                     return builder.buildFuture();
                                 })
                                 .executes(context -> goodInfo(context.getSource(), StringArgumentType.getString(context, "good")))))
-                        .then(Commands.literal("reload").executes(context -> reloadContent(context.getSource()))))
+                        .then(Commands.literal("reload").executes(context -> reloadContent(context.getSource())))
+                        .then(Commands.literal("audit").executes(context -> auditPlans(context.getSource()))))
                 .then(Commands.literal("building")
                         .then(Commands.literal("list").executes(context -> listBuildings(context.getSource())))
                         .then(buildingAction("check", false))
@@ -240,6 +246,16 @@ public final class MillenaireCommands {
                 .collect(Collectors.joining("\n", "Placed starting layouts:\n", ""));
         source.sendSuccess(() -> Component.literal(message), false);
         return settlements.size();
+    }
+
+    private static int villagerStatus(CommandSourceStack source) {
+        var villagers = source.getLevel().getEntitiesOfClass(org.millenaire.fabric.villager.MillVillagerEntity.class,
+                net.minecraft.world.phys.AABB.ofSize(source.getPosition(), 128, 128, 128));
+        String message = villagers.stream().map(v -> v.getName().getString() + " [" + v.profileId() + "] "
+                        + v.blockPosition().toShortString() + " " + (v.isSleeping() ? "sleeping" : v.activity().orElse("idle")))
+                .collect(Collectors.joining("\n", villagers.size() + " villagers nearby:\n", ""));
+        source.sendSuccess(() -> Component.literal(message), false);
+        return villagers.size();
     }
 
     private static int spawnVillager(CommandSourceStack source, String type) {
@@ -377,7 +393,9 @@ public final class MillenaireCommands {
     private static int listBuildings(CommandSourceStack source) {
         var buildings = FabricBuildingState.get(source.getServer()).buildings();
         String message = buildings.stream().map(building -> building.plan() + " " + building.dimension() + " "
-                + building.origin().x() + " " + building.origin().y() + " " + building.origin().z() + " rotation=" + building.rotation())
+                + building.origin().x() + " " + building.origin().y() + " " + building.origin().z() + " rotation=" + building.rotation()
+                + " chests=" + building.servicePoints().getOrDefault("chests", List.of()).stream()
+                        .map(p -> p.x() + "," + p.y() + "," + p.z()).collect(Collectors.joining(" ")))
                 .collect(Collectors.joining("\n", "Placed Millenaire buildings:\n", ""));
         source.sendSuccess(() -> Component.literal(message), false);
         return buildings.size();
@@ -407,6 +425,40 @@ public final class MillenaireCommands {
                 + (catalog.diagnostics().size() + questCatalog.diagnostics().size()) + " diagnostics.";
         source.sendSuccess(() -> Component.literal(message), false);
         return catalog.plans().size();
+    }
+
+    /** Prepares every plan off-world and reports why unsupported plans are blocked; writes millenaire-audit.txt. */
+    private static int auditPlans(CommandSourceStack source) {
+        var catalog = contentCatalog;
+        java.util.Map<String, Integer> reasons = new java.util.TreeMap<>();
+        java.util.Map<String, String> examples = new java.util.HashMap<>();
+        List<String> report = new java.util.ArrayList<>();
+        int supported = 0;
+        for (var plan : catalog.plans().values()) {
+            List<String> issues;
+            try {
+                issues = BuildingPlacement.prepare(plan, catalog.palette(), BlockPos.ZERO, 0, catalog.goods(), 0L).issues();
+            } catch (IOException | RuntimeException exception) {
+                issues = List.of("error: " + exception.getMessage());
+            }
+            if (issues.isEmpty()) { supported++; continue; }
+            report.add(plan.id() + "\t" + String.join(" | ", issues));
+            for (String issue : new java.util.LinkedHashSet<>(issues)) {
+                String reason = issue.replaceAll("^[^:]*: ", "").replaceAll("-?\\d+", "#");
+                reasons.merge(reason, 1, Integer::sum);
+                examples.putIfAbsent(reason, plan.id());
+            }
+        }
+        try {
+            java.nio.file.Files.write(FabricLoader.getInstance().getGameDir().resolve("millenaire-audit.txt"), report);
+        } catch (IOException exception) {
+            source.sendFailure(Component.literal("Could not write audit file: " + exception.getMessage()));
+        }
+        int total = catalog.plans().size(), ok = supported;
+        String top = reasons.entrySet().stream().sorted(java.util.Map.Entry.<String, Integer>comparingByValue().reversed()).limit(25)
+                .map(e -> e.getValue() + "x " + e.getKey() + " (e.g. " + examples.get(e.getKey()) + ")").collect(Collectors.joining("\n"));
+        source.sendSuccess(() -> Component.literal("Plan audit: " + ok + "/" + total + " plans placeable. Top blockers:\n" + top), false);
+        return ok;
     }
 
     private static int reloadContent(CommandSourceStack source) {

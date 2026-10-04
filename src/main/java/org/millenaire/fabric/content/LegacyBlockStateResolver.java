@@ -296,18 +296,26 @@ public final class LegacyBlockStateResolver {
                 number = 0;
                 meta = null;
             }
+            // Snow paths store the same stability bit as other paths; leaves store decay flags in bits 4 and 8.
+            if ((name.equals("pathsnow") || name.equals("pathsnow_slab")) && (number & ~9) == 0) { number = 0; meta = null; }
+            if (name.startsWith("leaves_") && (number & ~12) == 0) { number = 0; meta = null; }
             final int mappedMetadata = number;
             String legacyId = id;
             var matches = LegacyContentRegistry.origins().values().stream().filter(origin -> origin.kind().equals("block")
                     && origin.legacyId().equalsIgnoreCase(legacyId) && origin.metadata() == mappedMetadata).toList();
             if (matches.size() == 1) id = "millenaire:" + matches.getFirst().name();
             else if (number != 0) throw new IllegalArgumentException("No unique migrated block for " + legacyId + "=" + number);
+            String variant = values.remove("variant");
+            if (variant != null) id = variantBlock(legacyId, variant);
         }
         Identifier key = Identifier.parse(id);
         if (!BuiltInRegistries.BLOCK.containsKey(key)) throw new IllegalArgumentException("Unregistered migrated block: " + id);
         BlockState state = BuiltInRegistries.BLOCK.getValue(key).defaultBlockState();
         if (meta != null && state.getBlock().getStateDefinition().getProperty("facing") != null && !values.containsKey("facing"))
             throw new IllegalArgumentException("Numeric orientation is not converted for " + point.block());
+        // 1.12 slabs used half=bottom|top; modern slabs call it type.
+        if (values.containsKey("half") && state.getBlock().getStateDefinition().getProperty("half") == null
+                && state.getBlock().getStateDefinition().getProperty("type") != null) values.put("type", values.remove("half"));
         for (var value : values.entrySet()) {
             Property<?> property = state.getBlock().getStateDefinition().getProperty(value.getKey());
             if (property == null) throw new IllegalArgumentException("Unsupported property " + value.getKey() + " on " + id);
@@ -315,6 +323,29 @@ public final class LegacyBlockStateResolver {
         }
         return state;
     }
+    /**
+     * Legacy blocks with a {@code variant} property were split into one block per variant. Picks the block named
+     * after the variant, then {@code <block>_<variant>}, then the longest variant block name the value starts with
+     * (mosaic colours share one mosaic block). Single-model slabs keep their only block.
+     */
+    static String variantBlock(String legacyId, String variant) {
+        String value = variant.toLowerCase(java.util.Locale.ROOT);
+        String base = legacyId.substring(legacyId.indexOf(':') + 1).toLowerCase(java.util.Locale.ROOT);
+        var origins = LegacyContentRegistry.origins().values().stream()
+                .filter(origin -> origin.kind().equals("block") && origin.legacyId().equalsIgnoreCase(legacyId)).toList();
+        for (String candidate : List.of(value, base + "_" + value))
+            if (origins.stream().anyMatch(origin -> origin.name().equals(candidate)) || registered(candidate) && origins.isEmpty()) return "millenaire:" + candidate;
+        var prefix = origins.stream().filter(origin -> value.startsWith(origin.name()))
+                .max(java.util.Comparator.comparingInt(origin -> origin.name().length()));
+        if (prefix.isPresent()) return "millenaire:" + prefix.get().name();
+        if (base.contains("slab") && registered(base)) return "millenaire:" + base;
+        throw new IllegalArgumentException("No migrated block for " + legacyId + " variant=" + variant);
+    }
+
+    private static boolean registered(String name) {
+        return BuiltInRegistries.BLOCK.containsKey(Identifier.fromNamespaceAndPath("millenaire", name));
+    }
+
     private static int index(int value, int size) {
         if (value < 0 || value >= size) throw new IllegalArgumentException("Invalid legacy variant index: " + value);
         return value;

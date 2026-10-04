@@ -276,6 +276,21 @@ public final class LegacyContentRegistry {
         if (isPaintedBlockName(name)) {
             return PaintableBlocks.create(name, Blocks.STONE.defaultBlockState(), properties);
         }
+        if (name.equals("bed_straw") || name.equals("bed_charpoy")) {
+            return new org.millenaire.fabric.content.LegacyDecorBlocks.LegacyBedBlock(properties.strength(0.2F).sound(SoundType.WOOD).noOcclusion());
+        }
+        if (name.equals("byzantine_tiles_slab")) {
+            return new org.millenaire.fabric.content.LegacyDecorBlocks.AxisSlabBlock(properties);
+        }
+        if (Set.of("byzantine_tiles", "byzantine_stone_tiles", "byzantine_sandstone_tiles").contains(name)) {
+            return new org.millenaire.fabric.content.LegacyDecorBlocks.AxisBlock(properties);
+        }
+        if (name.equals("inuitcarving")) {
+            return new org.millenaire.fabric.content.LegacyDecorBlocks.FacingBlock(properties.noOcclusion());
+        }
+        if (name.equals("wooden_bars_rosette") || name.equals("woodenbarsrosette")) {
+            return new org.millenaire.fabric.content.LegacyDecorBlocks.RosetteBarsBlock(properties.noOcclusion());
+        }
         if (name.startsWith("slab_") || name.endsWith("_slab")) {
             return new SlabBlock(properties);
         }

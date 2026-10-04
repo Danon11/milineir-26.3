@@ -1,7 +1,11 @@
 {
   "variants": {
-    "": {
+    "axis=x": {
       "model": "millenaire:block/byzantine_sandstone_tiles"
+    },
+    "axis=z": {
+      "model": "millenaire:block/byzantine_sandstone_tiles",
+      "y": 90
     }
   }
 }

@@ -37,6 +37,7 @@ public class MillVillagerEntity extends PathfinderMob {
     private String firstName = "";
     private String familyName = "";
     private String building = "";
+    private final org.millenaire.fabric.goal.MillenaireBrain brain = new org.millenaire.fabric.goal.MillenaireBrain(this);
 
     public MillVillagerEntity(EntityType<? extends MillVillagerEntity> type, Level level) {
         super(type, level);
@@ -59,6 +60,7 @@ public class MillVillagerEntity extends PathfinderMob {
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
         goalSelector.addGoal(1, new OpenDoorGoal(this, true));
+        goalSelector.addGoal(2, brain);
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -120,6 +122,7 @@ public class MillVillagerEntity extends PathfinderMob {
     @Override
     public boolean removeWhenFarAway(double distance) { return false; }
 
+    public java.util.Optional<String> activity() { return brain.currentLabel(); }
     public String culture() { return culture; }
     public String villagerType() { return villagerType; }
     public String profileId() { return culture + "/" + villagerType; }

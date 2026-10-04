@@ -93,11 +93,15 @@ class BuildingPlacementTest {
         assertEquals(0, world.writes);
     }
 
-    @Test void treeMarkerRejectsOverlapWithPlannedBuildingBlock() throws Exception {
+    @Test void treeMarkerKeepsPlannedBuildingBlocksWhereTheyOverlap() throws Exception {
+        // The original generator never overwrote solid blocks; the tree yields instead of rejecting the plan.
+        var plain = treePlacement(new BlockPos(0, 64, 0), false);
         var prepared = treePlacement(new BlockPos(0, 64, 0), true);
-        assertFalse(prepared.supported());
-        assertTrue(prepared.issues().stream().anyMatch(issue -> issue.contains("overlaps planned building block")));
-        assertTrue(prepared.changes().isEmpty());
+        assertTrue(prepared.supported(), prepared.issues().toString());
+        var states = new java.util.HashMap<BlockPos, net.minecraft.world.level.block.state.BlockState>();
+        prepared.changes().forEach(change -> states.put(change.pos(), change.state()));
+        assertTrue(states.values().stream().anyMatch(state -> state.is(Blocks.STONE)), "planned building block kept");
+        assertTrue(prepared.changes().size() < plain.changes().size() + 1);
     }
 
     @Test void treeMarkerRollsBackWithBuildingOnWriteFailure() throws Exception {
@@ -293,6 +297,37 @@ class BuildingPlacementTest {
                         : net.minecraft.world.level.block.state.properties.DoorHingeSide.LEFT,
                         change.state().getValue(net.minecraft.world.level.block.DoorBlock.HINGE));
         }
+    }
+
+    private BuildingPlacement.Prepared declaredDoor(boolean lower) throws Exception {
+        Path image = temp.resolve("declared_A0.png");
+        // Plans store floors side by side: x=0 is floor 0, x=2 is floor 1 (one separator column).
+        var pixels = new BufferedImage(3, 1, BufferedImage.TYPE_INT_RGB);
+        pixels.setRGB(0, 0, lower ? 0x0000ff : 0xffffff);
+        pixels.setRGB(1, 0, 0x000000);
+        pixels.setRGB(2, 0, 0x00ff00);
+        ImageIO.write(pixels, "png", image.toFile());
+        var plan = new LegacyBuildingPlan("norman", "declared", 'A', 0, 1, 1, 0, image, Map.of());
+        var palette = new LegacyPalette(Map.of(
+                0x0000ff, new LegacyPalette.Point(0x0000ff, "doorLower", "minecraft:spruce_door", "facing=north,half=lower,hinge=left", true, "", "", 1),
+                0x00ff00, new LegacyPalette.Point(0x00ff00, "doorUpper", "minecraft:spruce_door", "facing=north,half=upper,hinge=right", true, "", "", 1),
+                0xffffff, new LegacyPalette.Point(0xffffff, "empty", "", "", false, "", "", 0)));
+        return BuildingPlacement.prepare(plan, palette, new BlockPos(0, 64, 0), 0);
+    }
+
+    @Test void declaredUpperDoorHalfSuppliesTheLegacyHinge() throws Exception {
+        var prepared = declaredDoor(true);
+        assertTrue(prepared.supported(), prepared.issues().toString());
+        var doors = prepared.changes().stream().filter(change -> change.state().getBlock() instanceof net.minecraft.world.level.block.DoorBlock).toList();
+        assertEquals(2, doors.size());
+        for (var door : doors) assertEquals(net.minecraft.world.level.block.state.properties.DoorHingeSide.RIGHT,
+                door.state().getValue(net.minecraft.world.level.block.DoorBlock.HINGE));
+    }
+
+    @Test void orphanUpperDoorHalfIsLeftOutInsteadOfBlockingThePlan() throws Exception {
+        var prepared = declaredDoor(false);
+        assertTrue(prepared.supported(), prepared.issues().toString());
+        assertTrue(prepared.changes().stream().noneMatch(change -> change.state().getBlock() instanceof net.minecraft.world.level.block.DoorBlock));
     }
 
     @Test void doorExpansionRejectsConflictingPlannedUpperBlock() throws Exception {

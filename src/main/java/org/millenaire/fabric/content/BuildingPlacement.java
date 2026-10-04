@@ -43,7 +43,7 @@ import java.util.*;
 
 /** Manual structure placement. All palette and destination checks precede the first write. */
 public final class BuildingPlacement {
-    public static final int MAX_BLOCKS = 32768;
+    public static final int MAX_BLOCKS = 1 << 20;
     public record Change(BlockPos pos, BlockState state, boolean secondPass) {}
     public enum SetupKind { CHEST, PANEL, SPAWNER, DISPENSER }
     public record Setup(BlockPos pos, SetupKind kind, BuildingBinding binding) {
@@ -176,6 +176,16 @@ public final class BuildingPlacement {
                     };
                     state = LegacyBlockStateResolver.resolve(new LegacyPalette.Point(color, point.label(), "minecraft:" + block, "", false, "", "", 0));
                 }
+                else if (SOURCE_BLOCKS.containsKey(point.label())) state = LegacyBlockStateResolver.resolve(new LegacyPalette.Point(color,
+                        point.label(), "minecraft:" + SOURCE_BLOCKS.get(point.label()), "", false, "", "", 0));
+                else if (TREE_SPAWNS.containsKey(point.label())) state = LegacyBlockStateResolver.resolve(new LegacyPalette.Point(color,
+                        point.label(), "minecraft:" + TREE_SPAWNS.get(point.label()), "", false, "", "", 0));
+                else if (bannerFacing(point.label()) != null) state = Blocks.WALL_BANNER.white().defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.WallBannerBlock.FACING, bannerFacing(point.label()));
+                else if (point.label().startsWith("cultureBannerStanding") || point.label().startsWith("villageBannerStanding"))
+                    state = Blocks.BANNER.white().defaultBlockState();
+                // Wall decorations were entities in the original; their positions stay indexed for the decoration layer.
+                else if (DECORATION_MARKERS.stream().anyMatch(point.label()::startsWith)) state = Blocks.AIR.defaultBlockState();
                 else throw new IllegalArgumentException("Unsupported special point: " + point.label());
                 Rotation rotation = switch (orientation) {
                     case 1 -> Rotation.COUNTERCLOCKWISE_90;
@@ -255,16 +265,33 @@ public final class BuildingPlacement {
             }
         }
         connectChestPairs(changes, setups, planned, issues);
+        // Panels hang on the first sturdy wall; a panel with no wall is left out, as the original sign would drop.
+        Set<BlockPos> unsupportedPanels = new HashSet<>();
         for (var setup : setups) if (setup.kind() == SetupKind.PANEL) {
-            Direction facing = planned.get(setup.pos()).getValue(WallSignBlock.FACING);
-            if (!sturdy(planned, setup.pos().relative(facing.getOpposite()), facing))
-                issues.add("Panel has no planned support at " + setup.pos());
+            BlockState panel = planned.get(setup.pos());
+            Direction facing = panel.getValue(WallSignBlock.FACING);
+            if (sturdy(planned, setup.pos().relative(facing.getOpposite()), facing)) continue;
+            Direction supported = null;
+            for (Direction direction : Direction.Plane.HORIZONTAL)
+                if (sturdy(planned, setup.pos().relative(direction.getOpposite()), direction)) { supported = direction; break; }
+            if (supported == null) { unsupportedPanels.add(setup.pos()); continue; }
+            BlockState turned = panel.setValue(WallSignBlock.FACING, supported);
+            planned.put(setup.pos(), turned);
+            for (int i = 0; i < changes.size(); i++)
+                if (changes.get(i).pos().equals(setup.pos())) changes.set(i, new Change(setup.pos(), turned, changes.get(i).secondPass()));
+        }
+        if (!unsupportedPanels.isEmpty()) {
+            setups.removeIf(setup -> unsupportedPanels.contains(setup.pos()));
+            for (int i = 0; i < changes.size(); i++)
+                if (unsupportedPanels.contains(changes.get(i).pos())) changes.set(i, new Change(changes.get(i).pos(), Blocks.AIR.defaultBlockState(), false));
+            unsupportedPanels.forEach(pos -> planned.put(pos, Blocks.AIR.defaultBlockState()));
         }
         for (int i = 0; i < changes.size(); i++) {
             var change = changes.get(i);
             if (!guessedTorches.contains(change.pos())) continue;
             BlockState below = planned.get(change.pos().below());
-            if (below != null && below.isFaceSturdy(EmptyBlockGetter.INSTANCE, change.pos().below(), Direction.UP)) continue;
+            // A torch on unplanned ground, a fence or a wall post stands as in the original.
+            if (below == null || below.isFaceSturdy(EmptyBlockGetter.INSTANCE, change.pos().below(), Direction.UP, net.minecraft.world.level.block.SupportType.CENTER)) continue;
             BlockState wallTorch = null;
             for (Direction direction : List.of(Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH)) {
                 BlockPos neighbor = change.pos().relative(direction);
@@ -274,7 +301,8 @@ public final class BuildingPlacement {
                     break;
                 }
             }
-            if (wallTorch == null) issues.add("Torch has no planned support at " + change.pos());
+            // Unsupported torches were dropped by the original second pass; skip them instead of rejecting the plan.
+            if (wallTorch == null) changes.set(i, new Change(change.pos(), Blocks.AIR.defaultBlockState(), false));
             else changes.set(i, new Change(change.pos(), wallTorch, true));
         }
         Map<BlockPos, BlockState> treeBlocks = new LinkedHashMap<>();
@@ -290,12 +318,12 @@ public final class BuildingPlacement {
                 issues.add("Tree marker has no trunk at " + marker.getKey());
                 continue;
             }
+            // Building blocks and earlier trees win; the original generator never overwrote solid blocks.
+            if (treeBlocks.containsKey(marker.getKey())) continue;
             for (var block : generated.entrySet()) {
                 BlockState plannedState = planned.get(block.getKey());
-                if (plannedState != null && !plannedState.isAir())
-                    issues.add("Tree overlaps planned building block at " + block.getKey());
-                if (treeBlocks.putIfAbsent(block.getKey(), block.getValue()) != null)
-                    issues.add("Tree markers overlap at " + block.getKey());
+                if (plannedState != null && !plannedState.isAir()) continue;
+                treeBlocks.putIfAbsent(block.getKey(), block.getValue());
             }
         }
         if (!treeBlocks.isEmpty()) {
@@ -330,10 +358,17 @@ public final class BuildingPlacement {
 
     private static void expandDoors(List<Change> changes, Map<BlockPos, BlockState> planned, Set<String> issues) {
         Map<BlockPos, BlockState> expanded = new LinkedHashMap<>();
+        Set<BlockPos> orphans = new HashSet<>();
         for (var change : changes) {
             BlockState lower = change.state();
             if (!(lower.getBlock() instanceof DoorBlock) || lower.getValue(DoorBlock.HALF) != DoubleBlockHalf.LOWER) continue;
-            if (lower.is(Blocks.OAK_DOOR)) {
+            BlockState declaredUpper = planned.get(change.pos().above());
+            boolean explicitUpper = declaredUpper != null && declaredUpper.is(lower.getBlock())
+                    && declaredUpper.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER;
+            if (explicitUpper) {
+                // Legacy door metadata stores the hinge on the upper half and the facing on the lower half.
+                lower = lower.setValue(DoorBlock.HINGE, declaredUpper.getValue(DoorBlock.HINGE));
+            } else if (lower.is(Blocks.OAK_DOOR)) {
                 // Original autoGuessLaddersDoorsStairs only adjusts oak door hinges.
                 Direction facing = lower.getValue(DoorBlock.FACING);
                 BlockPos left = change.pos().relative(facing.getCounterClockWise());
@@ -345,7 +380,7 @@ public final class BuildingPlacement {
             BlockPos upperPos = change.pos().above();
             BlockState upper = lower.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER);
             BlockState existing = planned.get(upperPos);
-            if (existing != null && !existing.isAir() && !existing.equals(upper)) {
+            if (existing != null && !existing.isAir() && !existing.equals(upper) && !explicitUpper) {
                 issues.add("Door upper half overlaps planned block at " + upperPos);
                 continue;
             }
@@ -354,10 +389,33 @@ public final class BuildingPlacement {
         }
         for (var change : changes) if (change.state().getBlock() instanceof DoorBlock
                 && change.state().getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER
-                && !change.state().equals(expanded.get(change.pos())))
-            issues.add("Door upper half has no matching lower half at " + change.pos());
-        changes.removeIf(change -> expanded.containsKey(change.pos()));
+                && !(expanded.get(change.pos()) instanceof BlockState generated && generated.is(change.state().getBlock())))
+            // An upper half without its lower half cannot survive; the original lost it on the first block update.
+            orphans.add(change.pos());
+        changes.removeIf(change -> expanded.containsKey(change.pos()) || orphans.contains(change.pos()));
+        orphans.forEach(pos -> { if (!expanded.containsKey(pos)) planned.remove(pos); });
         expanded.forEach((pos, state) -> { changes.add(new Change(pos, state, true)); planned.put(pos, state); });
+    }
+
+    /** Resource blocks that mining goals harvest, as in the original quarry and mine plans. */
+    static final Map<String, String> SOURCE_BLOCKS = Map.of("stonesource", "stone", "sandsource", "sand", "sandstonesource", "sandstone",
+            "gravelsource", "gravel", "claysource", "clay", "dioritesource", "diorite", "redsandstonesource", "red_sandstone",
+            "snowsource", "snow_block", "icesource", "ice");
+    /** Grove markers become saplings that grow into the planned species. */
+    static final Map<String, String> TREE_SPAWNS = Map.of("oakspawn", "oak_sapling", "pinespawn", "spruce_sapling",
+            "birchspawn", "birch_sapling", "acaciaspawn", "acacia_sapling", "darkoakspawn", "dark_oak_sapling", "junglespawn", "jungle_sapling");
+    static final List<String> DECORATION_MARKERS = List.of("byzantineicon", "wallcarpet", "tapestry", "indianstatue", "mayanstatue", "hidehanging");
+
+    static Direction bannerFacing(String label) {
+        if (!label.startsWith("cultureBannerWall") && !label.startsWith("villageBannerWall")) return null;
+        String side = label.substring(label.indexOf("Wall") + 4).toLowerCase(Locale.ROOT);
+        return switch (side) {
+            case "north" -> Direction.NORTH;
+            case "south" -> Direction.SOUTH;
+            case "east" -> Direction.EAST;
+            case "west" -> Direction.WEST;
+            default -> null;
+        };
     }
 
     private static boolean chestMarker(String label) {

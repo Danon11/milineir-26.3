@@ -1,13 +1,25 @@
 {
   "variants": {
-    "type=bottom": {
+    "axis=x,type=bottom": {
       "model": "millenaire:block/byzantine_tiles_slab_bottom"
     },
-    "type=top": {
+    "axis=z,type=bottom": {
+      "model": "millenaire:block/byzantine_tiles_slab_bottom",
+      "y": 90
+    },
+    "axis=x,type=top": {
       "model": "millenaire:block/byzantine_tiles_slab_top"
     },
-    "type=double": {
+    "axis=z,type=top": {
+      "model": "millenaire:block/byzantine_tiles_slab_top",
+      "y": 90
+    },
+    "axis=x,type=double": {
       "model": "millenaire:block/byzantine_tiles"
+    },
+    "axis=z,type=double": {
+      "model": "millenaire:block/byzantine_tiles",
+      "y": 90
     }
   }
 }
