@@ -128,6 +128,7 @@ public final class MillenaireBrain extends Goal {
 
     private static int builtInPriority(String name) {
         return switch (name) {
+            case "bringbackresourceshome" -> 60;
             case "chat" -> 15;
             case "gosocialise" -> 10;
             case "gorest" -> 5;
@@ -148,6 +149,15 @@ public final class MillenaireBrain extends Goal {
                 var partner = villager.level().getEntitiesOfClass(MillVillagerEntity.class, villager.getBoundingBox().inflate(12),
                         other -> other != villager && !other.isSleeping()).stream().findAny();
                 yield partner.map(other -> (Task) new ChatTask(other)).orElse(null);
+            }
+            case "bringbackresourceshome" -> {
+                if (context == null) yield null;
+                var profile = VillagerSpawning.snapshot().profiles().get(villager.profileId());
+                if (profile == null) yield null;
+                int carried = profile.bringBackHomeGoods().stream().mapToInt(good -> Math.max(0, villager.carried(good)
+                        - profile.startingInventory().getOrDefault(good, 0))).sum();
+                if (carried < 16 && !(carried > 0 && night(villager.level() instanceof ServerLevel server ? server.getDefaultClockTime() : 0))) yield null;
+                yield new DeliverTask(context, profile);
             }
             default -> null; // other built-in goals are not ported yet
         };
@@ -210,13 +220,13 @@ public final class MillenaireBrain extends Goal {
         Optional<BlockState> crop = cropState(goal);
         if (crop.isEmpty()) return null;
         String seed = goal.source().first("seed", "").trim().toLowerCase(Locale.ROOT);
-        if (!seed.isEmpty() && store.count(seed) <= 0) return null;
+        if (!seed.isEmpty() && villager.carried(seed) <= 0 && store.count(seed) <= 0) return null;
         ServerLevel level = context.level();
         for (BlockPos soil : context.points(building, GoalRules.soilFor(goal.cropType()))) {
             if (!level.isLoaded(soil) || !level.getBlockState(soil.above()).isAir()) continue;
             return new WorkTask(goal, slot, soil.above(), () -> {
                 if (!level.getBlockState(soil.above()).isAir()) return false;
-                if (!seed.isEmpty() && context.store(building).remove(seed, 1) == 0) return false;
+                if (!seed.isEmpty() && villager.changeCarried(seed, -1) == 0 && context.store(building).remove(seed, 1) == 0) return false;
                 BlockState ground = level.getBlockState(soil);
                 if (!(crop.get().getBlock() instanceof CropBlock) || ground.getBlock() instanceof FarmlandBlock) {
                     // flowers grow on the existing dirt or grass
@@ -243,8 +253,8 @@ public final class MillenaireBrain extends Goal {
             return new WorkTask(goal, slot, plant, () -> {
                 if (!ripe(level.getBlockState(plant), crop.get())) return false;
                 level.destroyBlock(plant, false, villager);
-                var target = context.store(building);
-                GoalRules.rollHarvest(goal, random).forEach(target::add);
+                // Harvest is carried; bringbackresourceshome takes it to the house, as in the original.
+                GoalRules.rollHarvest(goal, random).forEach(villager::changeCarried);
                 return true;
             });
         }
@@ -333,6 +343,26 @@ public final class MillenaireBrain extends Goal {
         }
         @Override void complete() {
             nextAllowed.put(goalName, villager.level().getGameTime() + 200);
+        }
+    }
+
+    /** Carries harvested goods home, keeping the villager's own starting stock (seeds, tools). */
+    private final class DeliverTask extends Task {
+        private final VillageContext context;
+        private final org.millenaire.fabric.villager.VillagerProfile profile;
+        DeliverTask(VillageContext context, org.millenaire.fabric.villager.VillagerProfile profile) {
+            super("bringbackresourceshome", context.workPoint(context.home()), 20);
+            this.context = context;
+            this.profile = profile;
+        }
+        @Override void complete() {
+            var home = context.store(context.home());
+            for (String good : profile.bringBackHomeGoods()) {
+                int surplus = villager.carried(good) - profile.startingInventory().getOrDefault(good, 0);
+                if (surplus <= 0) continue;
+                int stored = home.add(good, surplus);
+                villager.changeCarried(good, -stored);
+            }
         }
     }
 

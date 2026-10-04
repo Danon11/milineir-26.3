@@ -252,7 +252,8 @@ public final class MillenaireCommands {
         var villagers = source.getLevel().getEntitiesOfClass(org.millenaire.fabric.villager.MillVillagerEntity.class,
                 net.minecraft.world.phys.AABB.ofSize(source.getPosition(), 128, 128, 128));
         String message = villagers.stream().map(v -> v.getName().getString() + " [" + v.profileId() + "] "
-                        + v.blockPosition().toShortString() + " " + (v.isSleeping() ? "sleeping" : v.activity().orElse("idle")))
+                        + v.blockPosition().toShortString() + " " + (v.isSleeping() ? "sleeping" : v.activity().orElse("idle"))
+                        + (v.carriedGoods().isEmpty() ? "" : " carrying " + v.carriedGoods()))
                 .collect(Collectors.joining("\n", villagers.size() + " villagers nearby:\n", ""));
         source.sendSuccess(() -> Component.literal(message), false);
         return villagers.size();

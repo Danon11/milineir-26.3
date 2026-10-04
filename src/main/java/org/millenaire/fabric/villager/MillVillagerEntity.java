@@ -37,6 +37,8 @@ public class MillVillagerEntity extends PathfinderMob {
     private String firstName = "";
     private String familyName = "";
     private String building = "";
+    /** Goods carried by the villager, by itemlist alias. */
+    private final java.util.Map<String, Integer> inventory = new java.util.TreeMap<>();
     /** Created in registerGoals, which the Mob constructor calls before field initializers run. */
     private org.millenaire.fabric.goal.MillenaireBrain brain;
 
@@ -79,6 +81,8 @@ public class MillVillagerEntity extends PathfinderMob {
         entityData.set(CLOTH_0, appearance.cloth0().orElse(""));
         entityData.set(CLOTH_1, appearance.cloth1().orElse(""));
         entityData.set(MODEL, (byte) profile.model().ordinal());
+        inventory.clear();
+        inventory.putAll(profile.startingInventory());
         getAttribute(Attributes.MAX_HEALTH).setBaseValue(profile.health());
         getAttribute(Attributes.SCALE).setBaseValue(appearance.scale());
         setHealth(profile.health());
@@ -105,6 +109,7 @@ public class MillVillagerEntity extends PathfinderMob {
         output.putString("cloth_0", entityData.get(CLOTH_0));
         output.putString("cloth_1", entityData.get(CLOTH_1));
         output.putInt("model", entityData.get(MODEL));
+        output.store("inventory", com.mojang.serialization.Codec.unboundedMap(com.mojang.serialization.Codec.STRING, com.mojang.serialization.Codec.INT), inventory);
     }
 
     @Override
@@ -119,10 +124,23 @@ public class MillVillagerEntity extends PathfinderMob {
         entityData.set(CLOTH_0, input.getStringOr("cloth_0", ""));
         entityData.set(CLOTH_1, input.getStringOr("cloth_1", ""));
         entityData.set(MODEL, (byte) VillagerProfile.Model.byId(input.getIntOr("model", 0)).ordinal());
+        inventory.clear();
+        input.read("inventory", com.mojang.serialization.Codec.unboundedMap(com.mojang.serialization.Codec.STRING, com.mojang.serialization.Codec.INT))
+                .ifPresent(inventory::putAll);
     }
 
     @Override
     public boolean removeWhenFarAway(double distance) { return false; }
+
+    public int carried(String good) { return inventory.getOrDefault(good, 0); }
+    public java.util.Map<String, Integer> carriedGoods() { return java.util.Collections.unmodifiableMap(inventory); }
+    /** Adds or removes carried goods; never goes below zero. Returns the applied change. */
+    public int changeCarried(String good, int delta) {
+        int current = inventory.getOrDefault(good, 0);
+        int next = Math.max(0, current + delta);
+        if (next == 0) inventory.remove(good); else inventory.put(good, next);
+        return next - current;
+    }
 
     public java.util.Optional<String> activity() { return brain == null ? java.util.Optional.empty() : brain.currentLabel(); }
     public String culture() { return culture; }
