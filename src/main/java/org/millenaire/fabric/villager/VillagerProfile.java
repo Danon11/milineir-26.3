@@ -14,7 +14,7 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
                               Map<String, List<List<String>>> clothes, float baseScale, int health,
                               String firstNameList, String familyNameList, List<String> goals, List<String> tags,
                               Map<String, Integer> startingInventory, List<String> bringBackHomeGoods, String defaultWeapon,
-                              String maleChild, String femaleChild) {
+                              String maleChild, String femaleChild, Map<String, Integer> requiredGoods, List<String> collectGoods) {
     public static final String FREE_CLOTHES = "free";
     public static final String NATURAL_CLOTHES = "natural";
     private static final float SCALE_MIN = 0.8F, SCALE_VARIATION = 0.09F;
@@ -46,6 +46,8 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
         defaultWeapon = defaultWeapon == null ? "" : defaultWeapon;
         maleChild = maleChild == null ? "" : maleChild;
         femaleChild = femaleChild == null ? "" : femaleChild;
+        requiredGoods = requiredGoods == null ? Map.of() : Map.copyOf(requiredGoods);
+        collectGoods = collectGoods == null ? List.of() : List.copyOf(collectGoods);
         if (textures.isEmpty()) throw new IllegalArgumentException("Villager type " + culture + "/" + type + " has no texture");
         if (!(baseScale > 0) || health <= 0) throw new IllegalArgumentException("Invalid scale or health for " + culture + "/" + type);
     }
@@ -84,11 +86,20 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
             if (parts.length != 2) throw new IllegalArgumentException("Invalid startingInv '" + value + "' in " + culture + "/" + type);
             inventory.merge(parts[0].trim().toLowerCase(Locale.ROOT), org.millenaire.fabric.content.LegacyNumbers.product(parts[1]), Integer::sum);
         }
+        // requiredGood=good,count: what the villager's household keeps in stock (fetched by getgoodshousehold).
+        Map<String, Integer> required = new LinkedHashMap<>();
+        for (String value : document.values("requiredgood")) {
+            String[] parts = value.split(",");
+            if (parts.length != 2) continue;
+            try { required.merge(parts[0].trim().toLowerCase(Locale.ROOT), Integer.parseInt(parts[1].trim()), Math::max); }
+            catch (NumberFormatException ignored) {}
+        }
         List<String> bringBack = document.values("bringbackhomegood").stream().map(good -> good.trim().toLowerCase(Locale.ROOT)).toList();
         return new VillagerProfile(culture, type, model, female, document.values("texture").stream().map(texture -> texture.trim().toLowerCase(Locale.ROOT)).toList(),
                 clothes, scale, health, firstNames, familyNames, document.values("goal").stream().map(goal -> goal.trim().toLowerCase(Locale.ROOT)).toList(), tags,
                 inventory, bringBack, last(document, "defaultweapon", "").toLowerCase(Locale.ROOT),
-                last(document, "malechild", "").toLowerCase(Locale.ROOT), last(document, "femalechild", "").toLowerCase(Locale.ROOT));
+                last(document, "malechild", "").toLowerCase(Locale.ROOT), last(document, "femalechild", "").toLowerCase(Locale.ROOT),
+                required, document.values("collectgood").stream().map(good -> good.trim().toLowerCase(Locale.ROOT)).filter(good -> !good.isEmpty()).toList());
     }
 
     private static String last(LegacyDocument document, String key, String fallback) {

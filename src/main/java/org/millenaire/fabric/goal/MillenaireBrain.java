@@ -129,6 +129,15 @@ public final class MillenaireBrain extends Goal {
     private static int builtInPriority(String name) {
         return switch (name) {
             case "bringbackresourceshome" -> 60;
+            case "getgoodshousehold", "delivergoodshousehold" -> 55;
+            case "deliverresourcesshop" -> 58;
+            case "gethousethresources" -> 50;
+            case "gathergoods" -> 52;
+            case "keepstall" -> 35;
+            case "breed", "shearsheep" -> 42;
+            case "plantsugarcane", "harvestsugarcane" -> 44;
+            case "fish", "fishinuit" -> 30;
+            case "visitinn", "visitbuilding", "merchantvisitinn", "merchantvisitbuilding" -> 12;
             case "choptrees" -> 45;
             case "construction" -> 70;
             case "plantsaplings" -> 40;
@@ -178,8 +187,46 @@ public final class MillenaireBrain extends Goal {
                     .map(plan -> (Task) new BuiltInWorkTask(name, plan, 120)).orElse(null);
             case "plantsaplings" -> context == null ? null : ResourceGoals.plantCarriedSapling(context, villager, random)
                     .map(plan -> (Task) new BuiltInWorkTask(name, plan, 40)).orElse(null);
+            case "getgoodshousehold", "delivergoodshousehold" -> context == null ? null
+                    : chore(name, VillageChores.supplyHousehold(context, villager), 20);
+            case "deliverresourcesshop" -> context == null || profile() == null ? null
+                    : chore(name, VillageChores.deliverToShop(context, villager, profile(), night(context.level().getDefaultClockTime())), 20);
+            case "gethousethresources" -> context == null || profile() == null ? null
+                    : chore(name, VillageChores.collectForShops(context, villager, profile()), 20);
+            case "gathergoods" -> context == null || profile() == null ? null
+                    : chore(name, VillageChores.gatherDropped(context, villager, profile()), 10);
+            case "breed" -> context == null ? null : chore(name, VillageChores.breed(context), 60);
+            case "shearsheep" -> context == null ? null : chore(name, VillageChores.shear(context, villager, random), 40);
+            case "plantsugarcane" -> context == null ? null : chore(name, VillageChores.plantSugarCane(context, context.home()), 40);
+            case "harvestsugarcane" -> context == null ? null : chore(name, VillageChores.harvestSugarCane(context, context.home(), villager), 40);
+            case "fish", "fishinuit" -> context == null ? null : chore(name, VillageChores.fish(context, villager, random), 400);
+            case "keepstall" -> {
+                // Sellers mind their stall during the day, where players find them to trade.
+                if (context == null || night(context.level().getDefaultClockTime())) yield null;
+                var stalls = context.points(context.home(), "sellingPos");
+                if (stalls.isEmpty()) stalls = context.withTags(List.of("market")).stream().flatMap(b -> context.points(b, "sellingPos").stream()).toList();
+                yield stalls.isEmpty() ? null : new IdleTask("keepstall", stalls.get(random.nextInt(stalls.size())), 600 + villager.getRandom().nextInt(600), name);
+            }
+            case "visitinn", "merchantvisitinn", "visitbuilding", "merchantvisitbuilding" -> {
+                if (context == null) yield null;
+                var places = name.endsWith("inn") ? context.withTags(List.of("inn"))
+                        : context.buildings().stream().filter(b -> b != context.home()).toList();
+                if (places.isEmpty()) yield null;
+                var place = places.get(random.nextInt(places.size()));
+                yield new IdleTask(name, context.leisurePoint(place).orElse(context.workPoint(place)), 300 + villager.getRandom().nextInt(300), name);
+            }
+            // Covered elsewhere: fighting in VillagerCombat, growing up in VillagePopulation.
+            case "huntmonster", "defendvillage", "becomeadult" -> null;
             default -> null; // other built-in goals are not ported yet
         };
+    }
+
+    private org.millenaire.fabric.villager.VillagerProfile profile() {
+        return VillagerSpawning.snapshot().profiles().get(villager.profileId());
+    }
+
+    private Task chore(String name, Optional<ResourceGoals.Plan> plan, int ticks) {
+        return plan.map(p -> (Task) new BuiltInWorkTask(name, p, ticks)).orElse(null);
     }
 
     private Task dataTask(GoalDefinition goal, VillageContext context) {
@@ -438,6 +485,7 @@ public final class MillenaireBrain extends Goal {
         private final GoalDefinition goal;
         private final String slot;
         private final java.util.function.BooleanSupplier effect;
+        private ItemStack previousHand = ItemStack.EMPTY;
 
         WorkTask(GoalDefinition goal, String slot, BlockPos target, java.util.function.BooleanSupplier effect) {
             super(goal.key(), target, Math.min(goal.durationTicks(), 600));
@@ -449,6 +497,7 @@ public final class MillenaireBrain extends Goal {
         @Override void begin() {
             ACTIVE.merge(slot, 1, Integer::sum);
             ACTIVE.merge(goal.key(), 1, Integer::sum);
+            previousHand = villager.getMainHandItem().copy();
             hold(InteractionHand.MAIN_HAND, goal.heldItems().isEmpty() ? null : goal.heldItems().getFirst());
             super.begin();
         }
@@ -465,7 +514,7 @@ public final class MillenaireBrain extends Goal {
         @Override void end() {
             ACTIVE.computeIfPresent(slot, (key, count) -> count <= 1 ? null : count - 1);
             ACTIVE.computeIfPresent(goal.key(), (key, count) -> count <= 1 ? null : count - 1);
-            villager.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            villager.setItemSlot(EquipmentSlot.MAINHAND, previousHand); // the villager's weapon, if it has one
         }
 
         private void hold(InteractionHand hand, String good) {
