@@ -35,6 +35,10 @@ public final class MillenaireFabric implements ModInitializer {
                         LOGGER.log(System.Logger.Level.INFO, "Indexed " + catalog.plans().size() + " building plans, "
                                 + catalog.count("villages") + " village types, " + catalog.count("villagers") + " villager types");
                         for (String diagnostic : catalog.diagnostics()) LOGGER.log(System.Logger.Level.WARNING, diagnostic);
+                        MillenaireCommands.loadQuestTexts(FabricLoader.getInstance().getGameDir());
+                        var quests = MillenaireCommands.questCatalog();
+                        LOGGER.log(System.Logger.Level.INFO, "Loaded " + quests.quests().size() + " quest definitions");
+                        for (String diagnostic : quests.diagnostics()) LOGGER.log(System.Logger.Level.WARNING, diagnostic);
                         LOGGER.log(System.Logger.Level.INFO, "Loaded " + cultures.size()
                                 + " Millenaire culture descriptors");
                     } catch (IOException exception) {

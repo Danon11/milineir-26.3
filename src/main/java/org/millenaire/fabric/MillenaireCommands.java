@@ -18,6 +18,9 @@ import net.minecraft.server.level.ServerLevel;
 import org.millenaire.fabric.culture.CultureDescriptor;
 import org.millenaire.fabric.content.LegacyContentCatalog;
 import org.millenaire.fabric.content.LegacyCatalogLoader;
+import org.millenaire.fabric.quest.QuestCatalog;
+import org.millenaire.fabric.quest.QuestDefinition;
+import org.millenaire.fabric.quest.QuestTexts;
 import net.fabricmc.loader.api.FabricLoader;
 import java.io.IOException;
 
@@ -29,8 +32,22 @@ import java.util.stream.Collectors;
 public final class MillenaireCommands {
     private static volatile List<CultureDescriptor> cultureDescriptors = List.of();
     private static volatile LegacyContentCatalog contentCatalog = LegacyContentCatalog.empty();
+    private static volatile QuestCatalog questCatalog = QuestCatalog.empty();
+    private static volatile QuestTexts questTexts = QuestTexts.empty();
 
-    public static void setContentCatalog(LegacyContentCatalog catalog) { contentCatalog = catalog; }
+    public static void setContentCatalog(LegacyContentCatalog catalog) {
+        QuestCatalog quests = QuestCatalog.from(catalog);
+        contentCatalog = catalog;
+        questCatalog = quests;
+    }
+
+    public static QuestCatalog questCatalog() { return questCatalog; }
+
+    /** Loads quest strings from the same bundled and custom roots as the content catalog. */
+    public static void loadQuestTexts(java.nio.file.Path game) throws IOException {
+        java.nio.file.Path mods = game.toAbsolutePath().normalize().resolve("mods");
+        questTexts = QuestTexts.load(QuestTexts.FALLBACK_LANGUAGE, mods.resolve("millenaire"), mods.resolve("millenaire-custom"));
+    }
 
     private MillenaireCommands() {
     }
@@ -65,6 +82,22 @@ public final class MillenaireCommands {
                                     return builder.buildFuture();
                                 })
                                 .executes(context -> villageTypes(context.getSource(), StringArgumentType.getString(context, "culture"))))))
+                .then(Commands.literal("quest")
+                        .then(Commands.literal("list").executes(context -> listQuests(context.getSource(), ""))
+                                .then(Commands.argument("group", StringArgumentType.string())
+                                        .suggests((context, builder) -> {
+                                            questCatalog.quests().values().stream().map(QuestDefinition::group).distinct()
+                                                    .filter(group -> group.startsWith(builder.getRemaining())).forEach(builder::suggest);
+                                            return builder.buildFuture();
+                                        })
+                                        .executes(context -> listQuests(context.getSource(), StringArgumentType.getString(context, "group")))))
+                        .then(Commands.literal("info").then(Commands.argument("quest", StringArgumentType.greedyString())
+                                .suggests((context, builder) -> {
+                                    questCatalog.quests().keySet().stream().filter(path -> path.startsWith(builder.getRemaining()))
+                                            .forEach(builder::suggest);
+                                    return builder.buildFuture();
+                                })
+                                .executes(context -> questInfo(context.getSource(), StringArgumentType.getString(context, "quest"))))))
                 .then(Commands.literal("culture")
                         .then(Commands.literal("list").executes(context -> listCultures(context.getSource()))))
                 .then(Commands.literal("content")
@@ -330,7 +363,8 @@ public final class MillenaireCommands {
                 + " building PNG plans, " + catalog.count("villages") + " village definitions, "
                 + catalog.count("villagers") + " villager definitions, " + catalog.count("shops") + " shops, "
                 + catalog.globalDocuments().size() + " shared documents, " + catalog.goods().goods().size() + " goods aliases, "
-                + catalog.diagnostics().size() + " diagnostics.";
+                + questCatalog.quests().size() + " quests, "
+                + (catalog.diagnostics().size() + questCatalog.diagnostics().size()) + " diagnostics.";
         source.sendSuccess(() -> Component.literal(message), false);
         return catalog.plans().size();
     }
@@ -338,11 +372,59 @@ public final class MillenaireCommands {
     private static int reloadContent(CommandSourceStack source) {
         try {
             setContentCatalog(LegacyCatalogLoader.loadGame(FabricLoader.getInstance().getGameDir()));
+            loadQuestTexts(FabricLoader.getInstance().getGameDir());
             return contentStats(source);
         } catch (IOException | IllegalArgumentException exception) {
             source.sendFailure(Component.literal("Content reload failed: " + exception.getMessage()));
             return 0;
         }
+    }
+
+    private static int listQuests(CommandSourceStack source, String group) {
+        var quests = questCatalog.quests().values().stream()
+                .filter(quest -> group.isEmpty() || quest.group().equals(group)).toList();
+        if (quests.isEmpty()) {
+            source.sendFailure(Component.literal(group.isEmpty() ? "No quests are loaded." : "No quests in group " + group));
+            return 0;
+        }
+        String message = quests.stream().map(quest -> quest.path() + " (" + quest.steps().size() + " steps"
+                        + (quest.requiresWorldActions() ? ", world actions" : "") + ")")
+                .collect(Collectors.joining("\n", quests.size() + " quests:\n", ""));
+        source.sendSuccess(() -> Component.literal(message), false);
+        return quests.size();
+    }
+
+    private static int questInfo(CommandSourceStack source, String path) {
+        var found = questCatalog.get(path.trim());
+        if (found.isEmpty()) {
+            source.sendFailure(Component.literal("Unknown quest: " + path));
+            return 0;
+        }
+        QuestDefinition quest = found.get();
+        var texts = questTexts;
+        StringBuilder message = new StringBuilder(quest.path()).append(": chance/hour=").append(quest.chancePerHour())
+                .append(", max simultaneous=").append(quest.maxSimultaneous()).append(", min reputation=").append(quest.minReputation());
+        if (!quest.requiredPlayerTags().isEmpty()) message.append("\nrequires player tags ").append(quest.requiredPlayerTags());
+        if (!quest.forbiddenPlayerTags().isEmpty()) message.append("\nforbidden player tags ").append(quest.forbiddenPlayerTags());
+        for (var villager : quest.villagers()) {
+            message.append("\nvillager ").append(villager.key()).append(": ")
+                    .append(villager.types().isEmpty() ? "tags " + villager.requiredTags() : villager.types());
+            villager.relatedTo().ifPresent(related -> message.append(", ").append(villager.relation().orElseThrow()
+                    .name().toLowerCase(java.util.Locale.ROOT)).append(" of ").append(related));
+        }
+        for (var step : quest.steps()) {
+            message.append("\nstep ").append(step.index()).append(" [").append(step.villager()).append(", ")
+                    .append("duration ").append(step.duration()).append("] ")
+                    .append(texts.text(quest.key(), step.index(), QuestTexts.Field.LABEL).orElse("(no label)"));
+            if (!step.requiredGoods().isEmpty()) message.append("; requires ").append(step.requiredGoods());
+            if (!step.rewardGoods().isEmpty()) message.append("; rewards ").append(step.rewardGoods());
+            if (step.rewardMoney() > 0) message.append("; money ").append(step.rewardMoney());
+            if (step.rewardReputation() > 0) message.append("; reputation +").append(step.rewardReputation());
+            if (step.penaltyReputation() > 0) message.append("; penalty -").append(step.penaltyReputation());
+        }
+        String text = message.toString();
+        source.sendSuccess(() -> Component.literal(text), false);
+        return quest.steps().size();
     }
 
     private static int goodInfo(CommandSourceStack source, String key) {
