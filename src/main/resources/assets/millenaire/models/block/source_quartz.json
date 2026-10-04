@@ -1,6 +1,6 @@
 {
   "parent": "millenaire:block/source",
   "textures": {
-    "sourceblock": "minecraft:blocks/quartz_ore"
+    "sourceblock": "minecraft:block/nether_quartz_ore"
   }
 }

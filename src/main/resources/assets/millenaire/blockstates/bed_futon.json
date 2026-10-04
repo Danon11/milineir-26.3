@@ -1,5 +1,9 @@
 {
-    "multipart": [
-        {   "apply": { "model": "millenaire:bed_futon" }}
-    ]
+  "multipart": [
+    {
+      "apply": {
+        "model": "millenaire:block/bed_futon"
+      }
+    }
+  ]
 }

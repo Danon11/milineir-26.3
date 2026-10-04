@@ -6,7 +6,7 @@
         "facing": "south"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_post"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_post"
       }
     },
     {
@@ -16,7 +16,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side_alt"
       }
     },
     {
@@ -26,7 +26,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside_alt",
         "y": 90
       }
     },
@@ -37,7 +37,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side"
       }
     },
     {
@@ -47,7 +47,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside"
       }
     },
     {
@@ -57,7 +57,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side_alt",
         "y": 90
       }
     },
@@ -68,7 +68,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside",
         "y": 270
       }
     },
@@ -79,7 +79,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side",
         "y": 90
       }
     },
@@ -90,7 +90,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside_alt"
       }
     },
     {
@@ -99,7 +99,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_post"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_post"
       }
     },
     {
@@ -109,7 +109,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side_alt"
       }
     },
     {
@@ -119,7 +119,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside_alt",
         "y": 90
       }
     },
@@ -130,7 +130,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side"
       }
     },
     {
@@ -140,7 +140,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside"
       }
     },
     {
@@ -150,7 +150,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side_alt",
         "y": 90
       }
     },
@@ -161,7 +161,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside",
         "y": 270
       }
     },
@@ -172,7 +172,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side",
         "y": 90
       }
     },
@@ -183,7 +183,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside_alt"
       }
     },
     {
@@ -192,7 +192,7 @@
         "facing": "west"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_post"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_post"
       }
     },
     {
@@ -202,7 +202,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side_alt"
       }
     },
     {
@@ -212,7 +212,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside_alt",
         "y": 90
       }
     },
@@ -223,7 +223,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side"
       }
     },
     {
@@ -233,7 +233,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside"
       }
     },
     {
@@ -243,7 +243,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side_alt",
         "y": 90
       }
     },
@@ -254,7 +254,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside",
         "y": 270
       }
     },
@@ -265,7 +265,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_side",
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_side",
         "y": 90
       }
     },
@@ -276,7 +276,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomleft_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomleft_noside_alt"
       }
     },
     {
@@ -285,7 +285,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_post"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_post"
       }
     },
     {
@@ -295,7 +295,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side_alt"
       }
     },
     {
@@ -305,7 +305,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside_alt",
         "y": 90
       }
     },
@@ -316,7 +316,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side"
       }
     },
     {
@@ -326,7 +326,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside"
       }
     },
     {
@@ -336,7 +336,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side_alt",
         "y": 90
       }
     },
@@ -347,7 +347,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside",
         "y": 270
       }
     },
@@ -358,7 +358,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_side",
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_side",
         "y": 90
       }
     },
@@ -369,7 +369,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_bottomright_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_bottomright_noside_alt"
       }
     },
     {
@@ -378,7 +378,7 @@
         "facing": "south"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_post"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_post"
       }
     },
     {
@@ -388,7 +388,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side_alt"
       }
     },
     {
@@ -398,7 +398,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside_alt",
         "y": 90
       }
     },
@@ -409,7 +409,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side"
       }
     },
     {
@@ -419,7 +419,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside"
       }
     },
     {
@@ -429,7 +429,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side_alt",
         "y": 90
       }
     },
@@ -440,7 +440,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside",
         "y": 270
       }
     },
@@ -451,7 +451,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side",
         "y": 90
       }
     },
@@ -462,7 +462,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside_alt"
       }
     },
     {
@@ -471,7 +471,7 @@
         "facing": "north"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_post"
+        "model": "millenaire:block/wooden_bars_rosette_topright_post"
       }
     },
     {
@@ -481,7 +481,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topright_side_alt"
       }
     },
     {
@@ -491,7 +491,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside_alt",
         "y": 90
       }
     },
@@ -502,7 +502,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side"
+        "model": "millenaire:block/wooden_bars_rosette_topright_side"
       }
     },
     {
@@ -512,7 +512,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside"
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside"
       }
     },
     {
@@ -522,7 +522,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topright_side_alt",
         "y": 90
       }
     },
@@ -533,7 +533,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside",
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside",
         "y": 270
       }
     },
@@ -544,7 +544,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side",
+        "model": "millenaire:block/wooden_bars_rosette_topright_side",
         "y": 90
       }
     },
@@ -555,7 +555,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside_alt"
       }
     },
     {
@@ -564,7 +564,7 @@
         "facing": "west"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_post"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_post"
       }
     },
     {
@@ -574,7 +574,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side_alt"
       }
     },
     {
@@ -584,7 +584,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside_alt",
         "y": 90
       }
     },
@@ -595,7 +595,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side"
       }
     },
     {
@@ -605,7 +605,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside"
       }
     },
     {
@@ -615,7 +615,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side_alt",
         "y": 90
       }
     },
@@ -626,7 +626,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside",
         "y": 270
       }
     },
@@ -637,7 +637,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_side",
+        "model": "millenaire:block/wooden_bars_rosette_topleft_side",
         "y": 90
       }
     },
@@ -648,7 +648,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topleft_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topleft_noside_alt"
       }
     },
     {
@@ -657,7 +657,7 @@
         "facing": "east"
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_post"
+        "model": "millenaire:block/wooden_bars_rosette_topright_post"
       }
     },
     {
@@ -667,7 +667,7 @@
         "south": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topright_side_alt"
       }
     },
     {
@@ -677,7 +677,7 @@
         "south": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside_alt",
         "y": 90
       }
     },
@@ -688,7 +688,7 @@
         "north": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side"
+        "model": "millenaire:block/wooden_bars_rosette_topright_side"
       }
     },
     {
@@ -698,7 +698,7 @@
         "north": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside"
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside"
       }
     },
     {
@@ -708,7 +708,7 @@
         "west": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side_alt",
+        "model": "millenaire:block/wooden_bars_rosette_topright_side_alt",
         "y": 90
       }
     },
@@ -719,7 +719,7 @@
         "west": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside",
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside",
         "y": 270
       }
     },
@@ -730,7 +730,7 @@
         "east": true
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_side",
+        "model": "millenaire:block/wooden_bars_rosette_topright_side",
         "y": 90
       }
     },
@@ -741,7 +741,7 @@
         "east": false
       },
       "apply": {
-        "model": "millenaire:wooden_bars_rosette_topright_noside_alt"
+        "model": "millenaire:block/wooden_bars_rosette_topright_noside_alt"
       }
     }
   ]

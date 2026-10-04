@@ -42,3 +42,15 @@ tasks.withType(JavaCompile).configureEach {
 tasks.test {
     useJUnitPlatform()
 }
+
+// Client game test (separate "gametest" source set, not shipped in the mod jar): opens a world,
+// spawns villagers of several cultures in front of the camera and saves screenshots.
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'millenaire-gametest'
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+    }
+}

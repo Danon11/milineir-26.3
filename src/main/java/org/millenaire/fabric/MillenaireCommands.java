@@ -255,6 +255,9 @@ public final class MillenaireCommands {
                 if (!prepared.supported()) reportVillageIssues(source, prepared.combined().issues());
                 return layout.buildings().size();
             }
+            // An explicit command may load the chunks under the layout; natural generation never does.
+            int loaded = loadChunks(source.getLevel(), prepared.combined().changes());
+            if (loaded > 0) source.sendSuccess(() -> Component.literal("Loaded " + loaded + " chunks under the layout."), false);
             if (action.equals("check") || action.equals("checkreplace")) {
                 var dimension = source.getLevel().dimension().identifier();
                 var issues = new java.util.ArrayList<>(BuildingPlacement.checkDestinations(prepared.combined(), BuildingPlacement.world(source.getLevel()), replace));
@@ -276,6 +279,23 @@ public final class MillenaireCommands {
             source.sendFailure(Component.literal("Village operation failed: " + exception.getMessage()));
             return 0;
         }
+    }
+
+    /** Loads (generating if needed) every chunk containing a block change, with one chunk of margin for terrain adaptation. */
+    private static int loadChunks(net.minecraft.server.level.ServerLevel level, List<BuildingPlacement.Change> changes) {
+        var chunks = new java.util.HashSet<Long>();
+        for (var change : changes)
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++)
+                    chunks.add(net.minecraft.world.level.ChunkPos.pack((change.pos().getX() >> 4) + dx, (change.pos().getZ() >> 4) + dz));
+        int loaded = 0;
+        for (long packed : chunks) {
+            int x = net.minecraft.world.level.ChunkPos.getX(packed), z = net.minecraft.world.level.ChunkPos.getZ(packed);
+            if (level.hasChunk(x, z)) continue;
+            level.getChunk(x, z);
+            loaded++;
+        }
+        return loaded;
     }
 
     private static void reportVillageIssues(CommandSourceStack source, List<String> issues) {

@@ -4,7 +4,7 @@
         "top": "#topblock",
         "side": "#sideblock",
         "particle" : "#topblock",
-        "dirt" : "minecraft:blocks/dirt"
+        "dirt" : "minecraft:block/dirt"
     },
     "elements": [
     	{   "from": [ 0, 0, 0 ],

@@ -4,7 +4,7 @@
         "bottom": "millenaire:blocks/empty",
         "top": "millenaire:blocks/bed_charpoy",
         "side": "millenaire:blocks/bed_charpoy_side",
-        "particle" : "blocks/planks_acacia"
+        "particle" : "minecraft:block/acacia_planks"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

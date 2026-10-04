@@ -1,6 +1,6 @@
 {
   "parent": "millenaire:block/source",
   "textures": {
-    "sourceblock": "minecraft:blocks/stone"
+    "sourceblock": "minecraft:block/stone"
   }
 }

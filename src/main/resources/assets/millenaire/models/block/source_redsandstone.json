@@ -1,6 +1,6 @@
 {
   "parent": "millenaire:block/source",
   "textures": {
-    "sourceblock": "minecraft:blocks/red_sandstone_normal"
+    "sourceblock": "minecraft:block/red_sandstone"
   }
 }

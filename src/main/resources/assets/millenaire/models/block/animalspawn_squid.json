@@ -1,7 +1,7 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "items/dye_powder_black",
-    "particle" : "items/dye_powder_black"
+    "all": "minecraft:item/black_dye",
+    "particle" : "minecraft:item/black_dye"
   }
 }

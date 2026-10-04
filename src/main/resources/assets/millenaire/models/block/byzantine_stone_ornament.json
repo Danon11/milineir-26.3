@@ -1,8 +1,8 @@
 {
     "parent": "millenaire:block/mixtiles",
     "textures": {
-        "baseblock": "minecraft:blocks/stonebrick",
-        "topblock": "minecraft:blocks/stonebrick",
+        "baseblock": "minecraft:block/stone_bricks",
+        "topblock": "minecraft:block/stone_bricks",
         "sideblock": "millenaire:blocks/byzantine_tiles_ornament",
         "frontblock": "millenaire:blocks/byzantine_tiles_ornament",
         "bottomblock": "millenaire:blocks/byzantine_tiles_top"

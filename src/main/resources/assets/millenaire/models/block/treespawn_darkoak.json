@@ -1,7 +1,7 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "blocks/sapling_roofed_oak",
-    "particle" : "blocks/sapling_roofed_oak"
+    "all": "minecraft:block/dark_oak_sapling",
+    "particle" : "minecraft:block/dark_oak_sapling"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "millenaire:block/source",
   "textures": {
-    "sourceblock": "minecraft:blocks/stone_diorite"
+    "sourceblock": "minecraft:block/diorite"
   }
 }

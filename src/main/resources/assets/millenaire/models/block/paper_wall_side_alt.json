@@ -1,5 +1,5 @@
 {
-    "parent": "block/pane_side_alt",
+    "parent": "minecraft:block/template_glass_pane_side_alt",
     "textures": {
         "edge": "millenaire:blocks/paper_wall_side",
         "pane": "millenaire:blocks/paper_wall",

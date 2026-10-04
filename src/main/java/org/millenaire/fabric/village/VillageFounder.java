@@ -85,6 +85,14 @@ public final class VillageFounder {
             for (var building : layout.buildings()) fillFoundation(level, building);
         }
         var prepared = VillagePlacement.prepare(layout, catalog.palette(), catalog.goods());
+        // Basements must not reach below the world floor (shallow superflat worlds): lift the whole village instead.
+        int lowest = prepared.combined().changes().stream().mapToInt(change -> change.pos().getY()).min().orElse(origin.y());
+        if (!adaptTerrain && lowest <= level.getMinY()) { // the floor layer itself is bedrock
+            var lifted = new LegacyBuildingPlan.Position(origin.x(), origin.y() + level.getMinY() + 1 - lowest, origin.z());
+            layout = VillageLayout.create(catalog, type, lifted, seed);
+            for (var building : layout.buildings()) fillFoundation(level, building);
+            prepared = VillagePlacement.prepare(layout, catalog.palette(), catalog.goods());
+        }
         var dimension = level.dimension().identifier();
         var settlements = FabricSettlementState.get(level.getServer());
         var world = BuildingPlacement.world(level);

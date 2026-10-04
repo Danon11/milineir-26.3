@@ -1,5 +1,5 @@
 {
-    "parent": "block/half_slab",
+    "parent": "minecraft:block/slab",
     "textures": {
         "bottom": "millenaire:blocks/painted_brick_pink",
         "top": "millenaire:blocks/painted_brick_pink",

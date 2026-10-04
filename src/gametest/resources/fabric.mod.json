@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "millenaire-gametest",
+  "version": "1.0.0",
+  "name": "Millénaire client game test",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": ["org.millenaire.fabric.gametest.VillagerRenderGameTest"]
+  },
+  "depends": { "millenaire": "*", "fabric-client-gametest-api-v1": "*" }
+}

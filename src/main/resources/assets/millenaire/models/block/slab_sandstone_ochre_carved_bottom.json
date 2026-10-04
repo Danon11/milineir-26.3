@@ -1,5 +1,5 @@
 {
-    "parent": "block/half_slab",
+    "parent": "minecraft:block/slab",
     "textures": {
         "bottom": "millenaire:blocks/sandstone_ochre_clean",
         "top": "millenaire:blocks/sandstone_ochre_clean",

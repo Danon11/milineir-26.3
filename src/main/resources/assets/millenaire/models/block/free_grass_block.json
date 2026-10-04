@@ -1,6 +1,6 @@
 {
   "parent": "millenaire:block/free",
   "textures": {
-    "freeblock": "minecraft:blocks/grass_top"
+    "freeblock": "minecraft:block/grass_block_top"
   }
 }

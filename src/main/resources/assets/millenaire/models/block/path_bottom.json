@@ -1,10 +1,10 @@
 {
-    "parent": "block/half_slab",
+    "parent": "minecraft:block/slab",
     "textures": {
         "top": "#topblock",
         "side": "#sideblock",
         "particle" : "#topblock",
-        "dirt" : "minecraft:blocks/dirt"
+        "dirt" : "minecraft:block/dirt"
     },
     "elements": [
     	{   "from": [ 0, 0, 0 ],

@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:directory",
+      "prefix": "blocks/",
+      "source": "blocks"
+    }
+  ]
+}

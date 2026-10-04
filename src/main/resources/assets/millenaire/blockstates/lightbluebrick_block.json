@@ -1,5 +1,7 @@
 {
-    "variants": {
-        "normal": { "model": "millenaire:lightbluebrick_block" }
+  "variants": {
+    "normal": {
+      "model": "millenaire:block/lightbluebrick_block"
     }
+  }
 }

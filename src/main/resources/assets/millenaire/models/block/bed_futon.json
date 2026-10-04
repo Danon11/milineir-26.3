@@ -1,10 +1,10 @@
 {
     "parent": "block/block",
     "textures": {
-        "bottom": "blocks/wool_colored_green",
-        "top": "blocks/wool_colored_green",
-        "side": "blocks/wool_colored_green",
-        "particle" : "blocks/wool_colored_green"
+        "bottom": "minecraft:block/green_wool",
+        "top": "minecraft:block/green_wool",
+        "side": "minecraft:block/green_wool",
+        "particle" : "minecraft:block/green_wool"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],
