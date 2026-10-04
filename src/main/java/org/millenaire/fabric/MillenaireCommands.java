@@ -100,6 +100,8 @@ public final class MillenaireCommands {
                         .then(Commands.literal("settlements").executes(context -> listSettlements(context.getSource())))
                         .then(lifecycleCommand())
                         .then(Commands.literal("villagers").executes(context -> listVillagers(context.getSource())))
+                        .then(Commands.literal("grow").executes(context -> growVillage(context.getSource(), false))
+                                .then(Commands.literal("rush").executes(context -> growVillage(context.getSource(), true))))
                         .then(villageAction("plan", false))
                         .then(villageAction("check", false))
                         .then(villageAction("checkreplace", true))
@@ -353,6 +355,16 @@ public final class MillenaireCommands {
             source.sendFailure(Component.literal("Villager spawn failed: " + exception.getMessage()));
             return 0;
         }
+    }
+
+    /** Runs one growth evaluation for the settlement at the command position; rush ignores costs and builders. */
+    private static int growVillage(CommandSourceStack source, boolean rush) {
+        var pos = BlockPos.containing(source.getPosition());
+        var settlement = FabricSettlementState.get(source.getServer()).containing(source.getLevel().dimension().identifier(), pos.getX(), pos.getZ());
+        if (settlement.isEmpty()) { source.sendFailure(Component.literal("No Millénaire settlement here.")); return 0; }
+        String result = org.millenaire.fabric.village.VillageGrowth.evaluate(source.getLevel(), settlement.get(), rush);
+        source.sendSuccess(() -> Component.literal(settlement.get().name() + ": " + result), true);
+        return 1;
     }
 
     private static int listVillagers(CommandSourceStack source) {

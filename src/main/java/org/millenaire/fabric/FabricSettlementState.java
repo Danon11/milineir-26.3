@@ -64,6 +64,20 @@ public final class FabricSettlementState extends SavedData {
         if (!issues.isEmpty()) throw new IllegalArgumentException(String.join("; ", issues));
         settlements.add(settlement); setDirty();
     }
+    /** Adds a building to a recorded settlement, or replaces the record of an upgraded building at the same origin. */
+    public void upsertBuilding(Settlement settlement, Building building, boolean replaceSameOriginAndKey) {
+        int index = settlements.indexOf(settlement);
+        if (index < 0) throw new IllegalArgumentException("Unknown settlement");
+        List<Building> buildings = new ArrayList<>(settlement.buildings());
+        if (replaceSameOriginAndKey) buildings.replaceAll(existing -> existing.placement().origin().equals(building.placement().origin())
+                && FabricBuildingState.planKey(existing.placement().plan()).equals(FabricBuildingState.planKey(building.placement().plan()))
+                ? new Building(building.placement(), existing.reservedArea(), existing.centre()) : existing);
+        else buildings.add(building);
+        settlements.set(index, new Settlement(settlement.dimension(), settlement.type(), settlement.name(), settlement.origin(),
+                settlement.seed(), settlement.radius(), buildings));
+        setDirty();
+    }
+
     public static Settlement from(Identifier dimension, VillagePlacement.Prepared prepared) {
         if (!prepared.supported()) throw new IllegalArgumentException("Cannot record an unsupported layout");
         var layout = prepared.layout();

@@ -550,6 +550,24 @@ public final class BuildingPlacement {
     private static boolean wallAttachment(BlockState state) {
         return state.is(Blocks.LADDER) || state.is(Blocks.WALL_TORCH) || state.is(Blocks.REDSTONE_WALL_TORCH);
     }
+    /**
+     * An upgrade is built over its own level: blocks that already stand are skipped, and existing chests and
+     * other block entities of the same block keep their contents instead of blocking the upgrade.
+     */
+    public static Prepared forUpgrade(Prepared prepared, WorldAccess world) {
+        Set<BlockPos> kept = new HashSet<>();
+        List<Change> changes = new ArrayList<>();
+        for (var change : prepared.changes()) {
+            BlockState existing = world.get(change.pos());
+            if (existing.equals(change.state())) { kept.add(change.pos()); continue; }
+            if (existing.hasBlockEntity() && existing.getBlock() == change.state().getBlock()) { kept.add(change.pos()); continue; }
+            changes.add(change);
+        }
+        return new Prepared(changes, prepared.issues(), prepared.servicePoints(),
+                prepared.setups().stream().filter(setup -> !kept.contains(setup.pos())).toList(),
+                prepared.startingStock().stream().filter(stock -> !kept.contains(stock.pos())).toList(), prepared.treeRoots());
+    }
+
     public static List<String> checkDestinations(Prepared prepared, WorldAccess world, boolean replace) {
         if (!prepared.supported()) return prepared.issues();
         Set<String> errors = new LinkedHashSet<>();

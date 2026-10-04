@@ -142,6 +142,13 @@ public final class VillageLayout {
         throw new IllegalStateException("Variant weight mismatch");
     }
 
+    /** Location for a building added to an existing village, clear of every recorded building area. */
+    public static Building locate(LegacyBuildingPlan plan, Position centre, int radius, List<Building> existing, Random random) {
+        validate(plan);
+        Building found = find(plan, centre, radius, existing, random);
+        return found == null ? null : new Building(found.plan(), found.origin(), found.rotation(), false, found.reservedArea(), Role.START);
+    }
+
     private static Building find(LegacyBuildingPlan plan, Position centre, int radius, List<Building> previous, Random random) {
         int minRadius = (int) (radius * decimal(plan.parameters(), "mindistance", 0));
         int maxRadius = (int) (radius * decimal(plan.parameters(), "maxdistance", 1));

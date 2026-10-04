@@ -130,6 +130,7 @@ public final class MillenaireBrain extends Goal {
         return switch (name) {
             case "bringbackresourceshome" -> 60;
             case "choptrees" -> 45;
+            case "construction" -> 70;
             case "plantsaplings" -> 40;
             case "chat" -> 15;
             case "gosocialise" -> 10;
@@ -160,6 +161,18 @@ public final class MillenaireBrain extends Goal {
                         - profile.startingInventory().getOrDefault(good, 0))).sum();
                 if (carried < 16 && !(carried > 0 && night(villager.level() instanceof ServerLevel server ? server.getDefaultClockTime() : 0))) yield null;
                 yield new DeliverTask(context, profile);
+            }
+            case "construction" -> {
+                if (context == null) yield null;
+                var settlement = org.millenaire.fabric.village.VillageGrowth.settlementOf(context.level().getServer(),
+                        context.home().dimension(), context.home().origin());
+                var project = settlement.flatMap(org.millenaire.fabric.village.VillageGrowth::pending).orElse(null);
+                if (project == null) yield null;
+                yield new BuiltInWorkTask(name, new ResourceGoals.Plan(project.site(), () -> {
+                    String result = org.millenaire.fabric.village.VillageGrowth.complete(context.level(), project);
+                    org.slf4j.LoggerFactory.getLogger("Millenaire").info("{}: {}", villager.getName().getString(), result);
+                    return result.startsWith("built");
+                }), 300);
             }
             case "choptrees" -> context == null ? null : ResourceGoals.chopTree(context, villager)
                     .map(plan -> (Task) new BuiltInWorkTask(name, plan, 120)).orElse(null);

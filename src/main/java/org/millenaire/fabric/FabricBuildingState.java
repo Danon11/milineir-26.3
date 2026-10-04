@@ -43,7 +43,7 @@ public final class FabricBuildingState extends SavedData {
         setDirty();
     }
     /** Plan identifier without its upgrade level: {@code norman:fountain_A1} becomes {@code norman:fountain_A}. */
-    static String planKey(String plan) { return plan.replaceAll("\\d+$", ""); }
+    public static String planKey(String plan) { return plan.replaceAll("\\d+$", ""); }
 
     public record PlacedBuilding(Identifier dimension, String plan, Position origin, int rotation, Map<String, List<Position>> servicePoints) {
         public PlacedBuilding {
