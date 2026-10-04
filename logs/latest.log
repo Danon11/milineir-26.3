@@ -1,0 +1,11 @@
+[20:08:25] [Test worker/INFO]: [STDOUT]: Vanilla palette states: supported=613, unsupported=0
+[20:08:28] [Test worker/INFO]: [STDOUT]: Catalog: cultures=7, plans=1811, villages=52, villagers=285, shops=84, global=560, diagnostics=1, unknown-color plans=0
+[20:08:28] [Test worker/INFO]: [STDOUT]: Missing building metadata: mayan/buildings/core/mayanacropolis_A.txt
+[20:08:28] [Test worker/INFO]: [STDOUT]: byzantines:customcontrolled: [Custom village centre is not supported yet: custom_villagecentre]
+[20:08:28] [Test worker/INFO]: [STDOUT]: indian:indian_customcontrolled: [Custom village centre is not supported yet: custom_villagecentre]
+[20:08:28] [Test worker/INFO]: [STDOUT]: japanese:japanese_customcontrolled: [Custom village centre is not supported yet: custom_villagecentre]
+[20:08:28] [Test worker/INFO]: [STDOUT]: mayan:mayan_customcontrolled: [Custom village centre is not supported yet: custom_villagecentre]
+[20:08:28] [Test worker/INFO]: [STDOUT]: norman:customcontrolled: [Custom village centre is not supported yet: custom_villagecentre]
+[20:08:29] [Test worker/INFO]: [STDOUT]: norman:hameau_abbatiale: [Start 1 (cattlefarm): No space within radius 50 for norman:cattlefarm_A0]
+[20:08:29] [Test worker/INFO]: [STDOUT]: Bundled starting-layout audit: 46/52 complete geometric layouts; terrain and palette support checked separately.
+[20:08:29] [Test worker/INFO]: [STDOUT]: Goods: aliases=492, concrete=491, wildcard=1, indexed starting rules=1007

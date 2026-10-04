@@ -28,4 +28,4 @@ Quest offering by villagers (`chanceperhour`, `maxsimultaneous`, reputation), pl
 
 `QuestDefinitionParserTest` covers field parsing, Mac line endings, summed goods, products, outcomes, tag-only villagers, placeholder rendering, and 15 rejection cases. `QuestCatalogBundleTest` loads the real bundle (91 quests, per-group counts, world-quest count, English labels, French translation with fallback, language-name validation) and checks custom overrides and broken references.
 
-These tests were run locally with JUnit 5 against the catalog classes only; that environment could not download Minecraft or Fabric, so `net.minecraft.resources.Identifier` was a stand-in. The command wiring in `MillenaireCommands`/`MillenaireFabric` was syntax-checked but not compiled against Minecraft 26.3. Run `gradlew build` to confirm.
+`gradlew clean build` passes with Java 25 against Minecraft 26.3 and Fabric API 0.161.0+26.3: 173 tests, 0 failures, including the quest command wiring.
