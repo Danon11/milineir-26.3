@@ -304,7 +304,11 @@ public final class LegacyBlockStateResolver {
             var matches = LegacyContentRegistry.origins().values().stream().filter(origin -> origin.kind().equals("block")
                     && origin.legacyId().equalsIgnoreCase(legacyId) && origin.metadata() == mappedMetadata).toList();
             if (matches.size() == 1) id = "millenaire:" + matches.getFirst().name();
-            else if (number != 0) throw new IllegalArgumentException("No unique migrated block for " + legacyId + "=" + number);
+            else if (number != 0 && name.startsWith("leaves_") && matches.isEmpty()) {
+                // Unmigrated leaf variants (e.g. fruiting olive leaves) fall back to the plain leaves block.
+                number = 0;
+                meta = null;
+            } else if (number != 0) throw new IllegalArgumentException("No unique migrated block for " + legacyId + "=" + number);
             String variant = values.remove("variant");
             if (variant != null) id = variantBlock(legacyId, variant);
         }

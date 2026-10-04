@@ -43,7 +43,7 @@ import java.util.*;
 
 /** Manual structure placement. All palette and destination checks precede the first write. */
 public final class BuildingPlacement {
-    public static final int MAX_BLOCKS = 1 << 20;
+    public static final int MAX_BLOCKS = 1 << 22;
     public record Change(BlockPos pos, BlockState state, boolean secondPass) {}
     public enum SetupKind { CHEST, PANEL, SPAWNER, DISPENSER }
     public record Setup(BlockPos pos, SetupKind kind, BuildingBinding binding) {
@@ -466,6 +466,7 @@ public final class BuildingPlacement {
 
     private static void expandBeds(List<Change> changes, Map<BlockPos, BlockState> planned, Set<String> issues) {
         Map<BlockPos, BlockState> expanded = new LinkedHashMap<>();
+        Set<BlockPos> dropped = new HashSet<>();
         for (var change : changes) {
             BlockState head = change.state();
             if (!(head.getBlock() instanceof BedBlock) || head.getValue(BedBlock.PART) != BedPart.HEAD) continue;
@@ -473,7 +474,8 @@ public final class BuildingPlacement {
             BlockState foot = head.setValue(BedBlock.PART, BedPart.FOOT);
             BlockState existing = planned.get(footPos);
             if (existing != null && !existing.isAir() && !existing.equals(foot)) {
-                issues.add("Bed foot overlaps planned block at " + footPos);
+                // A few legacy plans put a solid block where the foot would go: leave that bed out.
+                dropped.add(change.pos());
                 continue;
             }
             expanded.put(change.pos(), head);
@@ -483,8 +485,9 @@ public final class BuildingPlacement {
         for (var change : changes) if (change.state().getBlock() instanceof BedBlock
                 && change.state().getValue(BedBlock.PART) == BedPart.FOOT
                 && !change.state().equals(expanded.get(change.pos())))
-            issues.add("Bed foot has no matching head at " + change.pos());
-        changes.removeIf(change -> expanded.containsKey(change.pos()));
+            dropped.add(change.pos()); // an orphan or mismatched foot is left out with its bed
+        changes.removeIf(change -> expanded.containsKey(change.pos()) || dropped.contains(change.pos()));
+        dropped.forEach(planned::remove);
         expanded.forEach((pos, state) -> { changes.add(new Change(pos, state, true)); planned.put(pos, state); });
     }
 

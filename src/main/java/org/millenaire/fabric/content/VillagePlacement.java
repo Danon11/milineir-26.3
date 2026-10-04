@@ -11,7 +11,7 @@ import org.millenaire.fabric.economy.StartingStock;
 
 /** Compiles every starting building into one placement operation and one rollback footprint. */
 public final class VillagePlacement {
-    public static final int MAX_OPERATIONS = 1 << 21;
+    public static final int MAX_OPERATIONS = 1 << 22;
     public record PreparedBuilding(VillageLayout.Building building, BuildingPlacement.Prepared blocks) {}
     public record Prepared(VillageLayout.Layout layout, List<PreparedBuilding> buildings, BuildingPlacement.Prepared combined) {
         public Prepared { buildings = List.copyOf(buildings); }

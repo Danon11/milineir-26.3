@@ -56,15 +56,22 @@ class StartingStockTest {
         assertEquals(64, container.getItem(0).getCount()); assertEquals(Items.IRON_SWORD, container.getItem(3).getItem());
         assertThrows(IllegalStateException.class, () -> StartingStock.apply(container, prepared.inventories().getFirst()));
     }
-    @Test void rejectsBadUnknownWildcardAndOverflowRulesWithoutReturningPartialStock() {
+    @Test void rejectsBadUnknownAndWildcardRulesAndCapsOverflowAtChestCapacity() {
         for (String rule : List.of("bread,NaN,1,0", "bread,Infinity,1,0", "bread,1,-1,0", "bread,1,0,-1",
-                "bread,1,1000000,1", "bread,1,2", "unknown,1,1,0", "bread,1,1729,0", "sword,1,28,0")) {
+                "bread,1,1000000,1", "bread,1,2", "unknown,1,1,0")) {
             var stock = StartingStock.prepare(List.of(rule), List.of(BlockPos.ZERO), goods(), 1);
             assertFalse(stock.supported(), rule); assertTrue(stock.inventories().isEmpty());
         }
         var wildcard = new LegacyGoodsCatalog(Map.of("wood", new LegacyGoodsCatalog.Good("wood", "minecraft:log", -1)), List.of());
         assertFalse(StartingStock.prepare(List.of("wood,1,1,0"), List.of(BlockPos.ZERO), wildcard, 0).supported());
-        assertFalse(StartingStock.prepare(List.of("bread,1,1,0"), List.of(), goods(), 0).supported());
+        for (String overflow : List.of("bread,1,1729,0", "sword,1,28,0")) {
+            var stock = StartingStock.prepare(List.of(overflow), List.of(BlockPos.ZERO), goods(), 1);
+            assertTrue(stock.supported(), overflow);
+            assertEquals(27, stock.inventories().getFirst().slots().size(), overflow);
+        }
+        // Lone buildings without a chest start empty instead of failing.
+        var chestless = StartingStock.prepare(List.of("bread,1,1,0"), List.of(), goods(), 0);
+        assertTrue(chestless.supported()); assertTrue(chestless.inventories().isEmpty());
         assertTrue(StartingStock.prepare(List.of(), List.of(), goods(), 0).supported());
     }
     @Test void convertsMetadataAndRetainsDamageAndPotionComponents() {

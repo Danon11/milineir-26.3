@@ -40,12 +40,12 @@ class BuildingStartingStockPlacementTest {
     private static BuildingPlacement.Prepared prepare(LegacyBuildingPlan plan) throws Exception {
         return BuildingPlacement.prepare(plan, palette(), BlockPos.ZERO, 0, point -> Blocks.CHEST.defaultBlockState(), goods(), 1234);
     }
-    @Test void requiresStockSupportAndRejectsOverflowBeforeWriting() throws Exception {
+    @Test void requiresStockSupportAndCapsOverflowAtChestCapacity() throws Exception {
         var prepared = prepare(plan("bread,1,70,0", 1)); assertTrue(prepared.supported(), prepared.issues().toString());
         var unsupported = new MemoryWorld() { @Override public String stockRejection(StartingStock.Inventory inventory) { return "Stock unsupported"; } };
         assertThrows(IllegalArgumentException.class, () -> BuildingPlacement.place(prepared, unsupported, false)); assertEquals(0, unsupported.writes);
-        var overflow = prepare(plan("bread,1,1729,0", 1)); assertFalse(overflow.supported()); assertTrue(overflow.changes().isEmpty());
-        assertTrue(overflow.startingStock().isEmpty());
+        var overflow = prepare(plan("bread,1,1729,0", 1)); assertTrue(overflow.supported(), overflow.issues().toString());
+        assertEquals(1, overflow.startingStock().size());
     }
     @Test void validatesEveryHouseAndFillsEveryBuildingStockInAGroup() throws Exception {
         var first = plan("bread,1,70,0", 1); var last = plan("bread,1,11,0", 1);

@@ -54,7 +54,8 @@ public final class StartingStock {
         List<String> active = declarations.stream().filter(value -> !value.isBlank()).toList();
         if (active.isEmpty()) return new Prepared(List.of(), List.of());
         if (active.size() > MAX_RULES) return failure("Too many starting good rules: " + active.size());
-        if (chests.isEmpty()) return failure("Starting inventory requires a village chest");
+        // Lone buildings without a chest simply start empty, as in the original mod.
+        if (chests.isEmpty()) return new Prepared(List.of(), List.of());
         if (chests.stream().distinct().count() != chests.size()) return failure("Duplicate starting chest position");
         List<Resolved> rules = new ArrayList<>();
         List<String> issues = new ArrayList<>();
@@ -78,8 +79,8 @@ public final class StartingStock {
             int count = rule.fixed() + (rule.bonus() > 0 ? random.nextInt(rule.bonus() + 1) : 0);
             if (count <= 0) continue;
             int chest = random.nextInt(chests.size());
-            if (!insert(contents.get(chest), resolved.target(), count, resolved.stackLimit()))
-                return failure("Starting inventory exceeds chest capacity at " + chests.get(chest) + " for " + rule.good());
+            // A full chest keeps what fits; the rest of the roll is lost rather than blocking the building.
+            insert(contents.get(chest), resolved.target(), count, resolved.stackLimit());
         }
         List<Inventory> inventories = new ArrayList<>();
         for (int i = 0; i < chests.size(); i++) inventories.add(new Inventory(chests.get(i), contents.get(i)));

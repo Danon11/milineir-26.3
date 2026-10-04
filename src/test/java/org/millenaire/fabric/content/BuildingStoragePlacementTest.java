@@ -69,7 +69,7 @@ class BuildingStoragePlacementTest {
         assertTrue(world.initialized.isEmpty()); for (var change : prepared.changes()) assertTrue(world.get(change.pos()).isAir());
     }
 
-    @Test void unsupportedPanelsChestRowsAndStartingInventoryRejectTheWholePlan() throws Exception {
+    @Test void unsupportedPanelsAndChestRowsRejectTheWholePlanButChestlessStockIsDropped() throws Exception {
         var floating = prepare(plan(new int[][]{{0xff0000}}), palette("mainchestGuess", "signwallGuess"), 0);
         assertFalse(floating.supported()); assertTrue(floating.changes().isEmpty());
         var triple = prepare(plan(new int[][]{{0x0000ff, 0x0000ff, 0x0000ff}}), palette("lockedchestTop", "mainchestTop"), 0);
@@ -78,8 +78,7 @@ class BuildingStoragePlacementTest {
         var stocked = new LegacyBuildingPlan(empty.culture(), empty.key(), empty.variation(), empty.upgrade(),
                 empty.width(), empty.length(), empty.startLevel(), empty.image(), Map.of("startinggood", List.of("bread,1.0,2,6")));
         var inventory = prepare(stocked, palette("mainchestGuess", "lockedchestGuess"), 0);
-        assertFalse(inventory.supported()); assertTrue(inventory.changes().isEmpty()); assertTrue(inventory.setups().isEmpty());
-        assertTrue(inventory.issues().stream().anyMatch(issue -> issue.contains("Starting inventory")));
+        assertTrue(inventory.supported(), inventory.issues().toString()); assertTrue(inventory.startingStock().isEmpty());
     }
 
     private static BuildingPlacement.Prepared prepare(LegacyBuildingPlan plan, LegacyPalette palette, int rotation) throws Exception {

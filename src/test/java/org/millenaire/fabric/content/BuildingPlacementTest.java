@@ -391,9 +391,9 @@ class BuildingPlacementTest {
     @Test void bedCounterpartRejectsConflictsAndAcceptsAnAlreadyDeclaredFoot() throws Exception {
         for (String occupied : List.of("stone", "wrongfoot")) {
             var prepared = bedPlacement("facing=north,part=head", 0, occupied);
-            assertFalse(prepared.supported());
-            assertTrue(prepared.changes().isEmpty());
-            assertTrue(prepared.issues().stream().anyMatch(issue -> issue.contains("Bed foot overlaps")));
+            // The bed is left out; the block occupying the foot stays.
+            assertTrue(prepared.supported(), prepared.issues().toString());
+            assertTrue(prepared.changes().stream().noneMatch(change -> change.state().getBlock() instanceof net.minecraft.world.level.block.BedBlock));
         }
         var prepared = bedPlacement("facing=north,part=head", 0, "foot");
         assertTrue(prepared.supported(), prepared.issues().toString());
@@ -401,10 +401,10 @@ class BuildingPlacementTest {
         assertEquals(2, prepared.changes().stream().map(BuildingPlacement.Change::pos).distinct().count());
     }
 
-    @Test void orphanBedFootRejectsPreparation() throws Exception {
+    @Test void orphanBedFootIsLeftOut() throws Exception {
         var prepared = bedPlacement("facing=north,part=foot", 0, "");
-        assertFalse(prepared.supported());
-        assertTrue(prepared.issues().stream().anyMatch(issue -> issue.contains("Bed foot has no matching head")));
+        assertTrue(prepared.supported(), prepared.issues().toString());
+        assertTrue(prepared.changes().stream().noneMatch(change -> change.state().getBlock() instanceof net.minecraft.world.level.block.BedBlock));
     }
 
     @Test void bedFootFailureRestoresBothOriginalCells() throws Exception {
