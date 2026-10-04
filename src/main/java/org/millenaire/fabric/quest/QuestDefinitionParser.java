@@ -1,6 +1,7 @@
 package org.millenaire.fabric.quest;
 
 import org.millenaire.fabric.content.LegacyDocument;
+import org.millenaire.fabric.content.LegacyNumbers;
 
 import java.util.*;
 
@@ -119,19 +120,7 @@ public final class QuestDefinitionParser {
         return new QuestDefinition.VillagerDefinition(key, types, Optional.ofNullable(relatedTo), Optional.ofNullable(relation), required, forbidden);
     }
 
-    /** Legacy numbers may be written as products such as {@code 2*64*64}. */
-    static int product(String value) {
-        long result = 1;
-        for (String factor : value.split("\\*", -1)) {
-            try {
-                result = Math.multiplyExact(result, Integer.parseInt(factor.trim()));
-            } catch (NumberFormatException exception) {
-                throw new IllegalArgumentException("invalid number '" + value + "'");
-            }
-            if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) throw new IllegalArgumentException("number out of range '" + value + "'");
-        }
-        return (int) result;
-    }
+    static int product(String value) { return LegacyNumbers.product(value); }
 
     private static String[] split(String value, int expected, String name) {
         String[] parts = value.split(",", -1);
