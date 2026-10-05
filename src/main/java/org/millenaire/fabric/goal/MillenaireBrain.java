@@ -138,6 +138,7 @@ public final class MillenaireBrain extends Goal {
             case "plantsugarcane", "harvestsugarcane" -> 44;
             case "fish", "fishinuit" -> 30;
             case "drybrick", "gatherbrick" -> 46;
+            case "buildpath" -> 38;
             case "visitinn", "visitbuilding", "merchantvisitinn", "merchantvisitbuilding" -> 12;
             case "choptrees" -> 45;
             case "construction" -> 70;
@@ -209,6 +210,20 @@ public final class MillenaireBrain extends Goal {
                 yield found;
             }
             case "fish", "fishinuit" -> context == null ? null : chore(name, VillageChores.fish(context, villager, random), 400);
+            case "buildpath" -> {
+                if (context == null) yield null;
+                var origin = context.home().origin();
+                var settlement = org.millenaire.fabric.FabricSettlementState.get(context.level().getServer())
+                        .containing(context.home().dimension(), origin.x(), origin.z()).orElse(null);
+                if (settlement == null) yield null;
+                var cells = org.millenaire.fabric.village.VillagePaths.pending(context.level(), settlement, villager.blockPosition(), 6);
+                if (cells.isEmpty()) yield null;
+                yield chore(name, Optional.of(new ResourceGoals.Plan(cells.getFirst().ground().above(), () -> {
+                    boolean laid = false;
+                    for (var cell : cells) laid |= org.millenaire.fabric.village.VillagePaths.lay(context.level(), cell);
+                    return laid;
+                })), 60);
+            }
             case "drybrick", "gatherbrick" -> {
                 if (context == null) yield null;
                 // The brick yard is the home when it has brick spots, else another building of the village.

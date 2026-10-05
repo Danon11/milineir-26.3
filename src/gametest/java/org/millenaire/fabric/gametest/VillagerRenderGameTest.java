@@ -62,6 +62,7 @@ public final class VillagerRenderGameTest implements FabricClientGameTest {
                     return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, 48)).getY();
                 });
                 world.getServer().runCommand("execute positioned " + x + " " + y + " 48 run millenaire village replace 7 " + village);
+                world.getServer().runCommand("execute positioned " + x + " " + y + " 48 run millenaire village paths");
                 int top = world.getServer().computeOnServer(server -> server.overworld()
                         .getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, 30)).getY());
                 world.getServer().runCommand("tp @p " + (x + 0.5) + " " + (Math.max(y, top) + 24) + " 4.5 0 35");

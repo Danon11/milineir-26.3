@@ -109,6 +109,7 @@ public final class MillenaireCommands {
                             return result.startsWith("founded") ? 1 : 0;
                         }))
                         .then(Commands.literal("populate").executes(context -> populateVillage(context.getSource())))
+                        .then(Commands.literal("paths").executes(context -> layPaths(context.getSource())))
                         .then(Commands.literal("grow").executes(context -> growVillage(context.getSource(), false))
                                 .then(Commands.literal("rush").executes(context -> growVillage(context.getSource(), true))))
                         .then(villageAction("plan", false))
@@ -380,6 +381,17 @@ public final class MillenaireCommands {
         String result = org.millenaire.fabric.village.VillageGrowth.evaluate(source.getLevel(), settlement.get(), rush);
         source.sendSuccess(() -> Component.literal(settlement.get().name() + ": " + result), true);
         return 1;
+    }
+
+    /** Lays the whole path network of the settlement here at once. */
+    private static int layPaths(CommandSourceStack source) {
+        var pos = BlockPos.containing(source.getPosition());
+        var settlement = FabricSettlementState.get(source.getServer()).containing(source.getLevel().dimension().identifier(), pos.getX(), pos.getZ());
+        if (settlement.isEmpty()) { source.sendFailure(Component.literal("No Millénaire settlement here.")); return 0; }
+        int cells = org.millenaire.fabric.village.VillagePaths.network(source.getLevel(), settlement.get()).size();
+        int laid = org.millenaire.fabric.village.VillagePaths.layAll(source.getLevel(), settlement.get());
+        source.sendSuccess(() -> Component.literal(settlement.get().name() + ": " + cells + " path cells planned, " + laid + " laid."), true);
+        return laid;
     }
 
     /** Runs one population pass on the settlement here without waiting for the random chances. */

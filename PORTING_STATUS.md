@@ -33,6 +33,10 @@
   status and the buildings to order; owned villages build only ordered buildings (upgrades still come by
   themselves). Owners may open every locked chest of their village. Commands: `/millenaire_village
   found|custom|order|info` (no operator rights; the chat buttons use them).
+- Village paths: a minimum spanning tree over the buildings' `pathStartPos` points, rooted at the town hall,
+  routed with A* over walkable ground (one block up or down per step, around walls and water, preferring
+  natural ground) and laid in the type's `pathmaterial` for the buildings' `pathlevel`; `nopaths` buildings are
+  skipped. Villagers with `buildpath` lay six cells per trip; `/millenaire village paths` lays all at once.
 - Fix: villagers lost their home building after an upgrade (`_A0` to `_A1`).
 
 
@@ -100,7 +104,7 @@ quests. What remains, roughly by importance:
 - Old screens: traveller's book, village/building panels, quest log, maps; hiring villagers.
 - World quests with bedrock buildings (quests are skipped while they need them).
 - Village relations: diplomacy, raids between villages, garrisons.
-- Remaining goals: paths (`buildpath`/`clearoldpath`), pujas and
+- Remaining goals: `clearoldpath`, pujas and
   sacrifices, brewing potions, silk/snails/cocoa/nether wart crops; families and marriages; clothes from items.
 - Decorative entities, wall smoothing, crop theft rules, the rainbow advancement, fortune on seed drops.
 
