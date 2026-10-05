@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "millenaire",
+  "icon": "assets/millenaire/icon.png",
   "version": "${version}",
   "name": "Millenaire",
   "description": "Millenaire 8.1.2 Fabric port in progress.",
