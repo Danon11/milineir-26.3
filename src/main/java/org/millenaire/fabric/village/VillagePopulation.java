@@ -120,11 +120,12 @@ public final class VillagePopulation {
             if (household.isEmpty() || household.stream().anyMatch(children::contains)) continue;
             int beds = Math.max(placed.servicePoints().getOrDefault("sleepingPos", List.of()).size(), VillagerSpawning.residents(plan, placed).size());
             if (household.size() >= beds + 1) continue;
-            Optional<VillagerProfile> mother = household.stream().map(record -> profiles.get(record.culture() + "/" + record.type()))
-                    .filter(Objects::nonNull).filter(VillagerProfile::canHaveChildren).findFirst();
-            boolean father = household.stream().anyMatch(record -> record.gender().equals("male")
-                    && !Optional.ofNullable(profiles.get(record.culture() + "/" + record.type())).map(VillagerProfile::child).orElse(true));
-            if (mother.isEmpty() || !father || (!force && random.nextInt(BIRTH_CHANCE) != 0)) continue;
+            var motherRecord = household.stream().filter(record -> Optional.ofNullable(profiles.get(record.culture() + "/" + record.type()))
+                    .map(VillagerProfile::canHaveChildren).orElse(false)).findFirst();
+            Optional<VillagerProfile> mother = motherRecord.map(record -> profiles.get(record.culture() + "/" + record.type()));
+            var fatherRecord = household.stream().filter(record -> record.gender().equals("male")
+                    && !Optional.ofNullable(profiles.get(record.culture() + "/" + record.type())).map(VillagerProfile::child).orElse(true)).findFirst();
+            if (mother.isEmpty() || fatherRecord.isEmpty() || (!force && random.nextInt(BIRTH_CHANCE) != 0)) continue;
             String type = childType(mother.get(), random);
             VillagerProfile child = type.isEmpty() ? null : profiles.get(mother.get().culture() + "/" + type);
             if (child == null) continue;
@@ -132,6 +133,11 @@ public final class VillagePopulation {
             var at = beds2.isEmpty() ? new LegacyBuildingPlan.Position(placed.origin().x(), placed.origin().y() + 1, placed.origin().z())
                     : beds2.get(random.nextInt(beds2.size()));
             var born = VillagerSpawning.spawn(level, new BlockPos(at.x(), at.y(), at.z()), child, key, new SplittableRandom(random.nextLong()));
+            // The child carries the father's family name and knows its parents.
+            String fatherName = fatherRecord.get().name();
+            String family = fatherName.contains(" ") ? fatherName.substring(fatherName.indexOf(' ') + 1) : born.familyName();
+            born.setFamily(family, motherRecord.get().id(), fatherRecord.get().id());
+            VillagerSpawning.record(level, born, child, true);
             return "born " + child.id() + " " + born.getName().getString() + " in " + key;
         }
         return "no change";

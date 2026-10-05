@@ -210,6 +210,36 @@ public final class VillagePaths {
         return result;
     }
 
+    /**
+     * Path blocks laid by villagers ({@code stable=false}) near {@code from} that the current network no longer
+     * uses, e.g. after a building moved or was upgraded. Paths drawn in building plans are stable and stay.
+     */
+    public static List<BlockPos> stale(ServerLevel level, FabricSettlementState.Settlement settlement, BlockPos from, int radius) {
+        Set<BlockPos> used = new HashSet<>();
+        for (Cell cell : network(level, settlement)) used.add(cell.ground());
+        List<BlockPos> result = new ArrayList<>();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dx = -radius; dx <= radius; dx++)
+            for (int dz = -radius; dz <= radius; dz++)
+                for (int dy = -4; dy <= 4; dy++) {
+                    cursor.set(from.getX() + dx, from.getY() + dy, from.getZ() + dz);
+                    if (!level.isLoaded(cursor)) continue;
+                    BlockState state = level.getBlockState(cursor);
+                    if (!path(state) || !state.hasProperty(org.millenaire.fabric.content.LegacyPathBlocks.STABLE)
+                            || state.getValue(org.millenaire.fabric.content.LegacyPathBlocks.STABLE) || used.contains(cursor)) continue;
+                    result.add(cursor.immutable());
+                }
+        return result;
+    }
+
+    /** Turns an old path block back into grass (or dirt when covered). */
+    public static boolean clear(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (!path(state)) return false;
+        level.setBlockAndUpdate(pos, level.getBlockState(pos.above()).isAir() ? Blocks.GRASS_BLOCK.defaultBlockState() : Blocks.DIRT.defaultBlockState());
+        return true;
+    }
+
     /** Lays the whole network at once (admin command); returns the number of cells laid. */
     public static int layAll(ServerLevel level, FabricSettlementState.Settlement settlement) {
         int laid = 0;

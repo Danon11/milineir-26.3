@@ -38,6 +38,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     private String firstName = "";
     private String familyName = "";
     private String building = "";
+    /** UUIDs of the parents, for villagers born in the village. */
+    private String mother = "", father = "";
     /** Goods carried by the villager, by itemlist alias. */
     private final java.util.Map<String, Integer> inventory = new java.util.TreeMap<>();
     /** Created in registerGoals, which the Mob constructor calls before field initializers run. */
@@ -113,6 +115,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         output.putString("first_name", firstName);
         output.putString("family_name", familyName);
         output.putString("building", building);
+        output.putString("mother", mother);
+        output.putString("father", father);
         output.putString("texture", entityData.get(TEXTURE));
         output.putString("cloth_0", entityData.get(CLOTH_0));
         output.putString("cloth_1", entityData.get(CLOTH_1));
@@ -130,6 +134,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         firstName = input.getStringOr("first_name", "");
         familyName = input.getStringOr("family_name", "");
         building = input.getStringOr("building", "");
+        mother = input.getStringOr("mother", "");
+        father = input.getStringOr("father", "");
         combatRole = null;
         childAge = input.getIntOr("child_age", -1);
         adultScale = input.getFloatOr("adult_scale", (float) getAttributeBaseValue(Attributes.SCALE));
@@ -207,6 +213,16 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     public String profileId() { return culture + "/" + villagerType; }
     public String building() { return building; }
     public String firstName() { return firstName; }
+    public String mother() { return mother; }
+    public String father() { return father; }
+
+    /** Sets the family a child is born into. */
+    public void setFamily(String familyName, String mother, String father) {
+        this.familyName = familyName == null ? "" : familyName;
+        this.mother = mother == null ? "" : mother;
+        this.father = father == null ? "" : father;
+        updateName();
+    }
     public String familyName() { return familyName; }
     public String texture() { return entityData.get(TEXTURE); }
     public Optional<String> cloth(int layer) {

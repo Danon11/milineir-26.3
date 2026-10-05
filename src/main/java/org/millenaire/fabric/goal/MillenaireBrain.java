@@ -139,6 +139,7 @@ public final class MillenaireBrain extends Goal {
             case "fish", "fishinuit" -> 30;
             case "drybrick", "gatherbrick" -> 46;
             case "buildpath" -> 38;
+            case "clearoldpath" -> 36;
             case "visitinn", "visitbuilding", "merchantvisitinn", "merchantvisitbuilding" -> 12;
             case "choptrees" -> 45;
             case "construction" -> 70;
@@ -222,6 +223,21 @@ public final class MillenaireBrain extends Goal {
                     boolean laid = false;
                     for (var cell : cells) laid |= org.millenaire.fabric.village.VillagePaths.lay(context.level(), cell);
                     return laid;
+                })), 60);
+            }
+            case "clearoldpath" -> {
+                if (context == null) yield null;
+                var origin = context.home().origin();
+                var settlement = org.millenaire.fabric.FabricSettlementState.get(context.level().getServer())
+                        .containing(context.home().dimension(), origin.x(), origin.z()).orElse(null);
+                if (settlement == null) yield null;
+                var old = org.millenaire.fabric.village.VillagePaths.stale(context.level(), settlement, villager.blockPosition(), 12);
+                if (old.isEmpty()) yield null;
+                var batch = old.stream().sorted(Comparator.comparingDouble(pos -> pos.distSqr(old.getFirst()))).limit(6).toList();
+                yield chore(name, Optional.of(new ResourceGoals.Plan(batch.getFirst().above(), () -> {
+                    boolean cleared = false;
+                    for (var pos : batch) cleared |= org.millenaire.fabric.village.VillagePaths.clear(context.level(), pos);
+                    return cleared;
                 })), 60);
             }
             case "drybrick", "gatherbrick" -> {
