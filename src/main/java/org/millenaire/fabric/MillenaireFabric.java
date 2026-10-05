@@ -37,6 +37,7 @@ public final class MillenaireFabric implements ModInitializer {
                     org.millenaire.fabric.quest.QuestSites.tick(server);
                     org.millenaire.fabric.village.VillagePanels.tick(server);
                     org.millenaire.fabric.village.WorldVillageGenerator.tick(server);
+                    org.millenaire.fabric.village.VillageChunkLoader.tick(server);
                 });
         FabricLoader.getInstance().getModContainer("millenaire").ifPresentOrElse(
                 modContainer -> {
@@ -57,6 +58,7 @@ public final class MillenaireFabric implements ModInitializer {
                         for (String diagnostic : catalog.diagnostics()) LOGGER.log(System.Logger.Level.WARNING, diagnostic);
                         MillenaireCommands.loadQuestTexts(FabricLoader.getInstance().getGameDir());
                         org.millenaire.fabric.village.WorldVillageGenerator.configure(FabricLoader.getInstance().getGameDir());
+                        org.millenaire.fabric.village.VillageChunkLoader.configure(FabricLoader.getInstance().getGameDir());
                         var quests = MillenaireCommands.questCatalog();
                         LOGGER.log(System.Logger.Level.INFO, "Loaded " + quests.quests().size() + " quest definitions");
                         for (String diagnostic : quests.diagnostics()) LOGGER.log(System.Logger.Level.WARNING, diagnostic);

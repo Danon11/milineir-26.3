@@ -99,6 +99,23 @@ public final class MillenaireCommands {
                         .then(Commands.literal("mark").executes(context -> mark(context.getSource())))
                         .then(Commands.literal("list").executes(context -> list(context.getSource())))
                         .then(Commands.literal("settlements").executes(context -> listSettlements(context.getSource())))
+                        .then(Commands.literal("keeploaded").executes(context -> {
+                            var source = context.getSource();
+                            var name = org.millenaire.fabric.village.VillageChunkLoader.markNearest(source.getLevel(),
+                                    source.getPosition().x, source.getPosition().z);
+                            if (name.isEmpty()) {
+                                source.sendFailure(Component.literal("No village in this dimension"));
+                                return 0;
+                            }
+                            source.sendSuccess(() -> Component.literal("Keeping " + name.get() + " loaded"), true);
+                            return 1;
+                        }))
+                        .then(Commands.literal("loaded").executes(context -> {
+                            var state = org.millenaire.fabric.village.VillageChunkLoader.State.get(context.getSource().getServer());
+                            context.getSource().sendSuccess(() -> Component.literal("Villages kept loaded: " + state.discoveredCount()
+                                    + " discovered, " + state.forcedCount() + " chunks forced"), false);
+                            return state.forcedCount();
+                        }))
                         .then(lifecycleCommand())
                         .then(Commands.literal("villagers").executes(context -> listVillagers(context.getSource())))
                         .then(Commands.literal("generate").executes(context -> {
