@@ -121,6 +121,7 @@ public final class SummoningWand {
                 .withStyle(ChatFormatting.GOLD);
         owner.ifPresent(o -> message.append(Component.literal(o.orders().isEmpty() ? "\nNo buildings ordered." : "\nOrdered: " + String.join(", ", o.orders()))
                 .withStyle(ChatFormatting.WHITE)));
+        message.append(Component.literal("\n")).append(button("[Diplomacy]", ChatFormatting.AQUA, "diplomacy"));
         message.append(Component.literal("\nOrder a building:").withStyle(ChatFormatting.GOLD));
         for (String plan : PlayerVillages.orderable(settlement))
             message.append(Component.literal(" ")).append(button("[" + plan + "]", ChatFormatting.GREEN, "order " + plan));
@@ -156,6 +157,12 @@ public final class SummoningWand {
                     context.getSource().sendSuccess(() -> Component.literal(result), false);
                     return 1;
                 })))
+                .then(Commands.literal("diplomacy").executes(context -> {
+                    var player = context.getSource().getPlayerOrException();
+                    context.getSource().sendSuccess(() -> diplomacyMenu(player), false);
+                    return 1;
+                }))
+                .then(diplomacyAction("raid")).then(diplomacyAction("gift")).then(diplomacyAction("insult"))
                 .then(Commands.literal("order").then(Commands.argument("building", StringArgumentType.word())
                         .executes(context -> reply(context.getSource(), PlayerVillages.order(context.getSource().getPlayerOrException(),
                                 StringArgumentType.getString(context, "building"))))))
@@ -166,6 +173,32 @@ public final class SummoningWand {
                     context.getSource().sendSuccess(() -> status(player, settlement.get()), false);
                     return 1;
                 })));
+    }
+
+    private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> diplomacyAction(String action) {
+        return Commands.literal(action).then(Commands.argument("village", StringArgumentType.greedyString()).executes(context -> reply(context.getSource(),
+                PlayerVillages.diplomacy(context.getSource().getPlayerOrException(), action, StringArgumentType.getString(context, "village")))));
+    }
+
+    /** Neighbours of the player's village with their relation and actions. */
+    static MutableComponent diplomacyMenu(ServerPlayer player) {
+        var settlement = PlayerVillages.settlementAt(player.level(), player.blockPosition());
+        if (settlement.isEmpty()) return Component.literal("You are not in a village.").withStyle(ChatFormatting.GRAY);
+        var server = player.level().getServer();
+        String key = VillageGrowth.key(settlement.get());
+        boolean owner = FabricVillageOwnership.get(server).owns(key, player.getUUID());
+        var relations = org.millenaire.fabric.FabricVillageRelations.get(server);
+        MutableComponent menu = Component.literal("Neighbours of " + settlement.get().name() + ":").withStyle(ChatFormatting.GOLD);
+        for (var other : VillageRaids.neighbours(server, settlement.get())) {
+            String otherKey = VillageGrowth.key(other);
+            int value = relations.get(key, otherKey);
+            menu.append(Component.literal("\n " + other.name() + " (" + other.type() + ", " + (int) VillageRaids.distance(settlement.get(), other)
+                    + " blocks): " + value + " " + org.millenaire.fabric.FabricVillageRelations.describe(value) + " ").withStyle(ChatFormatting.WHITE));
+            if (owner) menu.append(button("[Gift]", ChatFormatting.GREEN, "gift " + otherKey)).append(Component.literal(" "))
+                    .append(button("[Insult]", ChatFormatting.YELLOW, "insult " + otherKey)).append(Component.literal(" "))
+                    .append(button("[Raid]", ChatFormatting.RED, "raid " + otherKey));
+        }
+        return menu;
     }
 
     private static java.util.UUID uuid(String text) {

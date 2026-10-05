@@ -208,6 +208,47 @@ public final class PlayerVillages {
         return removed;
     }
 
+    /** The owner's village around the player, or why there is none. */
+    private static Optional<FabricSettlementState.Settlement> owned(ServerPlayer player) {
+        var settlement = settlementAt(player.level(), player.blockPosition());
+        return settlement.filter(s -> FabricVillageOwnership.get(player.level().getServer()).owns(VillageGrowth.key(s), player.getUUID()));
+    }
+
+    private static Optional<FabricSettlementState.Settlement> byKey(ServerPlayer player, String key) {
+        return FabricSettlementState.get(player.level().getServer()).settlements().stream().filter(s -> VillageGrowth.key(s).equals(key.trim())).findFirst();
+    }
+
+    /** Diplomacy actions of an owner towards a neighbour: raid, gift (one gold denier, +10) or insult (-10). */
+    public static Outcome diplomacy(ServerPlayer player, String action, String targetKey) {
+        var home = owned(player);
+        if (home.isEmpty()) return Outcome.fail("Stand in a village you own.");
+        var target = byKey(player, targetKey);
+        if (target.isEmpty() || !VillageRaids.neighbours(player.level().getServer(), home.get()).contains(target.get()))
+            return Outcome.fail("That village is not a neighbour of " + home.get().name() + ".");
+        var relations = org.millenaire.fabric.FabricVillageRelations.get(player.level().getServer());
+        String a = VillageGrowth.key(home.get()), b = VillageGrowth.key(target.get());
+        return switch (action) {
+            case "raid" -> {
+                if (!VillageRaids.carriesRaids(home.get())) yield Outcome.fail(home.get().name() + " does not raid.");
+                String result = VillageRaids.start(player.level(), home.get(), target.get());
+                yield new Outcome(result.contains("sends"), result);
+            }
+            case "gift" -> {
+                if (!org.millenaire.fabric.economy.Wallet.pay(player, org.millenaire.fabric.economy.TradeOffers.GOLD))
+                    yield Outcome.fail("A gift costs a gold denier.");
+                int value = relations.add(a, b, 10);
+                yield Outcome.ok(target.get().name() + " welcomes your gift: relations are now " + value + " ("
+                        + org.millenaire.fabric.FabricVillageRelations.describe(value) + ").");
+            }
+            case "insult" -> {
+                int value = relations.add(a, b, -10);
+                yield Outcome.ok(target.get().name() + " takes offence: relations are now " + value + " ("
+                        + org.millenaire.fabric.FabricVillageRelations.describe(value) + ").");
+            }
+            default -> Outcome.fail("Unknown action " + action);
+        };
+    }
+
     /** Custom buildings the village type lists ({@code customBuilding=}), as {@code culture:key}. */
     public static List<String> allowedCustom(FabricSettlementState.Settlement settlement) {
         return type(settlement.type()).map(type -> type.source().values("custombuilding").stream()

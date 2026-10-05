@@ -59,7 +59,14 @@ public final class VillagerCombat {
             if (other instanceof Player player) return !player.isCreative() && !player.isSpectator();
             return other instanceof MillVillagerEntity peer && peer.combatRole() != Role.HOSTILE;
         }
-        if (other instanceof MillVillagerEntity peer) return peer.combatRole() == Role.HOSTILE;
+        if (other instanceof MillVillagerEntity peer) {
+            // Raiders fight the fighters of the village they raid, and that village's fighters fight them.
+            var raiding = org.millenaire.fabric.village.VillageRaids.raidTarget(villager);
+            if (raiding.isPresent() && raiding.get().equals(peer.villageKey()) && peer.fights()) return true;
+            var raided = org.millenaire.fabric.village.VillageRaids.raidTarget(peer);
+            if (raided.isPresent() && !villager.villageKey().isEmpty() && raided.get().equals(villager.villageKey())) return true;
+            return peer.combatRole() == Role.HOSTILE;
+        }
         // Creepers are left alone: fighting them next to houses would blow the village up.
         return other instanceof Enemy && !(other instanceof Creeper);
     }
@@ -83,6 +90,7 @@ public final class VillagerCombat {
         });
         targets.addGoal(0, new VillagerHiring.DefendHirerGoal(villager));
         goals.addGoal(1, new VillagerHiring.FollowHirerGoal(villager));
+        goals.addGoal(1, new RaidMarchGoal(villager));
         targets.addGoal(1, new NearestAttackableTargetGoal<>(villager, LivingEntity.class, 10, true, false,
                 (other, level) -> villager.combatRole() != Role.CIVILIAN && enemy(villager, other)) {
             @Override public boolean canUse() { return villager.combatRole() != Role.CIVILIAN && !villager.isSleeping() && super.canUse(); }
@@ -96,14 +104,62 @@ public final class VillagerCombat {
     static void alert(MillVillagerEntity victim, LivingEntity attacker) {
         if (attacker == null || attacker == victim || !(victim.level() instanceof ServerLevel level)) return;
         if (attacker instanceof Player player && (player.isCreative() || player.isSpectator())) return;
-        if (attacker instanceof MillVillagerEntity peer && peer.combatRole() == victim.combatRole()) return;
+        // Friendly fire within a village (or between bandits) starts no fight.
+        if (attacker instanceof MillVillagerEntity peer && (peer.combatRole() == Role.HOSTILE) == (victim.combatRole() == Role.HOSTILE)
+                && peer.villageKey().equals(victim.villageKey())) return;
         if (victim.isSleeping()) victim.stopSleeping();
         AABB area = victim.getBoundingBox().inflate(ALERT_RADIUS);
         for (MillVillagerEntity defender : level.getEntitiesOfClass(MillVillagerEntity.class, area,
                 other -> other.combatRole() != Role.CIVILIAN && other.isAlive())) {
-            boolean sameSide = (defender.combatRole() == Role.HOSTILE) == (victim.combatRole() == Role.HOSTILE);
-            if (!sameSide || defender == attacker) continue;
+            boolean sameSide = (defender.combatRole() == Role.HOSTILE) == (victim.combatRole() == Role.HOSTILE)
+                    && (victim.villageKey().isEmpty() || defender.villageKey().equals(victim.villageKey()));
+            if (!sameSide || defender == attacker || attacker instanceof MillVillagerEntity peer && peer.villageKey().equals(defender.villageKey())) continue;
             if (defender.getTarget() == null || defender == victim) defender.setTarget(attacker);
         }
+    }
+
+    /** Raiders walk to the raided town hall, and home again with the loot, between fights. */
+    static final class RaidMarchGoal extends net.minecraft.world.entity.ai.goal.Goal {
+        private final MillVillagerEntity villager;
+        private net.minecraft.core.BlockPos destination;
+        private net.minecraft.world.phys.Vec3 lastPosition;
+        private int stuckTicks;
+        RaidMarchGoal(MillVillagerEntity villager) {
+            this.villager = villager;
+            setFlags(java.util.EnumSet.of(Flag.MOVE));
+        }
+        @Override public boolean canUse() {
+            destination = org.millenaire.fabric.village.VillageRaids.destination(villager).orElse(null);
+            return destination != null && villager.getTarget() == null && !villager.blockPosition().closerThan(destination, 3);
+        }
+        @Override public boolean canContinueToUse() { return canUse(); }
+        @Override public void tick() {
+            if (villager.tickCount % 20 != 0 && !villager.getNavigation().isDone()) return;
+            // Walls, cliffs or water can leave no path: after ten seconds without progress, slip through.
+            var now = villager.position();
+            if (lastPosition != null && now.distanceToSqr(lastPosition) < 1) stuckTicks += 20; else stuckTicks = 0;
+            lastPosition = now;
+            double dx = destination.getX() + 0.5 - villager.getX(), dz = destination.getZ() + 0.5 - villager.getZ();
+            double distance = Math.sqrt(dx * dx + dz * dz);
+            if (distance <= 30) {
+                if (stuckTicks >= 200) {
+                    villager.snapTo(destination.getX() + 0.5, destination.getY() + 1, destination.getZ() + 0.5, villager.getYRot(), villager.getXRot());
+                    stuckTicks = 0;
+                } else villager.getNavigation().moveTo(destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5, 0.75);
+                return;
+            }
+            // Navigation only plans within the follow range: march by waypoints 24 blocks apart on the surface.
+            int x = (int) Math.floor(villager.getX() + dx / distance * 24), z = (int) Math.floor(villager.getZ() + dz / distance * 24);
+            if (!villager.level().isLoaded(new net.minecraft.core.BlockPos(x, 0, z))) return;
+            int y = villager.level().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            if (stuckTicks >= 200) {
+                villager.snapTo(x + 0.5, y, z + 0.5, villager.getYRot(), villager.getXRot());
+                villager.getNavigation().stop();
+                stuckTicks = 0;
+                return;
+            }
+            villager.getNavigation().moveTo(x + 0.5, y, z + 0.5, 0.75);
+        }
+        @Override public void stop() { villager.getNavigation().stop(); }
     }
 }

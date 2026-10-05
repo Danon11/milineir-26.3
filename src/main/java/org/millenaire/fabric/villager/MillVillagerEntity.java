@@ -246,6 +246,21 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     // Combat: roles come from the legacy profile tags, see VillagerCombat.
     private VillagerCombat.Role combatRole;
 
+    private String villageKey;
+    private long villageKeyTime = Long.MIN_VALUE;
+
+    /** Key of the settlement this villager lives in ("" outside villages), refreshed every minute. */
+    public String villageKey() {
+        if (!(level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) return "";
+        long now = serverLevel.getGameTime();
+        if (villageKey == null || now - villageKeyTime > 1200) {
+            villageKey = building.isEmpty() ? "" : org.millenaire.fabric.village.VillagePopulation.settlementOf(serverLevel.getServer(),
+                    serverLevel.dimension().identifier(), building).map(org.millenaire.fabric.village.VillageGrowth::key).orElse("");
+            villageKeyTime = now;
+        }
+        return villageKey;
+    }
+
     public boolean isHired() { return !hiredBy.isEmpty(); }
     public boolean hiredBy(net.minecraft.world.entity.player.Player player) { return hiredBy.equals(player.getStringUUID()); }
     public java.util.UUID hirer() { return java.util.UUID.fromString(hiredBy); }

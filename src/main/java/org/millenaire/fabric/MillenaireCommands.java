@@ -110,6 +110,12 @@ public final class MillenaireCommands {
                         }))
                         .then(Commands.literal("populate").executes(context -> populateVillage(context.getSource())))
                         .then(Commands.literal("paths").executes(context -> layPaths(context.getSource())))
+                        .then(Commands.literal("raid").executes(context -> raidNearest(context.getSource())))
+                        .then(Commands.literal("raids").executes(context -> {
+                            var raids = org.millenaire.fabric.village.VillageRaids.describeActive(context.getSource().getLevel());
+                            context.getSource().sendSuccess(() -> Component.literal(raids.isEmpty() ? "No raids under way." : String.join("\n", raids)), false);
+                            return raids.size();
+                        }))
                         .then(Commands.literal("grow").executes(context -> growVillage(context.getSource(), false))
                                 .then(Commands.literal("rush").executes(context -> growVillage(context.getSource(), true))))
                         .then(villageAction("plan", false))
@@ -380,6 +386,18 @@ public final class MillenaireCommands {
         if (settlement.isEmpty()) { source.sendFailure(Component.literal("No Millénaire settlement here.")); return 0; }
         String result = org.millenaire.fabric.village.VillageGrowth.evaluate(source.getLevel(), settlement.get(), rush);
         source.sendSuccess(() -> Component.literal(settlement.get().name() + ": " + result), true);
+        return 1;
+    }
+
+    /** Sends the raiders of the settlement here against its nearest neighbour (testing and admin use). */
+    private static int raidNearest(CommandSourceStack source) {
+        var pos = BlockPos.containing(source.getPosition());
+        var settlement = FabricSettlementState.get(source.getServer()).containing(source.getLevel().dimension().identifier(), pos.getX(), pos.getZ());
+        if (settlement.isEmpty()) { source.sendFailure(Component.literal("No Millénaire settlement here.")); return 0; }
+        var target = org.millenaire.fabric.village.VillageRaids.neighbours(source.getServer(), settlement.get()).stream().findFirst();
+        if (target.isEmpty()) { source.sendFailure(Component.literal("No neighbour within reach.")); return 0; }
+        String result = org.millenaire.fabric.village.VillageRaids.start(source.getLevel(), settlement.get(), target.get());
+        source.sendSuccess(() -> Component.literal(result), true);
         return 1;
     }
 

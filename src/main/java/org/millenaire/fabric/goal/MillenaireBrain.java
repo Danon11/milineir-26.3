@@ -50,7 +50,8 @@ public final class MillenaireBrain extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!(villager.level() instanceof ServerLevel) || villager.getTradingPlayer() != null || villager.isHired()) return false;
+        if (!(villager.level() instanceof ServerLevel) || villager.getTradingPlayer() != null || villager.isHired()
+                || org.millenaire.fabric.village.VillageRaids.raiding(villager)) return false;
         if (task != null) return true;
         if (--cooldown > 0) return false;
         cooldown = DECISION_INTERVAL + villager.getRandom().nextInt(20);
@@ -59,7 +60,8 @@ public final class MillenaireBrain extends Goal {
     }
 
     @Override
-    public boolean canContinueToUse() { return task != null && !task.finished && villager.getTradingPlayer() == null && !villager.isHired(); }
+    public boolean canContinueToUse() { return task != null && !task.finished && villager.getTradingPlayer() == null && !villager.isHired()
+            && !org.millenaire.fabric.village.VillageRaids.raiding(villager); }
 
     @Override
     public boolean requiresUpdateEveryTick() { return true; }
