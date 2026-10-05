@@ -141,6 +141,7 @@ public final class MillenaireBrain extends Goal {
             case "fish", "fishinuit" -> 30;
             case "drybrick", "gatherbrick" -> 46;
             case "buildpath" -> 38;
+            case "performpujas", "bepujaperformer" -> 34;
             case "clearoldpath" -> 36;
             case "visitinn", "visitbuilding", "merchantvisitinn", "merchantvisitbuilding" -> 12;
             case "choptrees" -> 45;
@@ -226,6 +227,14 @@ public final class MillenaireBrain extends Goal {
                     for (var cell : cells) laid |= org.millenaire.fabric.village.VillagePaths.lay(context.level(), cell);
                     return laid;
                 })), 60);
+            }
+            case "performpujas", "bepujaperformer" -> {
+                // The priest leads the ceremony at the temple by day; players bring items to be blessed then.
+                if (context == null || night(context.level().getDefaultClockTime())) yield null;
+                var temples = context.withTags(List.of("pujas", "sacrifices"));
+                if (temples.isEmpty()) temples = context.withTags(List.of("praying"));
+                var temple = temples.isEmpty() ? context.home() : temples.getFirst();
+                yield new IdleTask(name, context.workPoint(temple), 1200 + villager.getRandom().nextInt(600), name);
             }
             case "clearoldpath" -> {
                 if (context == null) yield null;

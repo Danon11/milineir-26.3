@@ -173,6 +173,9 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         if (!isAlive() || isSleeping() || tradingPlayer != null || player.isSecondaryUseActive() || isHired()
                 || combatRole() == VillagerCombat.Role.HOSTILE || getTarget() != null) return super.mobInteract(player, hand);
         if (level().isClientSide()) return net.minecraft.world.InteractionResult.SUCCESS;
+        // A priest leading a puja or sacrifice blesses the item the player brings.
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer && VillageRituals.offer(serverPlayer, this))
+            return net.minecraft.world.InteractionResult.SUCCESS;
         // A quest step with this villager takes precedence over trading.
         if (org.millenaire.fabric.quest.QuestService.talk(this, player)) return net.minecraft.world.InteractionResult.SUCCESS;
         var session = VillagerTrading.open(this, player);

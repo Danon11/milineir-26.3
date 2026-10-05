@@ -151,6 +151,14 @@ public final class SummoningWand {
                     context.getSource().sendSuccess(() -> Component.literal(result), false);
                     return 1;
                 })))
+                .then(Commands.literal("bless").then(Commands.argument("villager", StringArgumentType.word())
+                        .then(Commands.argument("enchantment", StringArgumentType.greedyString()).executes(context -> {
+                            var player = context.getSource().getPlayerOrException();
+                            String result = org.millenaire.fabric.villager.VillageRituals.bless(player, uuid(StringArgumentType.getString(context, "villager")),
+                                    StringArgumentType.getString(context, "enchantment"));
+                            context.getSource().sendSuccess(() -> Component.literal(result), false);
+                            return 1;
+                        }))))
                 .then(Commands.literal("release").then(Commands.argument("villager", StringArgumentType.word()).executes(context -> {
                     var player = context.getSource().getPlayerOrException();
                     String result = org.millenaire.fabric.villager.VillagerHiring.release(player, uuid(StringArgumentType.getString(context, "villager")));
