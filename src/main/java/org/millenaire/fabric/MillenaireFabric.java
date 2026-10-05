@@ -22,6 +22,7 @@ public final class MillenaireFabric implements ModInitializer {
         org.millenaire.fabric.storage.VillageStorageContent.registerBlockEntities();
         org.millenaire.fabric.villager.VillagerContent.register();
         MillenaireCommands.register();
+        org.millenaire.fabric.village.SummoningWand.register();
         ServerTickEvents.END_SERVER_TICK.register(server ->
                 {
                     FabricSettlementLifecycleState.get(server).tick();

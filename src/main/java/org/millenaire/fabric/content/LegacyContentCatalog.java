@@ -7,6 +7,12 @@ import org.millenaire.fabric.economy.LegacyGoodsCatalog;
 public record LegacyContentCatalog(Map<String, Culture> cultures, Map<String, LegacyDocument> globalDocuments,
                                    Map<String, LegacyBuildingPlan> plans, LegacyPalette palette,
                                    LegacyGoodsCatalog goods, List<String> diagnostics) {
+    /** A PNG plan or a custom (player-built) building plan by id, or null. */
+    public LegacyBuildingPlan plan(String id) {
+        var plan = plans.get(id);
+        return plan != null ? plan : CustomBuildings.plans(this).get(id);
+    }
+
     public record Culture(String id, Map<String, LegacyDocument> documents) {
         public Culture { documents = Collections.unmodifiableMap(new LinkedHashMap<>(documents)); }
         public Map<String, VillageTypeDefinition> villageTypes() {

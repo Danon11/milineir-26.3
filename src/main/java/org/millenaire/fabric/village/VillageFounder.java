@@ -110,7 +110,7 @@ public final class VillageFounder {
         List<String> residentIssues = new ArrayList<>();
         int before = FabricVillagerState.get(level.getServer()).villagers().size();
         for (var building : record.buildings()) {
-            var plan = catalog.plans().get(building.placement().plan());
+            var plan = catalog.plan(building.placement().plan());
             if (plan != null) residentIssues.addAll(VillagerSpawning.populate(level, plan, building.placement(), random));
         }
         int residents = FabricVillagerState.get(level.getServer()).villagers().size() - before;

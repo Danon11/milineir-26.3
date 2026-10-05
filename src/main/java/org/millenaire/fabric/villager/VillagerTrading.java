@@ -44,7 +44,7 @@ public final class VillagerTrading {
         var catalog = MillenaireCommands.contentCatalog();
         var context = VillageContext.of(level, catalog, villager.building());
         if (context.isEmpty()) return "no recorded home building '" + villager.building() + "'";
-        var plan = catalog.plans().get(context.get().home().plan());
+        var plan = catalog.plan(context.get().home().plan());
         String shopId = plan == null ? "" : plan.parameters().getOrDefault("shop", List.of("")).getLast().trim().toLowerCase(Locale.ROOT);
         if (shopId.isEmpty()) return "home " + context.get().home().plan() + " has no shop";
         var culture = MillenaireCommands.tradeCatalog().cultures().get(villager.culture());
@@ -57,7 +57,7 @@ public final class VillagerTrading {
         var catalog = MillenaireCommands.contentCatalog();
         var context = VillageContext.of(level, catalog, villager.building()).orElse(null);
         if (context == null) return Optional.empty();
-        var plan = catalog.plans().get(context.home().plan());
+        var plan = catalog.plan(context.home().plan());
         String shopId = plan == null ? "" : plan.parameters().getOrDefault("shop", List.of("")).getLast().trim().toLowerCase(Locale.ROOT);
         if (shopId.isEmpty()) return Optional.empty();
         var culture = MillenaireCommands.tradeCatalog().cultures().get(villager.culture());

@@ -51,7 +51,7 @@ final class VillageChores {
     }
 
     static Optional<TradeCatalog.Shop> shop(VillageContext context, FabricBuildingState.PlacedBuilding building) {
-        var plan = context.catalog().plans().get(building.plan());
+        var plan = context.catalog().plan(building.plan());
         if (plan == null) return Optional.empty();
         String shopId = plan.parameters().getOrDefault("shop", List.of("")).getLast().trim().toLowerCase(Locale.ROOT);
         if (shopId.isEmpty()) return Optional.empty();

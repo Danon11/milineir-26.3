@@ -71,6 +71,7 @@ public final class MillenaireCommands {
     }
 
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        org.millenaire.fabric.village.SummoningWand.registerCommands(dispatcher);
         // Player quest actions, used by the chat buttons; no operator permission required.
         dispatcher.register(Commands.literal(org.millenaire.fabric.quest.QuestService.COMMAND)
                 .then(Commands.literal("list").executes(context -> {

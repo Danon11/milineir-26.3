@@ -5,7 +5,7 @@
   "name": "Millénaire client game test",
   "environment": "client",
   "entrypoints": {
-    "fabric-client-gametest": ["org.millenaire.fabric.gametest.VillagerRenderGameTest"]
+    "fabric-client-gametest": ["org.millenaire.fabric.gametest.VillagerRenderGameTest", "org.millenaire.fabric.gametest.PlayerVillageGameTest"]
   },
   "depends": { "millenaire": "*", "fabric-client-gametest-api-v1": "*" }
 }

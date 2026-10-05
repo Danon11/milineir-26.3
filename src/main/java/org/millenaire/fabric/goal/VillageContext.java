@@ -45,7 +45,7 @@ public record VillageContext(ServerLevel level, LegacyContentCatalog catalog, Fa
     }
 
     public List<String> tags(FabricBuildingState.PlacedBuilding building) {
-        var plan = catalog.plans().get(building.plan());
+        var plan = catalog.plan(building.plan());
         if (plan == null) return List.of();
         List<String> tags = new ArrayList<>();
         for (String value : plan.parameters().getOrDefault("tag", List.of()))

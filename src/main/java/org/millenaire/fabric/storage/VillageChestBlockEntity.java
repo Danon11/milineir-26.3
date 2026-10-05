@@ -36,7 +36,15 @@ public final class VillageChestBlockEntity extends ChestBlockEntity implements W
     private boolean allowed(Player player) {
         boolean administrator = player.isCreative() || player instanceof ServerPlayer serverPlayer
                 && serverPlayer.createCommandSourceStack().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
-        return allows(player.getUUID(), administrator);
+        return allows(player.getUUID(), administrator) || ownsVillage(player);
+    }
+    /** The owner of a player-controlled village may use every chest of it. */
+    private boolean ownsVillage(Player player) {
+        if (!(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) return true; // the server decides
+        return org.millenaire.fabric.village.PlayerVillages.settlementAt(serverLevel, getBlockPos())
+                .map(settlement -> org.millenaire.fabric.FabricVillageOwnership.get(serverLevel.getServer())
+                        .owns(org.millenaire.fabric.village.VillageGrowth.key(settlement), player.getUUID()))
+                .orElse(false);
     }
     @Override public boolean canOpen(Player player) {
         if (!allowed(player)) {

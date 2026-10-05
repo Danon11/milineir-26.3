@@ -73,7 +73,7 @@ public final class VillagePopulation {
         List<Vacancy> result = new ArrayList<>();
         for (var building : settlement.buildings()) {
             var placed = building.placement();
-            var plan = catalog.plans().get(placed.plan());
+            var plan = catalog.plan(placed.plan());
             if (plan == null) continue;
             String key = buildingKey(placed.plan(), placed.origin());
             Map<String, Integer> present = new HashMap<>();
@@ -113,7 +113,7 @@ public final class VillagePopulation {
         var catalog = MillenaireCommands.contentCatalog();
         for (var building : settlement.buildings()) {
             var placed = building.placement();
-            var plan = catalog.plans().get(placed.plan());
+            var plan = catalog.plan(placed.plan());
             if (plan == null) continue;
             String key = buildingKey(placed.plan(), placed.origin());
             var household = living.getOrDefault(baseKey(key), List.of());

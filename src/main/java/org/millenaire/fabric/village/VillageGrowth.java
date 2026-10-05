@@ -139,7 +139,7 @@ public final class VillageGrowth {
         List<Weighted> weighted = new ArrayList<>();
         Map<String, Integer> counts = new HashMap<>();
         for (var building : settlement.buildings()) {
-            var plan = catalog.plans().get(building.placement().plan());
+            var plan = catalog.plan(building.placement().plan());
             if (plan == null) continue;
             counts.merge(plan.key(), 1, Integer::sum);
             var next = nextLevel(plan);
@@ -147,14 +147,20 @@ public final class VillageGrowth {
             weighted.add(new Weighted(new Project(key(settlement), true, next, building.placement().origin(), building.placement().rotation(),
                     building.reservedArea(), Map.of()), priority(next)));
         }
-        if (type != null) {
-            for (List<String> tier : List.of(type.coreBuildings(), type.secondaryBuildings())) {
+        // A player-controlled village builds only what its owner ordered; upgrades still come by themselves.
+        var owner = org.millenaire.fabric.FabricVillageOwnership.get(level.getServer()).owner(key(settlement));
+        List<List<String>> tiers = owner.isPresent() ? List.of(owner.get().orders())
+                : type == null ? List.of() : List.of(type.coreBuildings(), type.secondaryBuildings());
+        if (!tiers.isEmpty()) {
+            for (List<String> tier : tiers) {
                 Map<String, Integer> wanted = new LinkedHashMap<>();
                 tier.forEach(key -> wanted.merge(key.trim(), 1, Integer::sum));
-                List<String> missing = wanted.entrySet().stream().filter(e -> counts.getOrDefault(e.getKey(), 0) < e.getValue()).map(Map.Entry::getKey).toList();
+                // Orders are built one at a time in the order given, even when the village already has such a building.
+                List<String> missing = owner.isPresent() ? tier.stream().limit(1).toList()
+                        : wanted.entrySet().stream().filter(e -> counts.getOrDefault(e.getKey(), 0) < e.getValue()).map(Map.Entry::getKey).toList();
                 if (missing.isEmpty()) continue;
                 var existing = settlement.buildings().stream().map(b -> {
-                    var plan = catalog.plans().get(b.placement().plan());
+                    var plan = catalog.plan(b.placement().plan());
                     return plan == null ? null : new VillageLayout.Building(plan, b.placement().origin(), b.placement().rotation(), b.centre(), b.reservedArea());
                 }).filter(Objects::nonNull).toList();
                 for (String key : missing) {
@@ -280,7 +286,10 @@ public final class VillageGrowth {
                 points);
         FabricBuildingState.get(level.getServer()).record(placed);
         settlements.upsertBuilding(settlement, new FabricSettlementState.Building(placed, project.area(), false), project.upgrade());
-        if (!project.upgrade()) VillagerSpawning.populate(level, project.plan(), placed, new SplittableRandom(level.getSeed() ^ project.site().asLong()));
+        if (!project.upgrade()) {
+            VillagerSpawning.populate(level, project.plan(), placed, new SplittableRandom(level.getSeed() ^ project.site().asLong()));
+            org.millenaire.fabric.FabricVillageOwnership.get(level.getServer()).completeOrder(project.settlementKey(), project.plan().key());
+        }
         return "built " + project.label();
     }
 }

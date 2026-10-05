@@ -95,8 +95,13 @@ public final class VillagerSpawning {
 
     /** Spawns the residents of a newly placed building; unknown resident types are returned as issues. */
     public static List<String> populate(ServerLevel level, LegacyBuildingPlan plan, FabricBuildingState.PlacedBuilding placed, RandomGenerator random) {
-        List<String> issues = new ArrayList<>();
         spawnAnimals(level, placed);
+        return spawnResidents(level, plan, placed, random);
+    }
+
+    /** Spawns the residents a plan lists, without the starting herd (player-built buildings bring their own). */
+    public static List<String> spawnResidents(ServerLevel level, LegacyBuildingPlan plan, FabricBuildingState.PlacedBuilding placed, RandomGenerator random) {
+        List<String> issues = new ArrayList<>();
         for (Resident resident : residents(plan, placed)) {
             VillagerProfile profile = snapshot.profiles().get(resident.profileId());
             if (profile == null) {
