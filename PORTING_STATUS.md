@@ -91,7 +91,7 @@ quests. What remains, roughly by importance:
 - Old screens: traveller's book, village/building panels, quest log, maps; hiring villagers.
 - World quests with bedrock buildings (quests are skipped while they need them).
 - Village relations: diplomacy, raids between villages, garrisons.
-- Remaining goals: mud bricks (`gatherbrick`/`drybrick`), paths (`buildpath`/`clearoldpath`), pujas and
+- Remaining goals: paths (`buildpath`/`clearoldpath`), pujas and
   sacrifices, brewing potions, silk/snails/cocoa/nether wart crops; families and marriages; clothes from items.
 - Decorative entities, wall smoothing, crop theft rules, the rainbow advancement, fortune on seed drops.
 

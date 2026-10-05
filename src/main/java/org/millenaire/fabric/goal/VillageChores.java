@@ -277,4 +277,46 @@ final class VillageChores {
             return true;
         }));
     }
+
+    // ------------------------------------------------------------------ mud bricks
+
+    private static Optional<net.minecraft.world.level.block.state.BlockState> mudBrick() {
+        var id = net.minecraft.resources.Identifier.fromNamespaceAndPath("millenaire", "mudbrick");
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(id).map(net.minecraft.world.level.block.Block::defaultBlockState);
+    }
+
+    /** {@code drybrick}: lays a mud brick out to dry on a free {@code brickspot}. */
+    static Optional<ResourceGoals.Plan> layBricks(VillageContext context, FabricBuildingState.PlacedBuilding building) {
+        var brick = mudBrick();
+        if (brick.isEmpty()) return Optional.empty();
+        ServerLevel level = context.level();
+        for (BlockPos spot : context.points(building, "brickspot")) {
+            if (!level.isLoaded(spot) || !level.getBlockState(spot).isAir()) continue;
+            return Optional.of(new ResourceGoals.Plan(spot, () -> {
+                if (!level.getBlockState(spot).isAir()) return false;
+                level.setBlockAndUpdate(spot, brick.get());
+                return true;
+            }));
+        }
+        return Optional.empty();
+    }
+
+    /** {@code gatherbrick}: collects the dried bricks once every spot of the yard is full. */
+    static Optional<ResourceGoals.Plan> gatherBricks(VillageContext context, FabricBuildingState.PlacedBuilding building, MillVillagerEntity villager) {
+        var brick = mudBrick();
+        var spots = context.points(building, "brickspot");
+        if (brick.isEmpty() || spots.isEmpty()) return Optional.empty();
+        ServerLevel level = context.level();
+        if (!spots.stream().allMatch(spot -> level.isLoaded(spot) && level.getBlockState(spot).is(brick.get().getBlock()))) return Optional.empty();
+        return Optional.of(new ResourceGoals.Plan(spots.getFirst(), () -> {
+            int gathered = 0;
+            for (BlockPos spot : spots)
+                if (level.getBlockState(spot).is(brick.get().getBlock())) {
+                    level.setBlockAndUpdate(spot, Blocks.AIR.defaultBlockState());
+                    gathered++;
+                }
+            villager.changeCarried("mudbrick", gathered);
+            return gathered > 0;
+        }));
+    }
 }

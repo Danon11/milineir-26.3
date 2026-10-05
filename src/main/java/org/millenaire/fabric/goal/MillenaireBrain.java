@@ -137,6 +137,7 @@ public final class MillenaireBrain extends Goal {
             case "breed", "shearsheep" -> 42;
             case "plantsugarcane", "harvestsugarcane" -> 44;
             case "fish", "fishinuit" -> 30;
+            case "drybrick", "gatherbrick" -> 46;
             case "visitinn", "visitbuilding", "merchantvisitinn", "merchantvisitbuilding" -> 12;
             case "choptrees" -> 45;
             case "construction" -> 70;
@@ -197,9 +198,28 @@ public final class MillenaireBrain extends Goal {
                     : chore(name, VillageChores.gatherDropped(context, villager, profile()), 10);
             case "breed" -> context == null ? null : chore(name, VillageChores.breed(context), 60);
             case "shearsheep" -> context == null ? null : chore(name, VillageChores.shear(context, villager, random), 40);
-            case "plantsugarcane" -> context == null ? null : chore(name, VillageChores.plantSugarCane(context, context.home()), 40);
-            case "harvestsugarcane" -> context == null ? null : chore(name, VillageChores.harvestSugarCane(context, context.home(), villager), 40);
+            case "plantsugarcane", "harvestsugarcane" -> {
+                if (context == null) yield null;
+                Task found = null;
+                for (var building : withPoints(context, "sugarcanesoil")) {
+                    found = chore(name, name.equals("plantsugarcane") ? VillageChores.plantSugarCane(context, building)
+                            : VillageChores.harvestSugarCane(context, building, villager), 40);
+                    if (found != null) break;
+                }
+                yield found;
+            }
             case "fish", "fishinuit" -> context == null ? null : chore(name, VillageChores.fish(context, villager, random), 400);
+            case "drybrick", "gatherbrick" -> {
+                if (context == null) yield null;
+                // The brick yard is the home when it has brick spots, else another building of the village.
+                Task found = null;
+                for (var building : withPoints(context, "brickspot")) {
+                    found = chore(name, name.equals("drybrick") ? VillageChores.layBricks(context, building)
+                            : VillageChores.gatherBricks(context, building, villager), name.equals("drybrick") ? 60 : 80);
+                    if (found != null) break;
+                }
+                yield found;
+            }
             case "keepstall" -> {
                 // Sellers mind their stall during the day, where players find them to trade.
                 if (context == null || night(context.level().getDefaultClockTime())) yield null;
@@ -223,6 +243,14 @@ public final class MillenaireBrain extends Goal {
 
     private org.millenaire.fabric.villager.VillagerProfile profile() {
         return VillagerSpawning.snapshot().profiles().get(villager.profileId());
+    }
+
+    private static List<FabricBuildingState.PlacedBuilding> withPoints(VillageContext context, String key) {
+        List<FabricBuildingState.PlacedBuilding> result = new ArrayList<>();
+        if (!context.points(context.home(), key).isEmpty()) result.add(context.home());
+        for (var building : context.buildings())
+            if (building != context.home() && !context.points(building, key).isEmpty()) result.add(building);
+        return result;
     }
 
     private Task chore(String name, Optional<ResourceGoals.Plan> plan, int ticks) {
