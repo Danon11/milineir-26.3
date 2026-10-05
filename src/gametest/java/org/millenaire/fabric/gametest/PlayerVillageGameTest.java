@@ -133,6 +133,21 @@ public final class PlayerVillageGameTest implements FabricClientGameTest {
             context.waitTicks(10);
             boolean gone = server.computeOnServer(s -> FabricSettlementState.get(s).containing(s.overworld().dimension().identifier(), centre.getX(), centre.getZ()).isEmpty());
             if (!gone) throw new AssertionError("Village not dissolved");
+
+            // 7. A quest world building: placed away from the player, reaching it sets explored_<building>.
+            var site = server.computeOnServer(s -> {
+                var player = s.getPlayerList().getPlayers().getFirst();
+                String message = org.millenaire.fabric.quest.QuestSites.place(player,
+                        new org.millenaire.fabric.quest.QuestDefinition.BedrockBuilding("norman", "anomalyone")).getString();
+                var sites = org.millenaire.fabric.quest.QuestSites.get(s).sites();
+                if (sites.isEmpty()) throw new AssertionError("Quest building not placed: " + message);
+                return sites.getLast();
+            });
+            server.runCommand("tp @p " + site.x() + " " + (site.y() + 2) + " " + site.z());
+            context.waitTicks(60);
+            boolean explored = server.computeOnServer(s -> org.millenaire.fabric.quest.FabricQuestState.get(s)
+                    .playerTag(s.getPlayerList().getPlayers().getFirst().getUUID(), "explored_anomalyone"));
+            if (!explored) throw new AssertionError("Reaching the quest building did not set explored_anomalyone");
         }
     }
 

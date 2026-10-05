@@ -30,6 +30,7 @@ public final class MillenaireFabric implements ModInitializer {
                     org.millenaire.fabric.village.VillageGrowth.tick(server);
                     org.millenaire.fabric.village.VillagePopulation.tick(server);
                     org.millenaire.fabric.village.VillageRaids.tick(server);
+                    org.millenaire.fabric.quest.QuestSites.tick(server);
                     org.millenaire.fabric.village.WorldVillageGenerator.tick(server);
                 });
         FabricLoader.getInstance().getModContainer("millenaire").ifPresentOrElse(

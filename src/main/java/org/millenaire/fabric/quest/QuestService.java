@@ -93,7 +93,6 @@ public final class QuestService {
         if (villagers.isEmpty()) return;
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             for (var quest : catalog.quests().values()) {
-                if (quest.steps().stream().anyMatch(step -> !step.bedrockBuildings().isEmpty())) continue; // needs lone building generation
                 if (RANDOM.nextDouble() > quest.chancePerHour() || !QuestRuntime.eligible(quest, player.getUUID(), state)) continue;
                 var assignment = QuestRuntime.assign(quest, player.getUUID(), villagers, state, RANDOM);
                 if (assignment.isEmpty()) continue;
@@ -186,6 +185,8 @@ public final class QuestService {
             FabricReputationState.get(server).add(village, player.getUUID(), step.rewardReputation());
         apply(state, instance, step.success());
         step.actionData().forEach(entry -> state.setActionData(player.getUUID(), entry.key(), entry.value()));
+        // World buildings of the step are placed now; the next step usually asks the player to explore them.
+        step.bedrockBuildings().forEach(building -> player.sendSystemMessage(QuestSites.place(player, building)));
         String success = text(quest, instance, instance.step(), QuestTexts.Field.DESCRIPTION_SUCCESS, server, player).orElse("");
         if (instance.step() + 1 >= quest.steps().size()) {
             state.remove(id);
