@@ -53,6 +53,8 @@
 - Parchments open as books (culture villagers, buildings, goods; village scroll for the village you stand
   in); town hall and building panels show the village status; `/millenaire_village journal` lists known
   villages with distance, direction and reputation.
+- Every goal named in the villager files now runs: also `getresourcesforbuild`, nether wart and cocoa,
+  silkworm frames, snails (purple dye), plain `mining` from the home's sources and `brewpotions`.
 - Fix: villagers lost their home building after an upgrade (`_A0` to `_A1`).
 
 
@@ -117,8 +119,8 @@ The gameplay systems of the original are in place. What remains is mostly presen
 - The original's custom screens are replaced by chat buttons and vanilla book/merchant screens (traveller's
   book map view, building panels as GUIs, quest log screen).
 - Decorative entities, wall smoothing, crop theft rules, the rainbow advancement, fortune on seed drops.
-- Remaining minor goals: silk, snails, cocoa and nether wart crops, potion brewing, `gotendsacrifices`,
-  meditation; marriages between villagers of different houses.
+- Marriages between villagers of different houses; brewing produces no potions yet (the brewer only tends
+  the stand).
 
 ## Verification
 

@@ -141,6 +141,9 @@ public final class MillenaireBrain extends Goal {
             case "fish", "fishinuit" -> 30;
             case "drybrick", "gatherbrick" -> 46;
             case "buildpath" -> 38;
+            case "getresourcesforbuild" -> 65;
+            case "plantwarts", "harvestwarts", "plantcocoa", "harvestcocoa", "gathersilk", "gathersnails", "mining" -> 44;
+            case "brewpotions" -> 30;
             case "performpujas", "bepujaperformer" -> 34;
             case "clearoldpath" -> 36;
             case "visitinn", "visitbuilding", "merchantvisitinn", "merchantvisitbuilding" -> 12;
@@ -235,6 +238,36 @@ public final class MillenaireBrain extends Goal {
                 if (temples.isEmpty()) temples = context.withTags(List.of("praying"));
                 var temple = temples.isEmpty() ? context.home() : temples.getFirst();
                 yield new IdleTask(name, context.workPoint(temple), 1200 + villager.getRandom().nextInt(600), name);
+            }
+            case "getresourcesforbuild" -> {
+                // Before building, the builder fetches the materials at the town hall.
+                if (context == null || context.townhall().isEmpty()) yield null;
+                var key = org.millenaire.fabric.village.VillageGrowth.settlementOf(context.level().getServer(), context.home().dimension(), context.home().origin());
+                if (key.flatMap(org.millenaire.fabric.village.VillageGrowth::pending).isEmpty()) yield null;
+                yield new IdleTask(name, context.workPoint(context.townhall().get()), 60, name);
+            }
+            case "plantwarts", "harvestwarts", "plantcocoa", "harvestcocoa" -> {
+                if (context == null) yield null;
+                String point = name.endsWith("warts") ? "netherwartsoil" : "cacaospot";
+                Task found = null;
+                for (var building : withPoints(context, point)) {
+                    found = chore(name, switch (name) {
+                        case "plantwarts" -> VillageChores.plantWarts(context, building);
+                        case "harvestwarts" -> VillageChores.harvestWarts(context, building, villager, random);
+                        case "plantcocoa" -> VillageChores.plantCocoa(context, building);
+                        default -> VillageChores.harvestCocoa(context, building, villager, random);
+                    }, 40);
+                    if (found != null) break;
+                }
+                yield found;
+            }
+            case "gathersilk" -> context == null ? null : chore(name, VillageChores.gatherSilk(context, villager, random), 200);
+            case "gathersnails" -> context == null ? null : chore(name, VillageChores.gatherSnails(context, villager, random), 400);
+            case "mining" -> context == null ? null : chore(name, VillageChores.quarry(context, villager, random), 300);
+            case "brewpotions" -> {
+                if (context == null) yield null;
+                var stands = withPoints(context, "brewingstand");
+                yield stands.isEmpty() ? null : new IdleTask(name, context.points(stands.getFirst(), "brewingstand").getFirst(), 400, name);
             }
             case "clearoldpath" -> {
                 if (context == null) yield null;

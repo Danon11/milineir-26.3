@@ -6,6 +6,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import org.millenaire.fabric.FabricBuildingState;
@@ -318,5 +319,131 @@ final class VillageChores {
             villager.changeCarried("mudbrick", gathered);
             return gathered > 0;
         }));
+    }
+
+    // ------------------------------------------------------------------ minor crops and crafts
+
+    private static Optional<Block> millBlock(String name) {
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(net.minecraft.resources.Identifier.fromNamespaceAndPath("millenaire", name));
+    }
+
+    /** {@code plantwarts}: nether wart on the {@code netherwartsoil} points (the soil is soul sand). */
+    static Optional<ResourceGoals.Plan> plantWarts(VillageContext context, FabricBuildingState.PlacedBuilding building) {
+        ServerLevel level = context.level();
+        for (BlockPos soil : context.points(building, "netherwartsoil")) {
+            BlockPos at = soil.above();
+            if (!level.isLoaded(at) || !level.getBlockState(at).isAir()) continue;
+            return Optional.of(new ResourceGoals.Plan(at, () -> {
+                if (!level.getBlockState(soil).is(Blocks.SOUL_SAND)) level.setBlockAndUpdate(soil, Blocks.SOUL_SAND.defaultBlockState());
+                if (!level.getBlockState(at).isAir()) return false;
+                level.setBlockAndUpdate(at, Blocks.NETHER_WART.defaultBlockState());
+                return true;
+            }));
+        }
+        return Optional.empty();
+    }
+
+    /** {@code harvestwarts}: ripe nether wart is picked and replanted. */
+    static Optional<ResourceGoals.Plan> harvestWarts(VillageContext context, FabricBuildingState.PlacedBuilding building, MillVillagerEntity villager, RandomGenerator random) {
+        ServerLevel level = context.level();
+        for (BlockPos soil : context.points(building, "netherwartsoil")) {
+            BlockPos at = soil.above();
+            var state = level.isLoaded(at) ? level.getBlockState(at) : null;
+            if (state == null || !state.is(Blocks.NETHER_WART) || state.getValue(net.minecraft.world.level.block.NetherWartBlock.AGE) < 3) continue;
+            return Optional.of(new ResourceGoals.Plan(at, () -> {
+                var now = level.getBlockState(at);
+                if (!now.is(Blocks.NETHER_WART) || now.getValue(net.minecraft.world.level.block.NetherWartBlock.AGE) < 3) return false;
+                level.setBlockAndUpdate(at, Blocks.NETHER_WART.defaultBlockState());
+                villager.changeCarried("netherwart", 2 + random.nextInt(3));
+                return true;
+            }));
+        }
+        return Optional.empty();
+    }
+
+    /** {@code plantcocoa}: cocoa pods on the {@code cacaospot} points, against a neighbouring jungle log. */
+    static Optional<ResourceGoals.Plan> plantCocoa(VillageContext context, FabricBuildingState.PlacedBuilding building) {
+        ServerLevel level = context.level();
+        for (BlockPos spot : context.points(building, "cacaospot")) {
+            if (!level.isLoaded(spot) || !level.getBlockState(spot).isAir()) continue;
+            for (var side : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+                if (!level.getBlockState(spot.relative(side)).is(net.minecraft.tags.BlockTags.JUNGLE_LOGS)) continue;
+                var pod = Blocks.COCOA.defaultBlockState().setValue(net.minecraft.world.level.block.CocoaBlock.FACING, side);
+                return Optional.of(new ResourceGoals.Plan(spot, () -> {
+                    if (!level.getBlockState(spot).isAir() || !pod.canSurvive(level, spot)) return false;
+                    level.setBlockAndUpdate(spot, pod);
+                    return true;
+                }));
+            }
+        }
+        return Optional.empty();
+    }
+
+    /** {@code harvestcocoa}: ripe pods give cocoa beans (dye_brown) and are planted again. */
+    static Optional<ResourceGoals.Plan> harvestCocoa(VillageContext context, FabricBuildingState.PlacedBuilding building, MillVillagerEntity villager, RandomGenerator random) {
+        ServerLevel level = context.level();
+        for (BlockPos spot : context.points(building, "cacaospot")) {
+            var state = level.isLoaded(spot) ? level.getBlockState(spot) : null;
+            if (state == null || !state.is(Blocks.COCOA) || state.getValue(net.minecraft.world.level.block.CocoaBlock.AGE) < 2) continue;
+            return Optional.of(new ResourceGoals.Plan(spot, () -> {
+                var now = level.getBlockState(spot);
+                if (!now.is(Blocks.COCOA) || now.getValue(net.minecraft.world.level.block.CocoaBlock.AGE) < 2) return false;
+                level.setBlockAndUpdate(spot, now.setValue(net.minecraft.world.level.block.CocoaBlock.AGE, 0));
+                villager.changeCarried("dye_brown", 2 + random.nextInt(2));
+                return true;
+            }));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * {@code gathersilk}: silkworm frames near the home ({@code silkwormfull}) give silk and become empty; an
+     * empty frame is tended back to full in the next visit.
+     */
+    static Optional<ResourceGoals.Plan> gatherSilk(VillageContext context, MillVillagerEntity villager, RandomGenerator random) {
+        var full = millBlock("silkwormfull");
+        var empty = millBlock("silkwormempty");
+        if (full.isEmpty() || empty.isEmpty()) return Optional.empty();
+        BlockPos home = context.workPoint(context.home());
+        ServerLevel level = context.level();
+        var ripe = WorldBlocks.nearest(level, home, 16, 6, state -> state.is(full.get()));
+        if (ripe.isPresent()) return Optional.of(new ResourceGoals.Plan(ripe.get(), () -> {
+            if (!level.getBlockState(ripe.get()).is(full.get())) return false;
+            level.setBlockAndUpdate(ripe.get(), empty.get().defaultBlockState());
+            villager.changeCarried("silk", 1 + random.nextInt(2));
+            return true;
+        }));
+        return WorldBlocks.nearest(level, home, 16, 6, state -> state.is(empty.get())).map(frame -> new ResourceGoals.Plan(frame, () -> {
+            if (!level.getBlockState(frame).is(empty.get())) return false;
+            level.setBlockAndUpdate(frame, full.get().defaultBlockState());
+            return true;
+        }));
+    }
+
+    /** {@code gathersnails}: snails from the snail soil near the home give purple dye. */
+    static Optional<ResourceGoals.Plan> gatherSnails(VillageContext context, MillVillagerEntity villager, RandomGenerator random) {
+        var soil = millBlock("snail_soil");
+        if (soil.isEmpty()) return Optional.empty();
+        BlockPos home = context.workPoint(context.home());
+        return WorldBlocks.nearest(context.level(), home, 16, 6, state -> state.is(soil.get())).map(at -> new ResourceGoals.Plan(at.above(), () -> {
+            villager.changeCarried("dye_purple", 1 + random.nextInt(2));
+            return true;
+        }));
+    }
+
+    /** {@code mining} as a plain goal: a few blocks from the home's stone, sand, gravel or clay sources. */
+    static Optional<ResourceGoals.Plan> quarry(VillageContext context, MillVillagerEntity villager, RandomGenerator random) {
+        Map<String, String> goods = Map.of("stonesource", "stone", "sandsource", "sand", "gravelsource", "gravel", "claysource", "clay");
+        for (var entry : goods.entrySet()) {
+            var sources = context.points(context.home(), entry.getKey());
+            if (sources.isEmpty()) continue;
+            BlockPos at = sources.get(random.nextInt(sources.size()));
+            // Sources are inexhaustible in the original: the block stays and the goods come from it.
+            return Optional.of(new ResourceGoals.Plan(at.above(), () -> {
+                villager.changeCarried(entry.getValue(), 2 + random.nextInt(3));
+                return true;
+            }));
+        }
+        return Optional.empty();
     }
 }
