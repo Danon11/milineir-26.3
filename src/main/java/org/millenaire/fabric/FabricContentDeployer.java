@@ -39,7 +39,7 @@ public final class FabricContentDeployer {
             try {
                 int copiedFiles = mergeMissingFiles(sourcePath.get(), destination);
                 LOGGER.log(System.Logger.Level.INFO, "Seeded " + copiedFiles + " Millenaire content files in " + destination);
-            } catch (IOException exception) {
+            } catch (IOException | RuntimeException exception) {
                 LOGGER.log(System.Logger.Level.ERROR, "Could not seed Millenaire content from " + bundledPath, exception);
             }
         }
@@ -65,7 +65,7 @@ public final class FabricContentDeployer {
                 }
 
                 Path relativePath = source.relativize(bundledFile);
-                Path target = destination.resolve(relativePath).normalize();
+                Path target = resolveAcrossFileSystems(destination, relativePath);
                 if (!target.startsWith(destination)) {
                     LOGGER.log(System.Logger.Level.WARNING, "Rejected bundled path outside destination: " + relativePath);
                     continue;
@@ -82,6 +82,16 @@ public final class FabricContentDeployer {
         }
 
         return copiedFiles;
+    }
+
+    // The bundled root usually lives in the mod jar's zip file system, so its
+    // relative paths cannot be resolved against a default-file-system path directly.
+    private static Path resolveAcrossFileSystems(Path destination, Path relativePath) {
+        Path target = destination;
+        for (Path part : relativePath) {
+            target = target.resolve(part.toString());
+        }
+        return target.normalize();
     }
 
     private static void ensureSafeDirectory(Path destinationRoot, Path directory) throws IOException {
