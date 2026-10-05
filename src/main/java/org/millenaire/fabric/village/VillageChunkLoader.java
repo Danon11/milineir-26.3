@@ -159,6 +159,9 @@ public final class VillageChunkLoader {
         int bar = chunk.lastIndexOf('|'), comma = chunk.lastIndexOf(',');
         ServerLevel level = server.getLevel(ResourceKey.create(Registries.DIMENSION, Identifier.parse(chunk.substring(0, bar))));
         if (level == null) return false;
-        return level.setChunkForced(Integer.parseInt(chunk.substring(bar + 1, comma)), Integer.parseInt(chunk.substring(comma + 1)), forced);
+        // Unlike ServerLevel.setChunkForced, this only adds the ticket: the chunk loads in the background instead of
+        // being read or generated synchronously on the server thread.
+        return level.getChunkSource().updateChunkForced(new net.minecraft.world.level.ChunkPos(
+                Integer.parseInt(chunk.substring(bar + 1, comma)), Integer.parseInt(chunk.substring(comma + 1))), forced);
     }
 }
