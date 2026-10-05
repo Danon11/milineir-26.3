@@ -17,6 +17,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SignBlock;
+import org.millenaire.fabric.ui.MillMenu;
+import org.millenaire.fabric.ui.MillMenus;
 import org.millenaire.fabric.FabricVillageOwnership;
 import org.millenaire.fabric.FabricVillagerState;
 
@@ -43,18 +45,23 @@ public final class SummoningWand {
         });
     }
 
+    private static String cmd(String arguments) { return "/" + COMMAND + " " + arguments; }
+
     static void use(ServerPlayer player, BlockPos pos) {
         var level = player.level();
         var state = level.getBlockState(pos);
         var settlement = PlayerVillages.settlementAt(level, pos);
+        String at = pos.getX() + " " + pos.getY() + " " + pos.getZ();
         if (state.is(Blocks.GOLD_BLOCK) && settlement.isEmpty()) {
-            MutableComponent menu = Component.literal("Found a village here:").withStyle(ChatFormatting.GOLD);
-            for (var type : PlayerVillages.foundable())
-                menu.append(Component.literal("\n ")).append(button("[" + type.name() + "]", ChatFormatting.GREEN,
-                        "found " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " " + type.culture() + ":" + type.id()))
-                        .append(Component.literal(" " + type.culture() + (type.source().first("customcentre", "").isBlank() ? "" : ", around your own building"))
-                                .withStyle(ChatFormatting.GRAY));
-            player.sendSystemMessage(menu);
+            var menu = MillMenu.builder("Found a village").subtitle("The gold block becomes its centre");
+            String culture = "";
+            for (var type : PlayerVillages.foundable()) {
+                if (!type.culture().equals(culture)) { culture = type.culture(); menu.heading(capitalise(culture)); }
+                boolean custom = !type.source().first("customcentre", "").isBlank();
+                menu.row(type.name() + (custom ? " — around your own town hall" : ""),
+                        MillMenu.button("Found", cmd("found " + at + " " + type.culture() + ":" + type.id()), MillMenu.Tone.GOOD));
+            }
+            MillMenus.show(player, menu.build());
             return;
         }
         if (settlement.isEmpty()) {
@@ -63,27 +70,22 @@ public final class SummoningWand {
         }
         String key = VillageGrowth.key(settlement.get());
         var ownership = FabricVillageOwnership.get(player.level().getServer());
-        if (!ownership.owns(key, player.getUUID())) {
-            String owner = ownership.owner(key).map(FabricVillageOwnership.Owner::name).orElse("nobody");
-            player.sendSystemMessage(Component.literal(settlement.get().name() + " (" + settlement.get().type() + ") is ruled by " + owner + ".")
-                    .withStyle(ChatFormatting.GRAY));
-            return;
-        }
-        if (state.getBlock() instanceof SignBlock) {
-            MutableComponent menu = Component.literal("Register the building around this sign as:").withStyle(ChatFormatting.GOLD);
+        if (ownership.owns(key, player.getUUID()) && state.getBlock() instanceof SignBlock) {
+            var menu = MillMenu.builder("Register a building").subtitle("What did you build around this sign?");
             var definitions = PlayerVillages.customBuildings();
             for (String id : PlayerVillages.allowedCustom(settlement.get())) {
                 var definition = definitions.get(id);
                 if (definition == null) continue;
-                menu.append(Component.literal("\n ")).append(button("[" + (definition.nativeName().isEmpty() ? definition.key() : definition.nativeName()) + "]",
-                        ChatFormatting.GREEN, "custom " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " " + id))
-                        .append(Component.literal(" " + requirements(definition)).withStyle(ChatFormatting.GRAY));
+                menu.row((definition.nativeName().isEmpty() ? definition.key() : definition.nativeName()) + ": " + requirements(definition),
+                        MillMenu.button("Register", cmd("custom " + at + " " + id), MillMenu.Tone.GOOD));
             }
-            player.sendSystemMessage(menu);
+            MillMenus.show(player, menu.build());
             return;
         }
-        player.sendSystemMessage(status(player, settlement.get()));
+        MillMenus.show(player, status(player, settlement.get()));
     }
+
+    private static String capitalise(String text) { return text.isEmpty() ? text : Character.toUpperCase(text.charAt(0)) + text.substring(1); }
 
     /** The negation wand asks for confirmation before undoing anything. */
     static void negate(ServerPlayer player, BlockPos pos) {
@@ -97,10 +99,11 @@ public final class SummoningWand {
         var origin = new org.millenaire.fabric.content.LegacyBuildingPlan.Position(pos.getX(), pos.getY(), pos.getZ());
         boolean building = level.getBlockState(pos).getBlock() instanceof SignBlock
                 && settlement.get().buildings().stream().anyMatch(b -> !b.centre() && b.placement().origin().equals(origin));
-        MutableComponent message = Component.literal(building ? "Remove this building from " + settlement.get().name() + "? "
-                : "Dissolve " + settlement.get().name() + "? Its villagers will leave. ").withStyle(ChatFormatting.GOLD);
-        message.append(button(building ? "[Remove building]" : "[Dissolve village]", ChatFormatting.RED, (building ? "unregister " : "dissolve ") + at + " confirm"));
-        player.sendSystemMessage(message);
+        var menu = MillMenu.builder(building ? "Remove a building" : "Dissolve " + settlement.get().name());
+        menu.text(building ? "This building will no longer belong to " + settlement.get().name() + "; its residents leave."
+                : "The village will be forgotten and its villagers will leave. The buildings stay where they are.");
+        menu.row("", MillMenu.button(building ? "Remove building" : "Dissolve village", cmd((building ? "unregister " : "dissolve ") + at + " confirm"), MillMenu.Tone.BAD));
+        MillMenus.show(player, menu.build());
     }
 
     static String requirements(org.millenaire.fabric.content.CustomBuildings.Definition definition) {
@@ -112,20 +115,37 @@ public final class SummoningWand {
         return text.toString();
     }
 
-    static MutableComponent status(ServerPlayer player, org.millenaire.fabric.FabricSettlementState.Settlement settlement) {
+    /** The village screen: population, construction, needs, buildings; owners also order buildings here. */
+    static MillMenu status(ServerPlayer player, org.millenaire.fabric.FabricSettlementState.Settlement settlement) {
         var server = player.level().getServer();
         String key = VillageGrowth.key(settlement);
         var owner = FabricVillageOwnership.get(server).owner(key);
+        boolean owns = owner.map(o -> o.player().equals(player.getStringUUID())).orElse(false);
         long living = FabricVillagerState.get(server).inSettlement(settlement).stream().filter(FabricVillagerState.Villager::alive).count();
-        MutableComponent message = Component.literal(settlement.name() + ": " + settlement.buildings().size() + " buildings, " + living + " villagers")
-                .withStyle(ChatFormatting.GOLD);
-        owner.ifPresent(o -> message.append(Component.literal(o.orders().isEmpty() ? "\nNo buildings ordered." : "\nOrdered: " + String.join(", ", o.orders()))
-                .withStyle(ChatFormatting.WHITE)));
-        message.append(Component.literal("\n")).append(button("[Diplomacy]", ChatFormatting.AQUA, "diplomacy"));
-        message.append(Component.literal("\nOrder a building:").withStyle(ChatFormatting.GOLD));
-        for (String plan : PlayerVillages.orderable(settlement))
-            message.append(Component.literal(" ")).append(button("[" + plan + "]", ChatFormatting.GREEN, "order " + plan));
-        return message;
+        var menu = MillMenu.builder(settlement.name()).subtitle(settlement.type() + owner.map(o -> ", ruled by " + o.name()).orElse(""));
+        menu.text(living + " villagers, " + settlement.buildings().size() + " buildings. Your reputation: "
+                + org.millenaire.fabric.FabricReputationState.get(server).get(key, player.getUUID()));
+        menu.heading("Construction");
+        var site = VillageConstruction.site(key);
+        if (site.isPresent()) menu.text("Building " + site.get().project().label().replaceFirst("^(build|upgrade) [a-z]+:", "$1 ") + ": " + site.get().progress() + "%");
+        else VillageGrowth.pending(key).ifPresentOrElse(p -> menu.text("Waiting for a builder: " + p.label()), () -> menu.text("No construction under way."));
+        var needs = VillageGrowth.needs(key);
+        if (!needs.isEmpty()) menu.text("Villagers are gathering: " + String.join(", ", needs.entrySet().stream()
+                .map(e -> e.getValue() + " " + e.getKey().name().toLowerCase(java.util.Locale.ROOT)).toList()));
+        menu.row("Relations with the neighbours", MillMenu.button("Diplomacy", cmd("diplomacy"), MillMenu.Tone.INFO));
+        if (owns) {
+            menu.heading("Orders");
+            menu.text(owner.get().orders().isEmpty() ? "No buildings ordered." : "Ordered: " + String.join(", ", owner.get().orders()));
+            for (String plan : PlayerVillages.orderable(settlement)) menu.row(plan, MillMenu.button("Order", cmd("order " + plan), MillMenu.Tone.GOOD));
+        }
+        menu.heading("Buildings");
+        var catalog = org.millenaire.fabric.MillenaireCommands.contentCatalog();
+        for (var building : settlement.buildings()) {
+            var plan = catalog.plan(building.placement().plan());
+            menu.text((plan == null ? building.placement().plan() : plan.parameters().getOrDefault("nativename", java.util.List.of(plan.key())).getLast())
+                    + (building.centre() ? " (town hall)" : ""));
+        }
+        return menu.build();
     }
 
     private static MutableComponent button(String label, ChatFormatting colour, String arguments) {
@@ -167,12 +187,12 @@ public final class SummoningWand {
                 })))
                 .then(Commands.literal("journal").executes(context -> {
                     var player = context.getSource().getPlayerOrException();
-                    context.getSource().sendSuccess(() -> journal(player), false);
+                    MillMenus.show(player, journal(player));
                     return 1;
                 }))
                 .then(Commands.literal("diplomacy").executes(context -> {
                     var player = context.getSource().getPlayerOrException();
-                    context.getSource().sendSuccess(() -> diplomacyMenu(player), false);
+                    MillMenus.show(player, diplomacyMenu(player));
                     return 1;
                 }))
                 .then(diplomacyAction("raid")).then(diplomacyAction("gift")).then(diplomacyAction("insult"))
@@ -183,7 +203,7 @@ public final class SummoningWand {
                     var player = context.getSource().getPlayerOrException();
                     var settlement = PlayerVillages.settlementAt(player.level(), player.blockPosition());
                     if (settlement.isEmpty()) return reply(context.getSource(), new PlayerVillages.Outcome(false, "You are not in a village."));
-                    context.getSource().sendSuccess(() -> status(player, settlement.get()), false);
+                    MillMenus.show(player, status(player, settlement.get()));
                     return 1;
                 })));
     }
@@ -194,47 +214,50 @@ public final class SummoningWand {
     }
 
     /** The traveller's journal: villages within 2000 blocks or where the player has a reputation, nearest first. */
-    static MutableComponent journal(ServerPlayer player) {
+    static MillMenu journal(ServerPlayer player) {
         var server = player.level().getServer();
         var reputation = org.millenaire.fabric.FabricReputationState.get(server);
         var ownership = FabricVillageOwnership.get(server);
         var dimension = player.level().dimension().identifier();
-        MutableComponent text = Component.literal("Traveller's journal:").withStyle(ChatFormatting.GOLD);
+        var menu = MillMenu.builder("Traveller's journal").subtitle("Villages you know");
         var known = org.millenaire.fabric.FabricSettlementState.get(server).settlements().stream().filter(s -> s.dimension().equals(dimension))
                 .map(s -> java.util.Map.entry(s, Math.hypot(s.origin().x() - player.getX(), s.origin().z() - player.getZ())))
                 .filter(e -> e.getValue() <= 2000 || reputation.get(VillageGrowth.key(e.getKey()), player.getUUID()) != 0)
-                .sorted(java.util.Map.Entry.comparingByValue()).limit(20).toList();
-        if (known.isEmpty()) return text.append(Component.literal("\n No village known nearby.").withStyle(ChatFormatting.GRAY));
+                .sorted(java.util.Map.Entry.comparingByValue()).limit(30).toList();
+        if (known.isEmpty()) menu.text("No village known nearby.");
         for (var entry : known) {
             var s = entry.getKey();
             String key = VillageGrowth.key(s);
             String direction = org.millenaire.fabric.quest.QuestSites.direction(s.origin().x() - player.getBlockX(), s.origin().z() - player.getBlockZ());
-            text.append(Component.literal("\n " + s.name() + " (" + s.type() + "): " + Math.round(entry.getValue()) + " blocks " + direction
-                    + ", reputation " + reputation.get(key, player.getUUID())
-                    + ownership.owner(key).map(o -> ", ruled by " + o.name()).orElse("")).withStyle(ChatFormatting.WHITE));
+            menu.heading(s.name());
+            menu.text(s.type() + ", " + Math.round(entry.getValue()) + " blocks " + direction + " at " + s.origin().x() + " " + s.origin().z()
+                    + ". Reputation " + reputation.get(key, player.getUUID()) + ownership.owner(key).map(o -> ", ruled by " + o.name()).orElse(""));
         }
-        return text;
+        return menu.build();
     }
 
-    /** Neighbours of the player's village with their relation and actions. */
-    static MutableComponent diplomacyMenu(ServerPlayer player) {
+    /** Neighbours of the player's village with their relation and, for the owner, gifts, insults and raids. */
+    static MillMenu diplomacyMenu(ServerPlayer player) {
         var settlement = PlayerVillages.settlementAt(player.level(), player.blockPosition());
-        if (settlement.isEmpty()) return Component.literal("You are not in a village.").withStyle(ChatFormatting.GRAY);
+        if (settlement.isEmpty()) return MillMenu.builder("Diplomacy").text("You are not in a village.").build();
         var server = player.level().getServer();
         String key = VillageGrowth.key(settlement.get());
         boolean owner = FabricVillageOwnership.get(server).owns(key, player.getUUID());
         var relations = org.millenaire.fabric.FabricVillageRelations.get(server);
-        MutableComponent menu = Component.literal("Neighbours of " + settlement.get().name() + ":").withStyle(ChatFormatting.GOLD);
-        for (var other : VillageRaids.neighbours(server, settlement.get())) {
+        var menu = MillMenu.builder("Diplomacy").subtitle("Neighbours of " + settlement.get().name());
+        var neighbours = VillageRaids.neighbours(server, settlement.get());
+        if (neighbours.isEmpty()) menu.text("No village within 1000 blocks.");
+        for (var other : neighbours) {
             String otherKey = VillageGrowth.key(other);
             int value = relations.get(key, otherKey);
-            menu.append(Component.literal("\n " + other.name() + " (" + other.type() + ", " + (int) VillageRaids.distance(settlement.get(), other)
-                    + " blocks): " + value + " " + org.millenaire.fabric.FabricVillageRelations.describe(value) + " ").withStyle(ChatFormatting.WHITE));
-            if (owner) menu.append(button("[Gift]", ChatFormatting.GREEN, "gift " + otherKey)).append(Component.literal(" "))
-                    .append(button("[Insult]", ChatFormatting.YELLOW, "insult " + otherKey)).append(Component.literal(" "))
-                    .append(button("[Raid]", ChatFormatting.RED, "raid " + otherKey));
+            menu.heading(other.name());
+            String line = other.type() + ", " + (int) VillageRaids.distance(settlement.get(), other) + " blocks: "
+                    + org.millenaire.fabric.FabricVillageRelations.describe(value) + " (" + value + ")";
+            if (owner) menu.row(line, MillMenu.button("Gift", cmd("gift " + otherKey), MillMenu.Tone.GOOD),
+                    MillMenu.button("Insult", cmd("insult " + otherKey)), MillMenu.button("Raid", cmd("raid " + otherKey), MillMenu.Tone.BAD));
+            else menu.text(line);
         }
-        return menu;
+        return menu.build();
     }
 
     private static java.util.UUID uuid(String text) {

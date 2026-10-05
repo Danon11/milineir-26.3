@@ -70,16 +70,16 @@ public final class VillageRituals {
                     .withStyle(ChatFormatting.GRAY));
             return true;
         }
-        MutableComponent message = Component.literal(priest.getName().getString() + ": what blessing should the " + rite + " ask for your "
-                + item.getHoverName().getString() + "?").withStyle(ChatFormatting.GOLD);
+        var menu = org.millenaire.fabric.ui.MillMenu.builder(priest.getName().getString())
+                .subtitle((sacrifices(priest) ? "Sacrifice" : "Puja") + " for your " + item.getHoverName().getString());
+        menu.text("Which blessing should the " + rite + " ask for? One level per offering.");
         blessings.forEach((holder, level) -> {
             String id = holder.unwrapKey().map(key -> key.identifier().toString()).orElse("");
-            message.append(Component.literal("\n ")).append(Component.literal("[" + Enchantment.getFullname(holder, level).getString()
-                    + " — " + VillagerHiring.money(price(level)) + "]").withStyle(style -> style.withColor(ChatFormatting.LIGHT_PURPLE)
-                    .withClickEvent(new ClickEvent.RunCommand("/" + org.millenaire.fabric.village.SummoningWand.COMMAND + " bless "
-                            + priest.getStringUUID() + " " + id))));
+            menu.row(Enchantment.getFullname(holder, level).getString() + " — " + VillagerHiring.money(price(level)),
+                    org.millenaire.fabric.ui.MillMenu.button("Bless", "/" + org.millenaire.fabric.village.SummoningWand.COMMAND + " bless "
+                            + priest.getStringUUID() + " " + id, org.millenaire.fabric.ui.MillMenu.Tone.GOOD));
         });
-        player.sendSystemMessage(message);
+        org.millenaire.fabric.ui.MillMenus.show(player, menu.build());
         return true;
     }
 

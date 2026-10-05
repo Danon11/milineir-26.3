@@ -138,6 +138,11 @@ public final class PlayerVillageGameTest implements FabricClientGameTest {
             playerCommand(context, "millenaire_village info");
             context.waitTicks(20);
             context.takeScreenshot("millenaire-player-village");
+            context.setScreen(() -> null);
+            playerCommand(context, "millenaire_village diplomacy");
+            context.waitTicks(20);
+            context.takeScreenshot("millenaire-diplomacy");
+            context.setScreen(() -> null);
 
             // 6. Negation wand actions: remove the custom farm, then dissolve the custom village.
             playerCommand(context, "millenaire_village unregister " + sign.getX() + " " + sign.getY() + " " + sign.getZ() + " confirm");

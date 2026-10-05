@@ -37,19 +37,21 @@ public final class VillagerHiring {
     public static void offer(ServerPlayer player, MillVillagerEntity villager) {
         var profile = villager.profile().orElseThrow();
         String id = villager.getStringUUID();
-        MutableComponent message = Component.literal(villager.getName().getString() + ": ").withStyle(ChatFormatting.GOLD);
+        String command = "/" + org.millenaire.fabric.village.SummoningWand.COMMAND + " ";
+        var menu = org.millenaire.fabric.ui.MillMenu.builder(villager.getName().getString()).subtitle("Hire a fighter");
+        String price = money(pricePerDay(profile));
         if (villager.hiredBy(player)) {
             long left = Math.max(0, villager.hiredUntil() - player.level().getGameTime());
-            message.append(Component.literal("I serve you for " + (left / 1000) + " more hours. ").withStyle(ChatFormatting.WHITE))
-                    .append(button("[Extend one day: " + money(pricePerDay(profile)) + "]", ChatFormatting.GREEN, "hire " + id))
-                    .append(Component.literal(" ")).append(button("[Release]", ChatFormatting.RED, "release " + id));
+            menu.text("I serve you for " + (left / 1000) + " more hours.");
+            menu.row("One more day costs " + price + ".", org.millenaire.fabric.ui.MillMenu.button("Extend", command + "hire " + id, org.millenaire.fabric.ui.MillMenu.Tone.GOOD),
+                    org.millenaire.fabric.ui.MillMenu.button("Release", command + "release " + id, org.millenaire.fabric.ui.MillMenu.Tone.BAD));
         } else if (villager.isHired()) {
-            message.append(Component.literal("I already serve someone else.").withStyle(ChatFormatting.WHITE));
+            menu.text("I already serve someone else.");
         } else {
-            message.append(Component.literal("I can fight for you. ").withStyle(ChatFormatting.WHITE))
-                    .append(button("[Hire for one day: " + money(pricePerDay(profile)) + "]", ChatFormatting.GREEN, "hire " + id));
+            menu.text("I can follow you and fight for you for a day: I defend you against whoever attacks you and strike what you strike.");
+            menu.row("A day's service costs " + price + ".", org.millenaire.fabric.ui.MillMenu.button("Hire", command + "hire " + id, org.millenaire.fabric.ui.MillMenu.Tone.GOOD));
         }
-        player.sendSystemMessage(message);
+        org.millenaire.fabric.ui.MillMenus.show(player, menu.build());
     }
 
     static String money(int deniers) {

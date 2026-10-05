@@ -135,16 +135,15 @@ public final class QuestService {
             var step = quest.steps().get(instance.step());
             if (!villager.getUUID().equals(instance.villagers().get(step.villager()))) continue;
             String label = text(quest, instance, instance.step(), QuestTexts.Field.LABEL, server, serverPlayer).orElse(quest.key());
-            MutableComponent message = Component.literal(label).withStyle(ChatFormatting.GOLD);
-            text(quest, instance, instance.step(), QuestTexts.Field.DESCRIPTION, server, serverPlayer)
-                    .ifPresent(description -> message.append(Component.literal("\n" + description).withStyle(ChatFormatting.WHITE)));
-            if (!step.requiredGoods().isEmpty() && step.showRequiredGoods())
-                message.append(Component.literal("\nRequired: " + step.requiredGoods()).withStyle(ChatFormatting.GRAY));
-            message.append(Component.literal("\n"));
-            message.append(button("[Accept]", ChatFormatting.GREEN, "accept " + instance.id()));
-            message.append(Component.literal(" "));
-            message.append(button("[Refuse]", ChatFormatting.RED, "refuse " + instance.id()));
-            serverPlayer.sendSystemMessage(message);
+            var menu = org.millenaire.fabric.ui.MillMenu.builder(label).subtitle(villager.getName().getString());
+            text(quest, instance, instance.step(), QuestTexts.Field.DESCRIPTION, server, serverPlayer).ifPresent(menu::text);
+            if (!step.requiredGoods().isEmpty() && step.showRequiredGoods()) {
+                menu.heading("Required");
+                step.requiredGoods().forEach((good, count) -> menu.text(count + " " + good));
+            }
+            menu.row("", org.millenaire.fabric.ui.MillMenu.button("Accept", "/" + COMMAND + " accept " + instance.id(), org.millenaire.fabric.ui.MillMenu.Tone.GOOD),
+                    org.millenaire.fabric.ui.MillMenu.button("Refuse", "/" + COMMAND + " refuse " + instance.id(), org.millenaire.fabric.ui.MillMenu.Tone.BAD));
+            org.millenaire.fabric.ui.MillMenus.show(serverPlayer, menu.build());
             return true;
         }
         return false;

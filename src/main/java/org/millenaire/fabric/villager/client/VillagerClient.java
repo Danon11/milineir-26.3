@@ -14,5 +14,9 @@ public final class VillagerClient implements ClientModInitializer {
             ModelLayerRegistry.registerModelLayer(MillVillagerModels.layer(model, true), () -> MillVillagerModels.create(model, true));
         }
         EntityRendererRegistry.register(VillagerContent.VILLAGER, MillVillagerRenderer::new);
+        // Millénaire menus open as Minecraft-style screens.
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(org.millenaire.fabric.ui.MillMenus.Payload.TYPE,
+                (payload, context) -> context.client().gui.setScreen(new org.millenaire.fabric.ui.client.MillMenuScreen(
+                        org.millenaire.fabric.ui.MillMenu.fromJson(payload.json()))));
     }
 }
