@@ -106,6 +106,11 @@ public final class MillenaireBrain extends Goal {
         long now = level.getGameTime();
         Task best = null;
         int bestScore = Integer.MIN_VALUE;
+        // What the village lacks for its next building steers the work of everybody who can help.
+        var villageKey = context == null ? null : org.millenaire.fabric.village.VillageGrowth.settlementOf(level.getServer(),
+                context.home().dimension(), context.home().origin()).orElse(null);
+        var needs = villageKey == null || profile.child() ? Map.<org.millenaire.fabric.village.BuildingMaterials.Raw, Integer>of()
+                : org.millenaire.fabric.village.VillageGrowth.needs(villageKey);
         for (String name : profile.goals()) {
             if (nextAllowed.getOrDefault(name, 0L) > now) continue;
             Task candidate;
@@ -116,13 +121,28 @@ public final class MillenaireBrain extends Goal {
                 if (!goal.activeAt(dayTime) || context == null || night(dayTime) && !goal.leisure()) continue;
                 candidate = dataTask(goal, context);
                 score = GoalRules.score(goal, random);
+                if (!needs.isEmpty() && (goal.kind() == GoalDefinition.Kind.MINING || goal.kind() == GoalDefinition.Kind.GATHER_BLOCKS)) score += 40;
             } else {
                 candidate = builtInTask(name, context);
                 score = builtInPriority(name) + villager.getRandom().nextInt(10);
+                if (name.equals("choptrees") && needs.containsKey(org.millenaire.fabric.village.BuildingMaterials.Raw.WOOD)
+                        || name.equals("shearsheep") && needs.containsKey(org.millenaire.fabric.village.BuildingMaterials.Raw.WOOL)) score += 40;
             }
             if (candidate != null && score > bestScore) {
                 best = candidate;
                 bestScore = score;
+            }
+        }
+        if (!needs.isEmpty() && !night(dayTime)) {
+            // Anyone carrying what the village needs takes it to the town hall first.
+            var delivery = VillageChores.deliverMaterials(context, villager, needs, profile);
+            if (delivery.isPresent() && 90 > bestScore) { best = new BuiltInWorkTask("delivermaterials", delivery.get(), 20); bestScore = 90; }
+            // Builders without a site to work on fetch the missing materials themselves.
+            boolean building = org.millenaire.fabric.village.VillageGrowth.pending(villageKey).isPresent()
+                    || org.millenaire.fabric.village.VillageConstruction.site(villageKey).isPresent();
+            if (!building && profile.goals().contains("construction") && 75 > bestScore && nextAllowed.getOrDefault("gathermaterials", 0L) <= now) {
+                var gather = VillageChores.gatherMaterials(context, villager, needs);
+                if (gather.isPresent()) { best = new BuiltInWorkTask("gathermaterials", gather.get(), 80); bestScore = 75; }
             }
         }
         return best;
@@ -182,15 +202,13 @@ public final class MillenaireBrain extends Goal {
             }
             case "construction" -> {
                 if (context == null) yield null;
-                var settlement = org.millenaire.fabric.village.VillageGrowth.settlementOf(context.level().getServer(),
-                        context.home().dimension(), context.home().origin());
-                var project = settlement.flatMap(org.millenaire.fabric.village.VillageGrowth::pending).orElse(null);
-                if (project == null) yield null;
-                yield new BuiltInWorkTask(name, new ResourceGoals.Plan(project.site(), () -> {
-                    String result = org.millenaire.fabric.village.VillageGrowth.complete(context.level(), project);
-                    org.slf4j.LoggerFactory.getLogger("Millenaire").info("{}: {}", villager.getName().getString(), result);
-                    return result.startsWith("built");
-                }), 300);
+                var key = org.millenaire.fabric.village.VillageGrowth.settlementOf(context.level().getServer(),
+                        context.home().dimension(), context.home().origin()).orElse(null);
+                if (key == null) yield null;
+                var site = org.millenaire.fabric.village.VillageConstruction.site(key);
+                var project = site.map(org.millenaire.fabric.village.VillageConstruction.Site::project)
+                        .or(() -> org.millenaire.fabric.village.VillageGrowth.pending(key)).orElse(null);
+                yield project == null ? null : new ConstructionTask(project);
             }
             case "choptrees" -> context == null ? null : ResourceGoals.chopTree(context, villager)
                     .map(plan -> (Task) new BuiltInWorkTask(name, plan, 120)).orElse(null);
@@ -538,6 +556,58 @@ public final class MillenaireBrain extends Goal {
             plan.effect().getAsBoolean();
             nextAllowed.put(label, villager.level().getGameTime() + 100);
         }
+    }
+
+    /**
+     * Builds a project block by block: on arrival the materials are paid and the site opened, then the builder
+     * places a few blocks a second, walking along as the walls rise, until the site is finished.
+     */
+    private final class ConstructionTask extends Task {
+        private final org.millenaire.fabric.village.VillageGrowth.Project project;
+        private org.millenaire.fabric.village.VillageConstruction.Site site;
+        ConstructionTask(org.millenaire.fabric.village.VillageGrowth.Project project) {
+            super("construction", project.site(), 1200);
+            this.project = project;
+        }
+        @Override void begin() {
+            hold(MillVillagerTools.HAMMER);
+            super.begin();
+        }
+        @Override void onArrival() {
+            site = org.millenaire.fabric.village.VillageGrowth.begin((ServerLevel) villager.level(), project).orElse(null);
+            if (site == null) {
+                org.slf4j.LoggerFactory.getLogger("Millenaire").info("{}: cannot start {}: {}", villager.getName().getString(),
+                        project.label(), org.millenaire.fabric.village.VillageGrowth.lastBeginIssue());
+                finished = true;
+            }
+        }
+        @Override Vec3 lookTarget() { return site == null ? super.lookTarget() : Vec3.atCenterOf(site.workPos()); }
+        @Override void working() {
+            if (site == null) { finished = true; return; }
+            if (villager.tickCount % 5 != 0) return;
+            ServerLevel level = (ServerLevel) villager.level();
+            if (org.millenaire.fabric.village.VillageConstruction.work(level, site, 2) > 0)
+                villager.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT);
+            BlockPos work = site.workPos();
+            if (villager.blockPosition().distSqr(work) > 64 && villager.getNavigation().isDone())
+                villager.getNavigation().moveTo(work.getX() + 0.5, work.getY(), work.getZ() + 0.5, 0.6);
+            if (site.done()) {
+                String result = org.millenaire.fabric.village.VillageGrowth.finish(level, site);
+                org.slf4j.LoggerFactory.getLogger("Millenaire").info("{}: {}", villager.getName().getString(), result);
+                finished = true;
+            }
+        }
+        @Override void end() { villager.setItemSlot(EquipmentSlot.MAINHAND, previous); }
+        private ItemStack previous = ItemStack.EMPTY;
+        private void hold(ItemStack tool) {
+            previous = villager.getMainHandItem().copy();
+            villager.setItemSlot(EquipmentSlot.MAINHAND, tool.copy());
+        }
+    }
+
+    /** Tools villagers show while working. */
+    private static final class MillVillagerTools {
+        static final ItemStack HAMMER = new ItemStack(net.minecraft.world.item.Items.STONE_AXE);
     }
 
     /** Carries harvested goods home, keeping the villager's own starting stock (seeds, tools). */

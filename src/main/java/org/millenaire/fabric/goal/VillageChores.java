@@ -16,6 +16,7 @@ import org.millenaire.fabric.economy.TradeCatalog;
 import org.millenaire.fabric.village.VillagePopulation;
 import org.millenaire.fabric.villager.MillVillagerEntity;
 import org.millenaire.fabric.villager.VillagerProfile;
+import org.millenaire.fabric.FabricSettlementState;
 import org.millenaire.fabric.villager.VillagerSpawning;
 
 import java.util.*;
@@ -442,6 +443,104 @@ final class VillageChores {
             return Optional.of(new ResourceGoals.Plan(at.above(), () -> {
                 villager.changeCarried(entry.getValue(), 2 + random.nextInt(3));
                 return true;
+            }));
+        }
+        return Optional.empty();
+    }
+
+    // ------------------------------------------------------------------ building materials
+
+    /** The town hall's chests, or the home's when the village has no town hall. */
+    private static FabricBuildingState.PlacedBuilding storehouse(VillageContext context) {
+        return context.townhall().orElse(context.home());
+    }
+
+    /** Raw material a carried good counts as, through its item. */
+    static Optional<org.millenaire.fabric.village.BuildingMaterials.Raw> rawOf(VillageContext context, String good) {
+        var prototype = new ChestGoodsStore(context.level(), List.of(), context.catalog().goods()).prototype(good);
+        if (prototype.isEmpty()) return Optional.empty();
+        for (var raw : org.millenaire.fabric.village.BuildingMaterials.Raw.values())
+            if (org.millenaire.fabric.village.BuildingMaterials.provides(raw, prototype.get()) > 0) return Optional.of(raw);
+        return Optional.empty();
+    }
+
+    /** Takes carried building materials the village needs to the town hall, once there are enough for a trip. */
+    static Optional<ResourceGoals.Plan> deliverMaterials(VillageContext context, MillVillagerEntity villager,
+                                                         Map<org.millenaire.fabric.village.BuildingMaterials.Raw, Integer> needs, VillagerProfile profile) {
+        Map<String, Integer> load = new LinkedHashMap<>();
+        for (var entry : villager.carriedGoods().entrySet()) {
+            int spare = spare(villager, profile, entry.getKey());
+            if (spare <= 0) continue;
+            var raw = rawOf(context, entry.getKey());
+            if (raw.isPresent() && needs.containsKey(raw.get())) load.put(entry.getKey(), spare);
+        }
+        int total = load.values().stream().mapToInt(Integer::intValue).sum();
+        if (total < 8) return Optional.empty();
+        var store = storehouse(context);
+        return Optional.of(new ResourceGoals.Plan(context.workPoint(store), () -> unload(villager, context.store(store), load)));
+    }
+
+    private static boolean insideVillageBuilding(VillageContext context, BlockPos pos) {
+        var origin = context.home().origin();
+        var settlement = org.millenaire.fabric.FabricSettlementState.get(context.level().getServer())
+                .containing(context.home().dimension(), origin.x(), origin.z());
+        return settlement.map(s -> s.buildings().stream().anyMatch(b -> {
+            var area = b.reservedArea();
+            return pos.getX() >= area.minX() && pos.getX() <= area.maxX() && pos.getZ() >= area.minZ() && pos.getZ() <= area.maxZ();
+        })).orElse(false);
+    }
+
+    /**
+     * Builders gather what the village lacks themselves: they fell a tree for wood, or dig exposed stone, sand or
+     * clay outside the village buildings (a few blocks per trip, the first block and its exposed neighbours).
+     */
+    static Optional<ResourceGoals.Plan> gatherMaterials(VillageContext context, MillVillagerEntity villager,
+                                                        Map<org.millenaire.fabric.village.BuildingMaterials.Raw, Integer> needs) {
+        if (needs.containsKey(org.millenaire.fabric.village.BuildingMaterials.Raw.WOOD)) {
+            var chop = ResourceGoals.chopTree(context, villager);
+            if (chop.isPresent()) return chop;
+        }
+        ServerLevel level = context.level();
+        BlockPos centre = context.workPoint(storehouse(context));
+        for (var raw : needs.keySet()) {
+            java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState> test = switch (raw) {
+                case STONE -> state -> state.is(Blocks.STONE) || state.is(Blocks.ANDESITE) || state.is(Blocks.DIORITE) || state.is(Blocks.GRANITE);
+                case SAND -> state -> state.is(Blocks.SAND) || state.is(Blocks.RED_SAND);
+                case CLAY -> state -> state.is(Blocks.CLAY);
+                default -> null;
+            };
+            if (test == null) continue;
+            String good = raw == org.millenaire.fabric.village.BuildingMaterials.Raw.STONE ? "cobblestone" : raw.good;
+            // Only surface blocks outside the village buildings: villagers dig open pits, not under houses.
+            BlockPos first = null;
+            double best = Double.MAX_VALUE;
+            BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+            for (int dx = -40; dx <= 40; dx += 2)
+                for (int dz = -40; dz <= 40; dz += 2) {
+                    int x = centre.getX() + dx, z = centre.getZ() + dz;
+                    if (!level.isLoaded(new BlockPos(x, 0, z))) continue;
+                    int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
+                    cursor.set(x, y, z);
+                    double distance = dx * dx + dz * dz;
+                    if (distance < best && test.test(level.getBlockState(cursor)) && !insideVillageBuilding(context, cursor)) {
+                        best = distance;
+                        first = cursor.immutable();
+                    }
+                }
+            if (first == null) continue;
+            BlockPos target = first;
+            return Optional.of(new ResourceGoals.Plan(target.above(), () -> {
+                int dug = 0;
+                List<BlockPos> candidates = new ArrayList<>(List.of(target));
+                for (var side : net.minecraft.core.Direction.Plane.HORIZONTAL) candidates.add(target.relative(side));
+                candidates.add(target.below());
+                for (BlockPos pos : candidates) {
+                    if (dug >= 4 || !test.test(level.getBlockState(pos)) || insideVillageBuilding(context, pos)) continue;
+                    level.destroyBlock(pos, false, villager);
+                    dug++;
+                }
+                if (dug > 0) villager.changeCarried(good, raw == org.millenaire.fabric.village.BuildingMaterials.Raw.CLAY ? dug * 4 : dug);
+                return dug > 0;
             }));
         }
         return Optional.empty();

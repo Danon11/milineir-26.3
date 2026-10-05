@@ -45,6 +45,10 @@ public final class VillageGrowth {
     }
 
     private static final Map<String, Project> PENDING = new HashMap<>();
+    /** Raw materials the village lacks for the project it wants next, which villagers then go and gather. */
+    private static final Map<String, Map<BuildingMaterials.Raw, Integer>> NEEDS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    public static Map<BuildingMaterials.Raw, Integer> needs(String settlementKey) { return NEEDS.getOrDefault(settlementKey, Map.of()); }
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
     private VillageGrowth() {}
@@ -76,7 +80,8 @@ public final class VillageGrowth {
             if (item == Items.AIR) continue;
             cost.merge(item, 1, Integer::sum);
         }
-        return cost;
+        // Villages pay in raw materials they gather themselves (see BuildingMaterials).
+        return BuildingMaterials.cost(cost);
     }
 
     private static List<Container> containers(ServerLevel level, FabricSettlementState.Settlement settlement) {
@@ -94,7 +99,13 @@ public final class VillageGrowth {
         for (Container container : containers)
             for (int slot = 0; slot < container.getContainerSize(); slot++) {
                 ItemStack stack = container.getItem(slot);
-                if (!stack.isEmpty()) have.merge(stack.getItem(), stack.getCount(), Integer::sum);
+                if (stack.isEmpty()) continue;
+                boolean raw = false;
+                for (var material : BuildingMaterials.Raw.values()) {
+                    int units = BuildingMaterials.provides(material, stack);
+                    if (units > 0) { have.merge(material.item, units, Integer::sum); raw = true; }
+                }
+                if (!raw) have.merge(stack.getItem(), stack.getCount(), Integer::sum);
             }
         Map<Item, Integer> missing = new LinkedHashMap<>();
         cost.forEach((item, count) -> { if (have.getOrDefault(item, 0) < count) missing.put(item, count - have.getOrDefault(item, 0)); });
@@ -105,8 +116,17 @@ public final class VillageGrowth {
         for (var entry : cost.entrySet()) {
             int remaining = entry.getValue();
             for (Container container : containers) {
+                var raw = BuildingMaterials.Raw.of(entry.getKey());
                 for (int slot = 0; slot < container.getContainerSize() && remaining > 0; slot++) {
                     ItemStack stack = container.getItem(slot);
+                    if (raw.isPresent()) {
+                        if (BuildingMaterials.provides(raw.get(), stack) == 0) continue;
+                        int unit = BuildingMaterials.unit(raw.get(), stack);
+                        int taken = Math.min((remaining + unit - 1) / unit, stack.getCount());
+                        stack.shrink(taken);
+                        remaining -= taken * unit;
+                        continue;
+                    }
                     if (!stack.is(entry.getKey())) continue;
                     int taken = Math.min(remaining, stack.getCount());
                     stack.shrink(taken);
@@ -209,9 +229,17 @@ public final class VillageGrowth {
 
     public static void tick(MinecraftServer server) {
         if (server.overworld().getGameTime() % INTERVAL != 0) return;
+        // A site no builder touched for two days is finished, so villages never keep half a house.
+        for (var site : VillageConstruction.abandoned(server.overworld().getGameTime())) {
+            var settlement = FabricSettlementState.get(server).settlements().stream().filter(s -> key(s).equals(site.project().settlementKey())).findFirst();
+            ServerLevel siteLevel = settlement.map(s -> server.getLevel(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, s.dimension()))).orElse(null);
+            if (siteLevel == null) VillageConstruction.close(site.project().settlementKey());
+            else if (siteLevel.isLoaded(site.project().site())) finish(siteLevel, site);
+        }
         for (var settlement : FabricSettlementState.get(server).settlements()) {
             ServerLevel level = server.getLevel(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, settlement.dimension()));
             if (level == null || !level.isLoaded(new BlockPos(settlement.origin().x(), settlement.origin().y(), settlement.origin().z()))) continue;
+            VillageSimulation.seen(level, settlement);
             evaluate(level, settlement, false);
         }
     }
@@ -221,10 +249,22 @@ public final class VillageGrowth {
      * Returns a description of what happened.
      */
     public static String evaluate(ServerLevel level, FabricSettlementState.Settlement settlement, boolean rush) {
+        return evaluate(level, settlement, rush, false);
+    }
+
+    /** With {@code instant}, an affordable project is paid and built at once (catching up on unloaded days). */
+    static String evaluate(ServerLevel level, FabricSettlementState.Settlement settlement, boolean rush, boolean instant) {
         String key = key(settlement);
+        var site = VillageConstruction.site(key);
+        if (site.isPresent()) {
+            if (rush) return finish(level, site.get());
+            return "building " + site.get().project().label() + ": " + site.get().progress() + "%";
+        }
         if (!rush && PENDING.containsKey(key)) return "waiting for a builder: " + PENDING.get(key).label();
         var containers = containers(level, settlement);
         String lastShortage = "nothing to build";
+        Map<BuildingMaterials.Raw, Integer> wanted = null;
+        int wantedTotal = Integer.MAX_VALUE;
         for (Project candidate : candidates(level, settlement)) {
             var prepared = prepare(level, candidate);
             if (prepared.isEmpty()) continue;
@@ -234,8 +274,23 @@ public final class VillageGrowth {
                     candidate.area(), rush ? Map.of() : cost);
             if (!rush) {
                 var missing = missing(containers, cost);
-                if (!missing.isEmpty()) { lastShortage = project.label() + " needs " + describe(missing); continue; }
-                if (hasBuilder(level, settlement)) {
+                if (!missing.isEmpty()) {
+                    // The project closest to affordable sets what the villagers gather, so they finish one thing at a time.
+                    int short_ = missing.values().stream().mapToInt(Integer::intValue).sum();
+                    if (wanted == null || short_ < wantedTotal) {
+                        wanted = new EnumMap<>(BuildingMaterials.Raw.class);
+                        for (var entry : missing.entrySet()) {
+                            var raw = BuildingMaterials.Raw.of(entry.getKey());
+                            if (raw.isPresent()) wanted.put(raw.get(), entry.getValue());
+                        }
+                        wantedTotal = short_;
+                        NEEDS.put(key, wanted);
+                    }
+                    lastShortage = project.label() + " needs " + describe(missing);
+                    continue;
+                }
+                NEEDS.remove(key);
+                if (!instant && hasBuilder(level, settlement)) {
                     PENDING.put(key, project);
                     return "builder assigned: " + project.label();
                 }
@@ -259,26 +314,66 @@ public final class VillageGrowth {
         }).stream().findAny().isPresent();
     }
 
-    /** Pays for and places a project, then records it; new buildings receive their residents. */
+    /** Pays for and places a project at once, then records it; new buildings receive their residents. */
     public static String complete(ServerLevel level, Project project) {
+        var site = open(level, project);
+        if (site.isEmpty()) return lastBeginIssue;
+        return finish(level, site.get());
+    }
+
+    private static String lastBeginIssue = "";
+    public static String lastBeginIssue() { return lastBeginIssue; }
+
+    /**
+     * Starts building a project: checks the site, pays the materials from the village chests and opens a
+     * construction site the builder fills block by block ({@link VillageConstruction}).
+     */
+    public static Optional<VillageConstruction.Site> begin(ServerLevel level, Project project) {
+        var existing = VillageConstruction.site(project.settlementKey());
+        if (existing.isPresent()) return existing;
+        // A builder arriving late must not start (and pay for) a project another builder already finished.
+        if (PENDING.get(project.settlementKey()) != project) { lastBeginIssue = project.label() + " is no longer planned"; return Optional.empty(); }
+        return open(level, project);
+    }
+
+    private static Optional<VillageConstruction.Site> open(ServerLevel level, Project project) {
+        var settlements = FabricSettlementState.get(level.getServer());
+        var settlement = settlements.settlements().stream().filter(s -> key(s).equals(project.settlementKey())).findFirst().orElse(null);
+        if (settlement == null) { PENDING.remove(project.settlementKey()); lastBeginIssue = "settlement no longer exists"; return Optional.empty(); }
+        var prepared = prepare(level, project);
+        if (prepared.isEmpty()) { PENDING.remove(project.settlementKey()); lastBeginIssue = "site of " + project.label() + " is no longer free"; return Optional.empty(); }
+        var containers = containers(level, settlement);
+        if (!project.cost().isEmpty()) {
+            if (!missing(containers, project.cost()).isEmpty()) {
+                PENDING.remove(project.settlementKey());
+                lastBeginIssue = "resources for " + project.label() + " are gone";
+                return Optional.empty();
+            }
+            consume(containers, project.cost());
+        }
+        return Optional.of(VillageConstruction.open(project, prepared.get(), level.getGameTime()));
+    }
+
+    /** Places what is left of a construction site (chests, panels, starting stock) and records the building. */
+    public static String finish(ServerLevel level, VillageConstruction.Site site) {
+        var project = site.project();
+        // Several builders may work on one site; only the first to see it done finishes it.
+        if (!VillageConstruction.close(site)) return "already finished " + project.label();
         PENDING.remove(project.settlementKey());
         var settlements = FabricSettlementState.get(level.getServer());
         var settlement = settlements.settlements().stream().filter(s -> key(s).equals(project.settlementKey())).findFirst().orElse(null);
         if (settlement == null) return "settlement no longer exists";
-        var prepared = prepare(level, project);
-        if (prepared.isEmpty()) return "site of " + project.label() + " is no longer free";
-        var containers = containers(level, settlement);
-        if (!project.cost().isEmpty()) {
-            if (!missing(containers, project.cost()).isEmpty()) return "resources for " + project.label() + " are gone";
-            consume(containers, project.cost());
+        try {
+            BuildingPlacement.place(site.prepared(), BuildingPlacement.world(level), true);
+        } catch (RuntimeException exception) {
+            return "could not finish " + project.label() + ": " + exception.getMessage();
         }
-        BuildingPlacement.place(prepared.get(), BuildingPlacement.world(level), true);
         // Upgrade images hold only the changed blocks; keep the service points of the levels below.
         Map<String, List<LegacyBuildingPlan.Position>> points = new LinkedHashMap<>();
         if (project.upgrade()) settlement.buildings().stream().filter(b -> b.placement().origin().equals(project.origin())
                         && FabricBuildingState.planKey(b.placement().plan()).equals(FabricBuildingState.planKey(project.plan().id())))
                 .findFirst().ifPresent(previous -> previous.placement().servicePoints().forEach((k, v) -> points.put(k, new ArrayList<>(v))));
-        prepared.get().servicePoints().forEach((k, v) -> {
+        site.prepared().servicePoints().forEach((k, v) -> {
             var list = points.computeIfAbsent(k, ignored -> new ArrayList<>());
             for (var point : v) if (!list.contains(point)) list.add(point);
         });

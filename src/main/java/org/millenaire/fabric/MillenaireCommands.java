@@ -111,6 +111,15 @@ public final class MillenaireCommands {
                         .then(Commands.literal("populate").executes(context -> populateVillage(context.getSource())))
                         .then(Commands.literal("paths").executes(context -> layPaths(context.getSource())))
                         .then(Commands.literal("raid").executes(context -> raidNearest(context.getSource())))
+                        .then(Commands.literal("simulate").then(Commands.argument("days", IntegerArgumentType.integer(1, 30)).executes(context -> {
+                            var source = context.getSource();
+                            var pos = BlockPos.containing(source.getPosition());
+                            var settlement = FabricSettlementState.get(source.getServer()).containing(source.getLevel().dimension().identifier(), pos.getX(), pos.getZ());
+                            if (settlement.isEmpty()) { source.sendFailure(Component.literal("No Millénaire settlement here.")); return 0; }
+                            String result = org.millenaire.fabric.village.VillageSimulation.catchUp(source.getLevel(), settlement.get(), IntegerArgumentType.getInteger(context, "days"));
+                            source.sendSuccess(() -> Component.literal(settlement.get().name() + ": " + result), true);
+                            return 1;
+                        })))
                         .then(Commands.literal("raids").executes(context -> {
                             var raids = org.millenaire.fabric.village.VillageRaids.describeActive(context.getSource().getLevel());
                             context.getSource().sendSuccess(() -> Component.literal(raids.isEmpty() ? "No raids under way." : String.join("\n", raids)), false);
