@@ -89,7 +89,7 @@ public final class QuestSites extends SavedData {
         return Component.literal("The place this quest speaks of could not be found; try again elsewhere.").withStyle(ChatFormatting.RED);
     }
 
-    static String direction(int dx, int dz) {
+    public static String direction(int dx, int dz) {
         String[] names = {"east", "south-east", "south", "south-west", "west", "north-west", "north", "north-east"};
         double angle = Math.toDegrees(Math.atan2(dz, dx));
         return names[(int) Math.floorMod(Math.round(angle / 45.0), 8)];

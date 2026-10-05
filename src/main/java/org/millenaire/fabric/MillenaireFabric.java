@@ -23,6 +23,7 @@ public final class MillenaireFabric implements ModInitializer {
         org.millenaire.fabric.villager.VillagerContent.register();
         MillenaireCommands.register();
         org.millenaire.fabric.village.SummoningWand.register();
+        org.millenaire.fabric.village.VillageBooks.register();
         ServerTickEvents.END_SERVER_TICK.register(server ->
                 {
                     FabricSettlementLifecycleState.get(server).tick();
@@ -31,6 +32,7 @@ public final class MillenaireFabric implements ModInitializer {
                     org.millenaire.fabric.village.VillagePopulation.tick(server);
                     org.millenaire.fabric.village.VillageRaids.tick(server);
                     org.millenaire.fabric.quest.QuestSites.tick(server);
+                    org.millenaire.fabric.village.VillagePanels.tick(server);
                     org.millenaire.fabric.village.WorldVillageGenerator.tick(server);
                 });
         FabricLoader.getInstance().getModContainer("millenaire").ifPresentOrElse(

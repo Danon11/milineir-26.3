@@ -35,6 +35,23 @@ public final class PlayerVillageGameTest implements FabricClientGameTest {
             playerCommand(context, "millenaire_village found " + gold.getX() + " " + gold.getY() + " " + gold.getZ() + " norman:controlled");
             context.waitTicks(40);
             check(server, gold, "norman:controlled");
+            // Panels and parchments of the new village.
+            server.runOnServer(s -> {
+                var player = s.getPlayerList().getPlayers().getFirst();
+                int panels = org.millenaire.fabric.village.VillagePanels.update(s.overworld(), settlement(s, gold));
+                if (panels == 0) throw new AssertionError("No village panel updated");
+                var scroll = org.millenaire.fabric.village.VillageBooks.pages(player, "villagescroll");
+                if (scroll.isEmpty() || !scroll.getFirst().contains("Seigneurie")) throw new AssertionError("Village scroll: " + scroll);
+                if (org.millenaire.fabric.village.VillageBooks.pages(player, "normanfull").size() < 5) throw new AssertionError("Norman parchment too short");
+                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(
+                        net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.fromNamespaceAndPath("millenaire", "parchment_villagescroll"))));
+            });
+            context.waitTicks(10);
+            context.runOnClient(client -> client.gameMode.useItem(client.player, net.minecraft.world.InteractionHand.MAIN_HAND));
+            context.waitTicks(20);
+            context.takeScreenshot("millenaire-village-scroll");
+            context.setScreen(() -> null);
+            server.runOnServer(s -> s.getPlayerList().getPlayers().getFirst().setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY));
             server.runOnServer(s -> {
                 if (!net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(net.minecraft.resources.Identifier.fromNamespaceAndPath("millenaire", "summoningwand")))
                     throw new AssertionError("Summoning wand is not registered");

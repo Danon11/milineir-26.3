@@ -165,6 +165,11 @@ public final class SummoningWand {
                     context.getSource().sendSuccess(() -> Component.literal(result), false);
                     return 1;
                 })))
+                .then(Commands.literal("journal").executes(context -> {
+                    var player = context.getSource().getPlayerOrException();
+                    context.getSource().sendSuccess(() -> journal(player), false);
+                    return 1;
+                }))
                 .then(Commands.literal("diplomacy").executes(context -> {
                     var player = context.getSource().getPlayerOrException();
                     context.getSource().sendSuccess(() -> diplomacyMenu(player), false);
@@ -186,6 +191,29 @@ public final class SummoningWand {
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> diplomacyAction(String action) {
         return Commands.literal(action).then(Commands.argument("village", StringArgumentType.greedyString()).executes(context -> reply(context.getSource(),
                 PlayerVillages.diplomacy(context.getSource().getPlayerOrException(), action, StringArgumentType.getString(context, "village")))));
+    }
+
+    /** The traveller's journal: villages within 2000 blocks or where the player has a reputation, nearest first. */
+    static MutableComponent journal(ServerPlayer player) {
+        var server = player.level().getServer();
+        var reputation = org.millenaire.fabric.FabricReputationState.get(server);
+        var ownership = FabricVillageOwnership.get(server);
+        var dimension = player.level().dimension().identifier();
+        MutableComponent text = Component.literal("Traveller's journal:").withStyle(ChatFormatting.GOLD);
+        var known = org.millenaire.fabric.FabricSettlementState.get(server).settlements().stream().filter(s -> s.dimension().equals(dimension))
+                .map(s -> java.util.Map.entry(s, Math.hypot(s.origin().x() - player.getX(), s.origin().z() - player.getZ())))
+                .filter(e -> e.getValue() <= 2000 || reputation.get(VillageGrowth.key(e.getKey()), player.getUUID()) != 0)
+                .sorted(java.util.Map.Entry.comparingByValue()).limit(20).toList();
+        if (known.isEmpty()) return text.append(Component.literal("\n No village known nearby.").withStyle(ChatFormatting.GRAY));
+        for (var entry : known) {
+            var s = entry.getKey();
+            String key = VillageGrowth.key(s);
+            String direction = org.millenaire.fabric.quest.QuestSites.direction(s.origin().x() - player.getBlockX(), s.origin().z() - player.getBlockZ());
+            text.append(Component.literal("\n " + s.name() + " (" + s.type() + "): " + Math.round(entry.getValue()) + " blocks " + direction
+                    + ", reputation " + reputation.get(key, player.getUUID())
+                    + ownership.owner(key).map(o -> ", ruled by " + o.name()).orElse("")).withStyle(ChatFormatting.WHITE));
+        }
+        return text;
     }
 
     /** Neighbours of the player's village with their relation and actions. */
