@@ -78,6 +78,25 @@ public final class FabricSettlementState extends SavedData {
         setDirty();
     }
 
+    /** Forgets a settlement (the negation wand); its blocks stay in the world. */
+    public boolean remove(Settlement settlement) {
+        boolean removed = settlements.remove(settlement);
+        if (removed) setDirty();
+        return removed;
+    }
+
+    /** Removes one building record from a settlement; the settlement itself must keep at least one building. */
+    public boolean removeBuilding(Settlement settlement, Position origin) {
+        int index = settlements.indexOf(settlement);
+        if (index < 0) return false;
+        List<Building> buildings = new ArrayList<>(settlement.buildings());
+        if (!buildings.removeIf(b -> b.placement().origin().equals(origin)) || buildings.isEmpty()) return false;
+        settlements.set(index, new Settlement(settlement.dimension(), settlement.type(), settlement.name(), settlement.origin(),
+                settlement.seed(), settlement.radius(), buildings));
+        setDirty();
+        return true;
+    }
+
     public static Settlement from(Identifier dimension, VillagePlacement.Prepared prepared) {
         if (!prepared.supported()) throw new IllegalArgumentException("Cannot record an unsupported layout");
         var layout = prepared.layout();

@@ -55,6 +55,10 @@ public final class FabricVillageOwnership extends SavedData {
         setDirty();
     }
 
+    public void release(String village) {
+        if (owners.remove(village) != null) setDirty();
+    }
+
     /** Adds a building order; the same plan is not queued twice. */
     public boolean order(String village, String plan) {
         var owner = owners.get(village);

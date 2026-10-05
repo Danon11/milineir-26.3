@@ -28,14 +28,17 @@ import org.millenaire.fabric.FabricVillagerState;
 public final class SummoningWand {
     public static final String COMMAND = "millenaire_village";
     private static final Identifier WAND = Identifier.fromNamespaceAndPath("millenaire", "summoningwand");
+    private static final Identifier NEGATION = Identifier.fromNamespaceAndPath("millenaire", "negationwand");
 
     private SummoningWand() {}
 
     public static void register() {
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
-            if (!BuiltInRegistries.ITEM.getKey(player.getItemInHand(hand).getItem()).equals(WAND)) return InteractionResult.PASS;
+            var item = BuiltInRegistries.ITEM.getKey(player.getItemInHand(hand).getItem());
+            if (!item.equals(WAND) && !item.equals(NEGATION)) return InteractionResult.PASS;
             if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.SUCCESS;
-            use(serverPlayer, hit.getBlockPos());
+            if (item.equals(WAND)) use(serverPlayer, hit.getBlockPos());
+            else negate(serverPlayer, hit.getBlockPos());
             return InteractionResult.SUCCESS;
         });
     }
@@ -82,6 +85,24 @@ public final class SummoningWand {
         player.sendSystemMessage(status(player, settlement.get()));
     }
 
+    /** The negation wand asks for confirmation before undoing anything. */
+    static void negate(ServerPlayer player, BlockPos pos) {
+        var level = player.level();
+        var settlement = PlayerVillages.settlementAt(level, pos);
+        if (settlement.isEmpty() || !FabricVillageOwnership.get(level.getServer()).owns(VillageGrowth.key(settlement.get()), player.getUUID())) {
+            player.sendSystemMessage(Component.literal("The negation wand only works in a village you own.").withStyle(ChatFormatting.GRAY));
+            return;
+        }
+        String at = pos.getX() + " " + pos.getY() + " " + pos.getZ();
+        var origin = new org.millenaire.fabric.content.LegacyBuildingPlan.Position(pos.getX(), pos.getY(), pos.getZ());
+        boolean building = level.getBlockState(pos).getBlock() instanceof SignBlock
+                && settlement.get().buildings().stream().anyMatch(b -> !b.centre() && b.placement().origin().equals(origin));
+        MutableComponent message = Component.literal(building ? "Remove this building from " + settlement.get().name() + "? "
+                : "Dissolve " + settlement.get().name() + "? Its villagers will leave. ").withStyle(ChatFormatting.GOLD);
+        message.append(button(building ? "[Remove building]" : "[Dissolve village]", ChatFormatting.RED, (building ? "unregister " : "dissolve ") + at + " confirm"));
+        player.sendSystemMessage(message);
+    }
+
     static String requirements(org.millenaire.fabric.content.CustomBuildings.Definition definition) {
         StringBuilder text = new StringBuilder();
         definition.resources().forEach((resource, range) -> {
@@ -119,6 +140,22 @@ public final class SummoningWand {
                 .then(Commands.literal("custom").then(position(Commands.argument("building", StringArgumentType.greedyString())
                         .executes(context -> reply(context.getSource(), PlayerVillages.registerCustom(context.getSource().getPlayerOrException(),
                                 StringArgumentType.getString(context, "building"), pos(context)))))))
+                .then(Commands.literal("dissolve").then(position(Commands.literal("confirm").executes(context -> reply(context.getSource(),
+                        PlayerVillages.dissolve(context.getSource().getPlayerOrException(), pos(context)))))))
+                .then(Commands.literal("unregister").then(position(Commands.literal("confirm").executes(context -> reply(context.getSource(),
+                        PlayerVillages.unregister(context.getSource().getPlayerOrException(), pos(context)))))))
+                .then(Commands.literal("hire").then(Commands.argument("villager", StringArgumentType.word()).executes(context -> {
+                    var player = context.getSource().getPlayerOrException();
+                    String result = org.millenaire.fabric.villager.VillagerHiring.hire(player, uuid(StringArgumentType.getString(context, "villager")));
+                    context.getSource().sendSuccess(() -> Component.literal(result), false);
+                    return 1;
+                })))
+                .then(Commands.literal("release").then(Commands.argument("villager", StringArgumentType.word()).executes(context -> {
+                    var player = context.getSource().getPlayerOrException();
+                    String result = org.millenaire.fabric.villager.VillagerHiring.release(player, uuid(StringArgumentType.getString(context, "villager")));
+                    context.getSource().sendSuccess(() -> Component.literal(result), false);
+                    return 1;
+                })))
                 .then(Commands.literal("order").then(Commands.argument("building", StringArgumentType.word())
                         .executes(context -> reply(context.getSource(), PlayerVillages.order(context.getSource().getPlayerOrException(),
                                 StringArgumentType.getString(context, "building"))))))
@@ -129,6 +166,10 @@ public final class SummoningWand {
                     context.getSource().sendSuccess(() -> status(player, settlement.get()), false);
                     return 1;
                 })));
+    }
+
+    private static java.util.UUID uuid(String text) {
+        try { return java.util.UUID.fromString(text); } catch (IllegalArgumentException exception) { return new java.util.UUID(0, 0); }
     }
 
     /** {@code <x> <y> <z>} followed by {@code tail}. */

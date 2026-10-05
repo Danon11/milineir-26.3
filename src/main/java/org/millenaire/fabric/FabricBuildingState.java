@@ -42,6 +42,12 @@ public final class FabricBuildingState extends SavedData {
         buildings.add(building);
         setDirty();
     }
+    public boolean remove(Identifier dimension, Position origin) {
+        boolean removed = buildings.removeIf(b -> b.dimension().equals(dimension) && b.origin().equals(origin));
+        if (removed) setDirty();
+        return removed;
+    }
+
     /** Plan identifier without its upgrade level: {@code norman:fountain_A1} becomes {@code norman:fountain_A}. */
     public static String planKey(String plan) { return plan.replaceAll("\\d+$", ""); }
 

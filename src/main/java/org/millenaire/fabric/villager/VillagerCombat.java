@@ -74,13 +74,15 @@ public final class VillagerCombat {
         var goals = villager.goalSelector();
         var targets = villager.targetSelector();
         goals.addGoal(1, new AvoidEntityGoal<>(villager, LivingEntity.class, 10.0F, 0.6, 0.75,
-                other -> villager.combatRole() == Role.CIVILIAN && danger(villager, other)));
+                other -> !villager.fights() && danger(villager, other)));
         goals.addGoal(1, new RangedAttackGoal(villager, 0.6, 30, 15.0F) {
-            @Override public boolean canUse() { return villager.isArcher() && villager.combatRole() != Role.CIVILIAN && super.canUse(); }
+            @Override public boolean canUse() { return villager.isArcher() && villager.fights() && super.canUse(); }
         });
         goals.addGoal(1, new MeleeAttackGoal(villager, 0.75, true) {
-            @Override public boolean canUse() { return !villager.isArcher() && villager.combatRole() != Role.CIVILIAN && super.canUse(); }
+            @Override public boolean canUse() { return !villager.isArcher() && villager.fights() && super.canUse(); }
         });
+        targets.addGoal(0, new VillagerHiring.DefendHirerGoal(villager));
+        goals.addGoal(1, new VillagerHiring.FollowHirerGoal(villager));
         targets.addGoal(1, new NearestAttackableTargetGoal<>(villager, LivingEntity.class, 10, true, false,
                 (other, level) -> villager.combatRole() != Role.CIVILIAN && enemy(villager, other)) {
             @Override public boolean canUse() { return villager.combatRole() != Role.CIVILIAN && !villager.isSleeping() && super.canUse(); }

@@ -153,6 +153,61 @@ public final class PlayerVillages {
         return Outcome.ok("Registered " + definition.nativeName() + (residents > 0 ? "; " + residents + " villagers move in." : "."));
     }
 
+    /**
+     * The negation wand: forgets a village the player owns. Its villagers leave (they are removed), its buildings
+     * stay as ordinary blocks.
+     */
+    public static Outcome dissolve(ServerPlayer player, BlockPos pos) {
+        ServerLevel level = player.level();
+        var reach = reachIssue(player, pos);
+        if (reach.isPresent()) return Outcome.fail(reach.get());
+        var settlement = settlementAt(level, pos);
+        if (settlement.isEmpty()) return Outcome.fail("This is not inside a village.");
+        String key = VillageGrowth.key(settlement.get());
+        var ownership = FabricVillageOwnership.get(level.getServer());
+        if (!ownership.owns(key, player.getUUID())) return Outcome.fail("Only the owner can dissolve " + settlement.get().name() + ".");
+        int villagers = removeVillagers(level, settlement.get(), null);
+        var buildings = FabricBuildingState.get(level.getServer());
+        settlement.get().buildings().forEach(b -> buildings.remove(b.placement().dimension(), b.placement().origin()));
+        FabricSettlementState.get(level.getServer()).remove(settlement.get());
+        ownership.release(key);
+        return Outcome.ok(settlement.get().name() + " is dissolved; " + villagers + " villagers left.");
+    }
+
+    /** The negation wand on a registered custom building's sign: forgets that building and sends its residents away. */
+    public static Outcome unregister(ServerPlayer player, BlockPos pos) {
+        ServerLevel level = player.level();
+        var reach = reachIssue(player, pos);
+        if (reach.isPresent()) return Outcome.fail(reach.get());
+        var settlement = settlementAt(level, pos);
+        if (settlement.isEmpty() || !FabricVillageOwnership.get(level.getServer()).owns(VillageGrowth.key(settlement.get()), player.getUUID()))
+            return Outcome.fail("This is not your village.");
+        var origin = new Position(pos.getX(), pos.getY(), pos.getZ());
+        var building = settlement.get().buildings().stream().filter(b -> b.placement().origin().equals(origin)).findFirst();
+        if (building.isEmpty()) return Outcome.fail("This sign marks no registered building.");
+        if (building.get().centre()) return Outcome.fail("The town hall cannot be removed; dissolve the village instead.");
+        int villagers = removeVillagers(level, settlement.get(), building.get());
+        FabricBuildingState.get(level.getServer()).remove(level.dimension().identifier(), origin);
+        FabricSettlementState.get(level.getServer()).removeBuilding(settlement.get(), origin);
+        return Outcome.ok("The building is no longer part of the village; " + villagers + " villagers left.");
+    }
+
+    /** Removes the villagers of a settlement (or of one of its buildings) and their records. */
+    private static int removeVillagers(ServerLevel level, FabricSettlementState.Settlement settlement, FabricSettlementState.Building only) {
+        java.util.Set<String> keys = new java.util.HashSet<>();
+        for (var b : settlement.buildings())
+            if (only == null || b == only) keys.add(VillagePopulation.baseKey(VillagePopulation.buildingKey(b.placement().plan(), b.placement().origin())));
+        var records = org.millenaire.fabric.FabricVillagerState.get(level.getServer());
+        int removed = 0;
+        for (var record : records.villagers()) {
+            if (!keys.contains(VillagePopulation.baseKey(record.building()))) continue;
+            if (level.getEntity(UUID.fromString(record.id())) instanceof org.millenaire.fabric.villager.MillVillagerEntity villager) villager.discard();
+            records.remove(record.id());
+            removed++;
+        }
+        return removed;
+    }
+
     /** Custom buildings the village type lists ({@code customBuilding=}), as {@code culture:key}. */
     public static List<String> allowedCustom(FabricSettlementState.Settlement settlement) {
         return type(settlement.type()).map(type -> type.source().values("custombuilding").stream()

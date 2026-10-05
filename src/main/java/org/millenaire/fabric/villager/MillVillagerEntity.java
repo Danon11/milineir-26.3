@@ -38,6 +38,9 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     private String firstName = "";
     private String familyName = "";
     private String building = "";
+    /** The player who hired this villager, and until which game time. */
+    private String hiredBy = "";
+    private long hiredUntil;
     /** UUIDs of the parents, for villagers born in the village. */
     private String mother = "", father = "";
     /** Goods carried by the villager, by itemlist alias. */
@@ -115,6 +118,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         output.putString("first_name", firstName);
         output.putString("family_name", familyName);
         output.putString("building", building);
+        output.putString("hired_by", hiredBy);
+        output.putLong("hired_until", hiredUntil);
         output.putString("mother", mother);
         output.putString("father", father);
         output.putString("texture", entityData.get(TEXTURE));
@@ -134,6 +139,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         firstName = input.getStringOr("first_name", "");
         familyName = input.getStringOr("family_name", "");
         building = input.getStringOr("building", "");
+        hiredBy = input.getStringOr("hired_by", "");
+        hiredUntil = input.getLongOr("hired_until", 0L);
         mother = input.getStringOr("mother", "");
         father = input.getStringOr("father", "");
         combatRole = null;
@@ -158,7 +165,12 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
 
     @Override
     protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
-        if (!isAlive() || isSleeping() || tradingPlayer != null || player.isSecondaryUseActive()
+        if (player.isSecondaryUseActive() && isAlive() && !level().isClientSide() && VillagerHiring.hireable(this)
+                && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            VillagerHiring.offer(serverPlayer, this);
+            return net.minecraft.world.InteractionResult.SUCCESS;
+        }
+        if (!isAlive() || isSleeping() || tradingPlayer != null || player.isSecondaryUseActive() || isHired()
                 || combatRole() == VillagerCombat.Role.HOSTILE || getTarget() != null) return super.mobInteract(player, hand);
         if (level().isClientSide()) return net.minecraft.world.InteractionResult.SUCCESS;
         // A quest step with this villager takes precedence over trading.
@@ -234,6 +246,21 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     // Combat: roles come from the legacy profile tags, see VillagerCombat.
     private VillagerCombat.Role combatRole;
 
+    public boolean isHired() { return !hiredBy.isEmpty(); }
+    public boolean hiredBy(net.minecraft.world.entity.player.Player player) { return hiredBy.equals(player.getStringUUID()); }
+    public java.util.UUID hirer() { return java.util.UUID.fromString(hiredBy); }
+    public long hiredUntil() { return hiredUntil; }
+
+    /** Hires the villager for a player until {@code until}, or releases it with a null player. */
+    public void hire(java.util.UUID player, long until) {
+        hiredBy = player == null ? "" : player.toString();
+        hiredUntil = player == null ? 0 : until;
+        if (player == null) setTarget(null);
+    }
+
+    /** Fighters by type, and anyone hired. */
+    public boolean fights() { return combatRole() != VillagerCombat.Role.CIVILIAN || isHired(); }
+
     public java.util.Optional<VillagerProfile> profile() {
         return java.util.Optional.ofNullable(VillagerSpawning.snapshot().profiles().get(profileId()));
     }
@@ -307,6 +334,11 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     @Override
     protected void customServerAiStep(net.minecraft.server.level.ServerLevel level) {
         super.customServerAiStep(level);
+        if (isHired() && tickCount % 100 == 0 && level.getGameTime() >= hiredUntil) {
+            var hirer = level.getPlayerByUUID(hirer());
+            if (hirer != null) hirer.sendSystemMessage(Component.literal(getName().getString() + "'s service is over; they go back home."));
+            hire(null, 0);
+        }
         if (childAge < 0) return;
         childAge++;
         if (childAge % 200 == 0) updateScale();

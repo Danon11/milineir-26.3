@@ -14,7 +14,8 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
                               Map<String, List<List<String>>> clothes, float baseScale, int health,
                               String firstNameList, String familyNameList, List<String> goals, List<String> tags,
                               Map<String, Integer> startingInventory, List<String> bringBackHomeGoods, String defaultWeapon,
-                              String maleChild, String femaleChild, Map<String, Integer> requiredGoods, List<String> collectGoods) {
+                              String maleChild, String femaleChild, Map<String, Integer> requiredGoods, List<String> collectGoods,
+                              int hiringCost) {
     public static final String FREE_CLOTHES = "free";
     public static final String NATURAL_CLOTHES = "natural";
     private static final float SCALE_MIN = 0.8F, SCALE_VARIATION = 0.09F;
@@ -99,7 +100,12 @@ public record VillagerProfile(String culture, String type, Model model, boolean 
                 clothes, scale, health, firstNames, familyNames, document.values("goal").stream().map(goal -> goal.trim().toLowerCase(Locale.ROOT)).toList(), tags,
                 inventory, bringBack, last(document, "defaultweapon", "").toLowerCase(Locale.ROOT),
                 last(document, "malechild", "").toLowerCase(Locale.ROOT), last(document, "femalechild", "").toLowerCase(Locale.ROOT),
-                required, document.values("collectgood").stream().map(good -> good.trim().toLowerCase(Locale.ROOT)).filter(good -> !good.isEmpty()).toList());
+                required, document.values("collectgood").stream().map(good -> good.trim().toLowerCase(Locale.ROOT)).filter(good -> !good.isEmpty()).toList(),
+                parseInt(last(document, "hiringcost", "0")));
+    }
+
+    private static int parseInt(String value) {
+        try { return Math.max(0, Integer.parseInt(value.trim())); } catch (NumberFormatException exception) { return 0; }
     }
 
     private static String last(LegacyDocument document, String key, String fallback) {

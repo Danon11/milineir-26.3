@@ -99,9 +99,40 @@ public final class PlayerVillageGameTest implements FabricClientGameTest {
             var after = server.computeOnServer(s -> FabricVillageOwnership.get(s).owner(key).orElseThrow().orders());
             int built = server.computeOnServer(s -> settlement(s, centre).buildings().size());
             if (!after.isEmpty() || built < 3) throw new AssertionError("Ordered farm not built: orders " + after + ", buildings " + built);
+            // 5. Hiring: a guard serves the player for a day for its hiringcost in silver deniers.
+            String guard = server.computeOnServer(s -> {
+                var level = s.overworld();
+                var player = s.getPlayerList().getPlayers().getFirst();
+                var profile = org.millenaire.fabric.villager.VillagerSpawning.snapshot().profiles().values().stream()
+                        .filter(p -> p.hiringCost() > 0 && p.culture().equals("norman")).findFirst().orElseThrow();
+                var villager = org.millenaire.fabric.villager.VillagerSpawning.spawn(level, player.blockPosition().offset(2, 0, 0), profile, "", new java.util.SplittableRandom(5));
+                player.getInventory().add(new net.minecraft.world.item.ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath("millenaire", "denieror")), 2));
+                return villager.getStringUUID();
+            });
+            playerCommand(context, "millenaire_village hire " + guard);
+            context.waitTicks(10);
+            boolean hired = server.computeOnServer(s -> s.overworld().getEntity(java.util.UUID.fromString(guard))
+                    instanceof org.millenaire.fabric.villager.MillVillagerEntity v && v.isHired());
+            if (!hired) throw new AssertionError("Guard was not hired");
+            int money = server.computeOnServer(s -> org.millenaire.fabric.economy.Wallet.total(s.getPlayerList().getPlayers().getFirst()));
+            if (money >= 2 * 4096) throw new AssertionError("Hiring cost nothing: " + money);
+
             playerCommand(context, "millenaire_village info");
             context.waitTicks(20);
             context.takeScreenshot("millenaire-player-village");
+
+            // 6. Negation wand actions: remove the custom farm, then dissolve the custom village.
+            playerCommand(context, "millenaire_village unregister " + sign.getX() + " " + sign.getY() + " " + sign.getZ() + " confirm");
+            context.waitTicks(10);
+            int left = server.computeOnServer(s -> settlement(s, centre).buildings().size());
+            if (left != built - 1) throw new AssertionError("Farm not removed: " + left + " of " + built);
+            server.runCommand("tp @p " + centre.getX() + " " + (centre.getY() + 1) + " " + (centre.getZ() - 3));
+            context.waitTicks(10);
+            playerCommand(context, "millenaire_village dissolve " + centre.getX() + " " + centre.getY() + " " + centre.getZ() + " confirm");
+            context.waitTicks(10);
+            boolean gone = server.computeOnServer(s -> FabricSettlementState.get(s).containing(s.overworld().dimension().identifier(), centre.getX(), centre.getZ()).isEmpty());
+            if (!gone) throw new AssertionError("Village not dissolved");
         }
     }
 
