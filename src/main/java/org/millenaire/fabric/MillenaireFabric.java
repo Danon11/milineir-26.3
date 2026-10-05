@@ -40,6 +40,11 @@ public final class MillenaireFabric implements ModInitializer {
                 });
         FabricLoader.getInstance().getModContainer("millenaire").ifPresentOrElse(
                 modContainer -> {
+                    // Millenaire villages take the place of vanilla villages in new terrain; /datapack disable restores them.
+                    net.fabricmc.fabric.api.resource.v1.ResourceLoader.registerBuiltinPack(
+                            net.minecraft.resources.Identifier.fromNamespaceAndPath("millenaire", "no_vanilla_villages"), modContainer,
+                            net.minecraft.network.chat.Component.literal("Millenaire: no vanilla villages"),
+                            net.fabricmc.fabric.api.resource.v1.pack.PackActivationType.DEFAULT_ENABLED);
                     FabricContentDeployer.deploy(modContainer);
                     try {
                         List<CultureDescriptor> cultures = CultureDescriptorLoader.loadAll(
