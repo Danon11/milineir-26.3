@@ -58,7 +58,8 @@ public final class WorldVillageGenerator {
         public State() {}
         private State(List<String> attempted) { this.attempted.addAll(attempted); }
         static State get(MinecraftServer server) { return server.overworld().getDataStorage().computeIfAbsent(TYPE); }
-        boolean tryMark(String region) { boolean added = attempted.add(region); if (added) setDirty(); return added; }
+        boolean attempted(String region) { return attempted.contains(region); }
+        void mark(String region) { if (attempted.add(region)) setDirty(); }
     }
 
     /** Modern biome paths for the legacy biome names used by village types. */
@@ -84,6 +85,7 @@ public final class WorldVillageGenerator {
             Map.entry("meadow", List.of("meadow")), Map.entry("grove", List.of("grove")), Map.entry("cherry grove", List.of("cherry_grove")));
 
     private static final int SITE_MIN = 48, SITE_MAX = 192, FLATNESS = 24, CHECK_INTERVAL = 400, SEARCH = 128, SEARCH_STEP = 32, VILLAGE_AREA = 96;
+    static final String NOT_LOADED = "area not loaded yet";
     private static volatile Config config = new Config(true, 600, 150);
 
     private WorldVillageGenerator() {}
@@ -110,9 +112,14 @@ public final class WorldVillageGenerator {
         if (distance < SITE_MIN || distance > SITE_MAX) return;
         var spawn = level.getRespawnData().pos();
         if (Math.hypot(spawn.getX() - x, spawn.getZ() - z) < config.spawnProtection()) return;
-        if (!loaded(level, x, z, SEARCH + 40)) return; // try again once the surroundings are loaded
-        if (!State.get(level.getServer()).tryMark(level.dimension().identifier() + "/" + rx + "," + rz)) return;
+        var state = State.get(level.getServer());
+        String key = level.dimension().identifier() + "/" + rx + "," + rz;
+        if (state.attempted(key)) return;
         String result = generate(level, x, z, random);
+        // Players only keep their view distance loaded, so a site whose village area is not loaded yet is retried
+        // later instead of using up the region.
+        if (result.equals(NOT_LOADED)) return;
+        state.mark(key);
         org.slf4j.LoggerFactory.getLogger("Millenaire").info("Village site {} {}: {}", x, z, result);
     }
 
@@ -142,20 +149,22 @@ public final class WorldVillageGenerator {
                 return "too close to " + settlement.name();
         // Search the surroundings for the flattest dry site; the layout uses one ground level.
         int bestX = x, bestZ = z, bestRange = Integer.MAX_VALUE, ground = 0;
+        boolean anyLoaded = false;
         for (int sx = x - SEARCH; sx <= x + SEARCH; sx += SEARCH_STEP)
             for (int sz = z - SEARCH; sz <= z + SEARCH; sz += SEARCH_STEP) {
-                if (!loaded(level, sx, sz, 40)) continue;
+                // Never generate chunks synchronously: only sites whose whole village area is loaded are considered.
+                if (!loaded(level, sx, sz, VILLAGE_AREA)) continue;
+                anyLoaded = true;
                 int h = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz);
                 if (!level.getFluidState(new BlockPos(sx, h - 1, sz)).isEmpty()) continue;
                 int range = terrainRange(level, sx, sz);
                 if (range < bestRange) { bestRange = range; bestX = sx; bestZ = sz; ground = h; }
             }
-        if (bestRange == Integer.MAX_VALUE) return "water or unloaded";
+        if (!anyLoaded) return NOT_LOADED;
+        if (bestRange == Integer.MAX_VALUE) return "water";
         if (bestRange > FLATNESS) return "too steep (" + bestRange + ")";
         x = bestX;
         z = bestZ;
-        // Never generate chunks synchronously: the whole village area must already be loaded.
-        if (!loaded(level, x, z, VILLAGE_AREA)) return "area not loaded yet";
         var biome = level.getBiome(new BlockPos(x, ground, z)).unwrapKey().map(key -> key.identifier().getPath()).orElse("");
         var type = pickType(biome, random);
         if (type.isEmpty()) return "no village type for biome " + biome;
