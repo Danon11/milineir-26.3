@@ -43,6 +43,8 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     private long hiredUntil;
     /** UUIDs of the parents, for villagers born in the village. */
     private String mother = "", father = "";
+    /** UUID of the husband or wife. */
+    private String spouse = "";
     /** Goods carried by the villager, by itemlist alias. */
     private final java.util.Map<String, Integer> inventory = new java.util.TreeMap<>();
     /** Created in registerGoals, which the Mob constructor calls before field initializers run. */
@@ -121,6 +123,7 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         output.putString("hired_by", hiredBy);
         output.putLong("hired_until", hiredUntil);
         output.putString("mother", mother);
+        output.putString("spouse", spouse);
         output.putString("father", father);
         output.putString("texture", entityData.get(TEXTURE));
         output.putString("cloth_0", entityData.get(CLOTH_0));
@@ -142,6 +145,7 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
         hiredBy = input.getStringOr("hired_by", "");
         hiredUntil = input.getLongOr("hired_until", 0L);
         mother = input.getStringOr("mother", "");
+        spouse = input.getStringOr("spouse", "");
         father = input.getStringOr("father", "");
         combatRole = null;
         childAge = input.getIntOr("child_age", -1);
@@ -229,6 +233,15 @@ public class MillVillagerEntity extends PathfinderMob implements net.minecraft.w
     public String building() { return building; }
     public String firstName() { return firstName; }
     public String mother() { return mother; }
+    public String spouse() { return spouse; }
+
+    /** Marries two villagers; the wife takes her husband's family name, as in the original. */
+    public static void marry(MillVillagerEntity husband, MillVillagerEntity wife) {
+        husband.spouse = wife.getStringUUID();
+        wife.spouse = husband.getStringUUID();
+        if (!husband.familyName.isEmpty()) wife.familyName = husband.familyName;
+        wife.updateName();
+    }
     public String father() { return father; }
 
     /** Sets the family a child is born into. */

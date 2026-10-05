@@ -47,7 +47,32 @@ public final class VillageFounder {
             var origin = new LegacyBuildingPlan.Position(building.origin().x(), ground + offset, building.origin().z());
             buildings.add(new VillageLayout.Building(building.plan(), origin, building.rotation(), building.centre(), building.reservedArea(), building.role()));
         }
+        smoothWalls(layout.origin(), buildings);
         return new VillageLayout.Layout(layout.type(), layout.origin(), layout.seed(), layout.radius(), buildings, layout.issues());
+    }
+
+    /**
+     * Wall smoothing: wall segments, taken in order around the village, have their height averaged with their
+     * neighbours twice, so the wall follows the land without steps between segments.
+     */
+    static void smoothWalls(LegacyBuildingPlan.Position centre, List<VillageLayout.Building> buildings) {
+        List<Integer> walls = new ArrayList<>();
+        for (int i = 0; i < buildings.size(); i++) if (buildings.get(i).role() == VillageLayout.Role.WALL) walls.add(i);
+        if (walls.size() < 3) return;
+        walls.sort(Comparator.comparingDouble(i -> Math.atan2(buildings.get(i).origin().z() - centre.z(), buildings.get(i).origin().x() - centre.x())));
+        int n = walls.size();
+        int[] heights = new int[n];
+        for (int k = 0; k < n; k++) heights[k] = buildings.get(walls.get(k)).origin().y();
+        for (int pass = 0; pass < 2; pass++) {
+            int[] next = new int[n];
+            for (int k = 0; k < n; k++) next[k] = Math.round((heights[(k + n - 1) % n] + 2 * heights[k] + heights[(k + 1) % n]) / 4.0f);
+            heights = next;
+        }
+        for (int k = 0; k < n; k++) {
+            var b = buildings.get(walls.get(k));
+            var origin = new LegacyBuildingPlan.Position(b.origin().x(), heights[k], b.origin().z());
+            buildings.set(walls.get(k), new VillageLayout.Building(b.plan(), origin, b.rotation(), b.centre(), b.reservedArea(), b.role()));
+        }
     }
 
     /** Fills air and water under a building's lowest floor down to the ground, so nothing floats. */

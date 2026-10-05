@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:tapestry_beasts",
+  "width": 2,
+  "height": 1,
+  "title": {
+    "text": "Beasts",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

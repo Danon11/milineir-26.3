@@ -1,0 +1,27 @@
+{
+  "criteria": {
+    "rainbow": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:gui/advancements/backgrounds/stone",
+    "description": {
+      "text": "Paint bricks in all sixteen colours"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "millenaire:painted_brick_red"
+    },
+    "show_toast": true,
+    "title": {
+      "text": "Rainbow"
+    }
+  },
+  "requirements": [
+    [
+      "rainbow"
+    ]
+  ]
+}

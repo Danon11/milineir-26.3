@@ -50,6 +50,34 @@ public final class VillagerRenderGameTest implements FabricClientGameTest {
             world.getConnection().waitForChunksRender(true, ClientGameTestContext.DEFAULT_TIMEOUT);
             context.takeScreenshot("millenaire-villagers");
 
+            // Decorations: a stone wall with one tapestry, statue and icon of each kind hung as paintings.
+            context.setScreen(() -> null);
+            int hung = world.getServer().computeOnServer(server -> {
+                var level = server.overworld();
+                var player = server.getPlayerList().getPlayers().getFirst();
+                BlockPos base = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(0, 0, -40));
+                for (int x = -14; x <= 14; x++) for (int y = 0; y < 6; y++)
+                    level.setBlockAndUpdate(base.offset(x, y, 0), net.minecraft.world.level.block.Blocks.STONE_BRICKS.defaultBlockState());
+                var variants = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.PAINTING_VARIANT);
+                int hungCount = 0, x = -13;
+                for (String name : List.of("tapestry_oath", "indianstatue_ganesh", "mayanstatue_mask", "byzantineiconlarge_christ",
+                        "byzantineiconmedium_mary", "byzantineiconsmall_0", "tapestry_griffins")) {
+                    var holder = variants.get(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.PAINTING_VARIANT,
+                            net.minecraft.resources.Identifier.fromNamespaceAndPath("millenaire", name))).orElseThrow(() -> new AssertionError("Missing variant " + name));
+                    int w = holder.value().width();
+                    var painting = new net.minecraft.world.entity.decoration.painting.Painting(level, base.offset(x + w / 2, 1 + holder.value().height() / 2, 1),
+                            net.minecraft.core.Direction.SOUTH, holder);
+                    if (painting.survives() && level.addFreshEntity(painting)) hungCount++;
+                    x += w + 1;
+                }
+                player.teleportTo(level, base.getX() + 0.5, base.getY() + 1, base.getZ() + 14.5, Set.of(), 180, 5, true);
+                return hungCount;
+            });
+            if (hung < 6) throw new AssertionError("Only " + hung + " decorations could be hung");
+            world.getConnection().waitForChunksRender(true, ClientGameTestContext.DEFAULT_TIMEOUT);
+            context.waitTicks(40);
+            context.takeScreenshot("millenaire-decorations");
+
             // Second scene: a placed village seen from above, to review block models and textures.
             world.getServer().runCommand("kill @e[type=millenaire:villager]");
             world.getServer().runCommand("gamemode spectator @a");

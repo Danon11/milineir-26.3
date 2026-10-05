@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:mayanstatue_glyph",
+  "width": 2,
+  "height": 2,
+  "title": {
+    "text": "Glyph",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

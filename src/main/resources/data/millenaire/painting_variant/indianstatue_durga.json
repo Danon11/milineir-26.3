@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:indianstatue_durga",
+  "width": 2,
+  "height": 3,
+  "title": {
+    "text": "Durga",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

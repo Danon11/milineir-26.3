@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:tapestry_feast",
+  "width": 4,
+  "height": 2,
+  "title": {
+    "text": "The Feast",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

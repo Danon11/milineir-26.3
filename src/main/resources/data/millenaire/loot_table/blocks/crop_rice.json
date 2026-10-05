@@ -2,20 +2,49 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "condition": {"type": "minecraft:survives_explosion"},
-      "entries": [{"type": "minecraft:item", "name": "millenaire:rice"}],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "millenaire:rice"
+        }
+      ],
       "rolls": 1
     },
     {
       "condition": {
         "type": "minecraft:all_of",
         "terms": [
-          {"type": "minecraft:survives_explosion"},
-          {"type": "minecraft:match_block", "blocks": "millenaire:crop_rice", "state": {"age": "7"}}
+          {
+            "type": "minecraft:survives_explosion"
+          },
+          {
+            "type": "minecraft:match_block",
+            "blocks": "millenaire:crop_rice",
+            "state": {
+              "age": "7"
+            }
+          }
         ]
       },
-      "entries": [{"type": "minecraft:item", "condition": {"type": "minecraft:random_chance", "chance": 0.5714286}, "name": "millenaire:rice"}],
-      "rolls": 3
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "millenaire:rice",
+          "modifier": {
+            "type": "minecraft:apply_bonus",
+            "enchantment": "minecraft:fortune",
+            "formula": "minecraft:binomial_with_bonus_count",
+            "parameters": {
+              "extra": 3,
+              "probability": 0.5714286
+            }
+          }
+        }
+      ],
+      "rolls": 1
     }
   ],
   "random_sequence": "millenaire:blocks/crop_rice"

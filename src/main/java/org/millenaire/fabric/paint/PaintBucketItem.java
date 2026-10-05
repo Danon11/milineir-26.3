@@ -69,7 +69,10 @@ public final class PaintBucketItem extends Item {
         if (context.getPlayer() == null || !(context.getLevel() instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
             return InteractionResult.PASS;
         }
-        return PaintableBlocks.recolor(context.getItemInHand(), color, serverLevel, clickedPos,
+        var result = PaintableBlocks.recolor(context.getItemInHand(), color, serverLevel, clickedPos,
                 context.getPlayer(), context.getHand());
+        if (result.consumesAction() && context.getPlayer() instanceof net.minecraft.server.level.ServerPlayer player)
+            org.millenaire.fabric.village.VillageEtiquette.painted(player, color);
+        return result;
     }
 }

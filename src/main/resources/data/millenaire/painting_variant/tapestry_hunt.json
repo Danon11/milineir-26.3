@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:tapestry_hunt",
+  "width": 6,
+  "height": 3,
+  "title": {
+    "text": "The Hunt",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

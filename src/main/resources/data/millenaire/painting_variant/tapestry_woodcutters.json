@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:tapestry_woodcutters",
+  "width": 2,
+  "height": 2,
+  "title": {
+    "text": "Woodcutters",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

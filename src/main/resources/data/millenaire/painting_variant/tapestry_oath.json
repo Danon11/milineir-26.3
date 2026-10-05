@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:tapestry_oath",
+  "width": 5,
+  "height": 3,
+  "title": {
+    "text": "Harold's Oath",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

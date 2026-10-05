@@ -9,6 +9,7 @@ import org.millenaire.fabric.MillenaireCommands;
 import org.millenaire.fabric.content.LegacyBuildingPlan;
 import org.millenaire.fabric.villager.VillagerProfile;
 import org.millenaire.fabric.villager.VillagerSpawning;
+import org.millenaire.fabric.villager.MillVillagerEntity;
 
 import java.util.*;
 
@@ -98,6 +99,20 @@ public final class VillagePopulation {
                 .filter(record -> Optional.ofNullable(profiles.get(record.culture() + "/" + record.type())).map(VillagerProfile::child).orElse(false))
                 .toList();
 
+        // Marriages: an unmarried man and woman of the same house marry.
+        for (var household : living.values()) {
+            List<MillVillagerEntity> single = new ArrayList<>();
+            for (var record : household)
+                if (level.getEntity(UUID.fromString(record.id())) instanceof MillVillagerEntity villager && villager.spouse().isEmpty()
+                        && !villager.isChildVillager()) single.add(villager);
+            var man = single.stream().filter(v -> !v.profile().map(VillagerProfile::female).orElse(false)).findFirst();
+            var woman = single.stream().filter(v -> v.profile().map(VillagerProfile::female).orElse(false)).findFirst();
+            if (man.isPresent() && woman.isPresent()) {
+                MillVillagerEntity.marry(man.get(), woman.get());
+                VillagerSpawning.record(level, woman.get(), woman.get().profile().orElseThrow(), true);
+            }
+        }
+
         // Resurrection: a dead resident comes back, unless a child of the same gender will grow into the place.
         for (Vacancy vacancy : vacancies(server, settlement)) {
             VillagerProfile profile = profiles.get(vacancy.profileId());
@@ -123,8 +138,13 @@ public final class VillagePopulation {
             var motherRecord = household.stream().filter(record -> Optional.ofNullable(profiles.get(record.culture() + "/" + record.type()))
                     .map(VillagerProfile::canHaveChildren).orElse(false)).findFirst();
             Optional<VillagerProfile> mother = motherRecord.map(record -> profiles.get(record.culture() + "/" + record.type()));
-            var fatherRecord = household.stream().filter(record -> record.gender().equals("male")
+            Optional<FabricVillagerState.Villager> fatherRecord = household.stream().filter(record -> record.gender().equals("male")
                     && !Optional.ofNullable(profiles.get(record.culture() + "/" + record.type())).map(VillagerProfile::child).orElse(true)).findFirst();
+            // Children are born to married couples: the father is the mother's husband when she is loaded.
+            if (motherRecord.isPresent() && level.getEntity(UUID.fromString(motherRecord.get().id())) instanceof MillVillagerEntity wife) {
+                if (wife.spouse().isEmpty()) continue;
+                fatherRecord = household.stream().filter(record -> record.id().equals(wife.spouse())).findFirst();
+            }
             if (mother.isEmpty() || fatherRecord.isEmpty() || (!force && random.nextInt(BIRTH_CHANCE) != 0)) continue;
             String type = childType(mother.get(), random);
             VillagerProfile child = type.isEmpty() ? null : profiles.get(mother.get().culture() + "/" + type);

@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:tapestry_hall",
+  "width": 3,
+  "height": 2,
+  "title": {
+    "text": "The Hall",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

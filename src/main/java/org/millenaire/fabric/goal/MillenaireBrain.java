@@ -283,9 +283,18 @@ public final class MillenaireBrain extends Goal {
             case "gathersnails" -> context == null ? null : chore(name, VillageChores.gatherSnails(context, villager, random), 400);
             case "mining" -> context == null ? null : chore(name, VillageChores.quarry(context, villager, random), 300);
             case "brewpotions" -> {
+                // The brewer turns nether wart from the house stock into awkward potions at the brewing stand.
                 if (context == null) yield null;
                 var stands = withPoints(context, "brewingstand");
-                yield stands.isEmpty() ? null : new IdleTask(name, context.points(stands.getFirst(), "brewingstand").getFirst(), 400, name);
+                if (stands.isEmpty()) yield null;
+                var house = stands.getFirst();
+                if (context.store(house).count("netherwart") + villager.carried("netherwart") <= 0) yield null;
+                yield chore(name, Optional.of(new ResourceGoals.Plan(context.points(house, "brewingstand").getFirst(), () -> {
+                    var store = context.store(house);
+                    if (villager.changeCarried("netherwart", -1) == 0 && store.remove("netherwart", 1) == 0) return false;
+                    store.add("akwardpotion", 1 + random.nextInt(3));
+                    return true;
+                })), 400);
             }
             case "clearoldpath" -> {
                 if (context == null) yield null;

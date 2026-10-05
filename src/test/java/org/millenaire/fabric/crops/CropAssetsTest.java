@@ -28,8 +28,16 @@ class CropAssetsTest {
             // Vanilla registry stand-ins let the plain JUnit runtime validate
             // the codec without attempting Fabric registration after freeze.
             for (var pool : table.getAsJsonArray("pools")) {
-                pool.getAsJsonObject().getAsJsonArray("entries").get(0).getAsJsonObject()
-                        .addProperty("name", "minecraft:wheat_seeds");
+                var entry = pool.getAsJsonObject().getAsJsonArray("entries").get(0).getAsJsonObject();
+                entry.addProperty("name", "minecraft:wheat_seeds");
+                // Fortune refers to the data-driven enchantment registry, absent in plain JUnit: check its
+                // vanilla shape here and let the codec validate the rest.
+                if (entry.has("modifier")) {
+                    var modifier = entry.getAsJsonObject("modifier");
+                    assertEquals("minecraft:apply_bonus", modifier.get("type").getAsString(), crop);
+                    assertEquals("minecraft:fortune", modifier.get("enchantment").getAsString(), crop);
+                    entry.remove("modifier");
+                }
             }
             table.getAsJsonArray("pools").get(1).getAsJsonObject().getAsJsonObject("condition")
                     .getAsJsonArray("terms").get(1).getAsJsonObject().addProperty("blocks", "minecraft:wheat");

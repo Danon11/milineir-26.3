@@ -25,6 +25,8 @@ public final class MillenaireFabric implements ModInitializer {
         org.millenaire.fabric.ui.MillMenus.register();
         org.millenaire.fabric.village.SummoningWand.register();
         org.millenaire.fabric.village.VillageBooks.register();
+        org.millenaire.fabric.content.WallDecorations.register();
+        org.millenaire.fabric.village.VillageEtiquette.register();
         ServerTickEvents.END_SERVER_TICK.register(server ->
                 {
                     FabricSettlementLifecycleState.get(server).tick();

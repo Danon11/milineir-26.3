@@ -1,0 +1,13 @@
+{
+  "asset_id": "millenaire:tapestry_birds",
+  "width": 1,
+  "height": 1,
+  "title": {
+    "text": "Birds",
+    "color": "yellow"
+  },
+  "author": {
+    "text": "Mill\u00e9naire",
+    "color": "gray"
+  }
+}

@@ -95,7 +95,11 @@ public final class PlayerVillageGameTest implements FabricClientGameTest {
                 BlockPos at = centre.offset(0, 0, -20);
                 level.setBlockAndUpdate(at, Blocks.OAK_SIGN.defaultBlockState());
                 level.setBlockAndUpdate(at.offset(1, 0, 0), Blocks.CHEST.defaultBlockState());
-                for (int i = 0; i < 10; i++) level.setBlockAndUpdate(at.offset(i - 5, -1, 3), Blocks.FARMLAND.defaultBlockState());
+                // A water channel beside the field keeps the farmland from drying back to dirt.
+                for (int i = 0; i < 10; i++) {
+                    level.setBlockAndUpdate(at.offset(i - 5, -1, 4), Blocks.WATER.defaultBlockState());
+                    level.setBlockAndUpdate(at.offset(i - 5, -1, 3), Blocks.FARMLAND.defaultBlockState().setValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE, 7));
+                }
                 return at;
             });
             server.runCommand("tp @p " + sign.getX() + " " + (sign.getY() + 1) + " " + (sign.getZ() - 3));
